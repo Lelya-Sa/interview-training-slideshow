@@ -1,0 +1,156 @@
+/* ============================================
+   SLIDE CONTAINER COMPONENT STYLES
+   ============================================
+*/
+
+.slide-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  position: relative;
+  overflow-y: auto;
+}
+
+.slide {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideIn 0.5s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #667eea;
+}
+
+.slide-number {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.slide-category {
+  color: #667eea;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.slide-title {
+  font-size: 32px;
+  color: #1f2937;
+  margin: 20px 0;
+  line-height: 1.3;
+}
+
+.slide-content {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #4b5563;
+}
+
+.slide-content h2 {
+  color: #667eea;
+  margin: 25px 0 15px 0;
+  font-size: 28px;
+}
+
+.slide-content h3 {
+  color: #667eea;
+  margin: 20px 0 10px 0;
+  font-size: 24px;
+}
+
+.slide-content h4 {
+  color: #764ba2;
+  margin: 15px 0 10px 0;
+  font-size: 20px;
+}
+
+.slide-content code {
+  background: #f3f4f6;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+}
+
+.code-block {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px 0;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.slide-content ul,
+.slide-content ol {
+  margin: 15px 0;
+  padding-left: 30px;
+}
+
+.slide-content li {
+  margin: 8px 0;
+}
+
+.slide-content p {
+  margin: 15px 0;
+}
+
+.mark-complete {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 20px;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.mark-complete:hover {
+  background: #059669;
+  transform: scale(1.05);
+}
+
+.mark-complete.completed {
+  background: #6b7280;
+  cursor: default;
+}
+
+.mark-complete.completed:hover {
+  transform: none;
+}

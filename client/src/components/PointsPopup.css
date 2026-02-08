@@ -1,0 +1,33 @@
+/* ============================================
+   POINTS POPUP COMPONENT STYLES
+   ============================================
+*/
+
+.points-popup {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  font-weight: bold;
+  animation: popup 0.5s ease;
+  z-index: 2000;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  font-size: 18px;
+}
+
+@keyframes popup {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
