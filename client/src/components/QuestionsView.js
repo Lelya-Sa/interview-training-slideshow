@@ -108,7 +108,6 @@ function QuestionsView({ dayNumber, onClose }) {
   // SUBMIT ANSWER
   // ============================================
   const handleSubmitAnswer = () => {
-    const currentQuestion = questions[currentQuestionIndex];
     const userAnswer = userAnswers[currentQuestionIndex] || '';
     
     // Mark as submitted

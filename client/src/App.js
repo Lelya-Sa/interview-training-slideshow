@@ -452,7 +452,7 @@ function App() {
       document.removeEventListener('keydown', handleKeyDown);
       // Must use same function reference (handleKeyDown)
     };
-  }, [currentSlide, slidesData.length]); // Re-run if currentSlide changes
+  }, [currentSlide, slidesData.length, changeSlide, markComplete]); // Re-run if currentSlide changes
   // Interview: "Dependencies ensure handler has latest values"
 
   // ============================================

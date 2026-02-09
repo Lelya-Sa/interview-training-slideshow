@@ -168,10 +168,11 @@ function Sidebar({ gameState, totalSlides, onUnlockAchievement }) {
       }
     });
     // Loop ends - checked all achievements
-  }, [gameState, onUnlockAchievement]); 
+  }, [gameState, onUnlockAchievement, achievements]); 
   // Dependency array: Run effect when gameState or onUnlockAchievement changes
   // gameState: Changes when user completes slides or earns points
   // onUnlockAchievement: Function reference (shouldn't change, but included for completeness)
+  // achievements: Array of achievement definitions (constant, but included for ESLint)
   // Interview: "Dependency array ensures effect runs when dependencies change"
 
   // ============================================
