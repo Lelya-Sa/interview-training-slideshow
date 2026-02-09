@@ -108,45 +108,52 @@ function RoadmapView({ onSelectDay }) {
         <p>Select a day to start your training journey</p>
       </div>
 
-      <div className="days-grid">
-        {days.map(day => {
-          const progress = calculateProgress(day);
-          const isCompleted = progress === 100;
-          
-          return (
-            <div
-              key={day.dayNumber}
-              className={`day-card ${isCompleted ? 'completed' : ''}`}
-              onClick={() => onSelectDay(day.dayNumber)}
-            >
-              <div className="day-header">
-                <h2>Day {day.dayNumber}</h2>
-                {isCompleted && <span className="badge">✓ Complete</span>}
-              </div>
-              
-              {day.level && (
-                <div className="day-level">{day.level}</div>
-              )}
-              
-              <div className="day-progress">
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${progress}%` }}
-                  >
-                    {progress}%
+      {days.length === 0 ? (
+        <div className="roadmap-error">
+          <p>No days found. The API returned {days.length} days.</p>
+          <p>Check the browser console for API response details.</p>
+        </div>
+      ) : (
+        <div className="days-grid">
+          {days.map(day => {
+            const progress = calculateProgress(day);
+            const isCompleted = progress === 100;
+            
+            return (
+              <div
+                key={day.dayNumber}
+                className={`day-card ${isCompleted ? 'completed' : ''}`}
+                onClick={() => onSelectDay(day.dayNumber)}
+              >
+                <div className="day-header">
+                  <h2>Day {day.dayNumber}</h2>
+                  {isCompleted && <span className="badge">✓ Complete</span>}
+                </div>
+                
+                {day.level && (
+                  <div className="day-level">{day.level}</div>
+                )}
+                
+                <div className="day-progress">
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${progress}%` }}
+                    >
+                      {progress}%
+                    </div>
                   </div>
                 </div>
+                
+                <div className="day-stats">
+                  <span>{day.topics?.length || 0} Topics</span>
+                  <span>{day.corePractice?.length || 0} Practice Items</span>
+                </div>
               </div>
-              
-              <div className="day-stats">
-                <span>{day.topics.length} Topics</span>
-                <span>{day.corePractice.length} Practice Items</span>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
