@@ -7,8 +7,7 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && node index.js",
     "client": "cd client && npm start",
-    "build": "cd client && npm run build && cd .. && mkdir -p build && cp -r client/build/* build/ 2>/dev/null || xcopy /E /I /Y client\\build build\\",
-    "build:vercel": "cd client && npm run build && cd .. && mkdir -p build && cp -r client/build/* build/ 2>/dev/null || xcopy /E /I /Y client\\build build\\",
+    "build": "cd client && npm run build && cd .. && node copy-build.js",
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "start": "npm run dev"
   },
