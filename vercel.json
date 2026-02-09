@@ -2,7 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "client/build",
-  "installCommand": "cd client && npm install --legacy-peer-deps",
+  "installCommand": "npm run install-all",
   "rewrites": [
     {
       "source": "/((?!api/).*)",
