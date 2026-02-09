@@ -137,9 +137,8 @@ module.exports = (req, res) => {
         if (!fs.existsSync(roadmapPath)) {
             console.error('Daily schedule not found at:', roadmapPath);
             // Try alternative paths (project root)
-            const projectRoot = path.resolve(__dirname, '../..');
             const altPaths = [
-                path.join(projectRoot, 'daily-schedule'),
+                path.join(__dirname, '../../daily-schedule'),
                 '/var/task/daily-schedule'
             ];
             

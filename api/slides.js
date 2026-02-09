@@ -98,9 +98,8 @@ function loadSlides() {
         if (!fs.existsSync(markdownPath)) {
             console.error('Markdown file not found at:', markdownPath);
             // Try alternative paths (project root)
-            const projectRoot = path.resolve(__dirname, '..');
             const altPaths = [
-                path.join(projectRoot, 'full_stack_interview_answers.md'),
+                path.join(__dirname, '../full_stack_interview_answers.md'),
                 '/var/task/full_stack_interview_answers.md'
             ];
             
