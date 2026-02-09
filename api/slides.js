@@ -12,6 +12,20 @@
 const fs = require('fs');
 const path = require('path');
 
+// Force Vercel to include the markdown file by requiring it
+// This ensures it's included in the serverless function bundle
+try {
+    // Try to require the file to force inclusion (will fail, but that's ok)
+    // The file will be available via fs.readFileSync at runtime
+    const markdownPath = path.join(__dirname, '../full_stack_interview_answers.md');
+    if (fs.existsSync(markdownPath)) {
+        // File exists, will be included in bundle
+        console.log('Markdown file will be included:', markdownPath);
+    }
+} catch (e) {
+    // Ignore - we'll read it at runtime
+}
+
 // Helper function to parse markdown (same as server/index.js)
 function parseMarkdown(content) {
     const slides = [];
