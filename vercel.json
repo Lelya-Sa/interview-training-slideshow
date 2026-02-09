@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd client && npm run build && cd .. && mkdir -p build && cp -r client/build/* build/",
+  "buildCommand": "cd client && npm run build && cd .. && cp -r client/build .",
   "outputDirectory": "build",
   "installCommand": "npm run install-all",
   "rewrites": [
