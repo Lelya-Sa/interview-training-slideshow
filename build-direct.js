@@ -165,3 +165,6 @@ console.log('📍 Directory is readable:', (() => {
     return 'NO';
   }
 })());
+
+// Ensure script exits successfully
+process.exit(0);
