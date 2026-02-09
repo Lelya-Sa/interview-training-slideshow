@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd client && ./node_modules/.bin/react-scripts build && cd .. && cp -r client/build build",
+  "buildCommand": "cd client && npm run build && cd .. && cp -r client/build build",
   "outputDirectory": "build",
   "installCommand": "npm run install-all",
   "rewrites": [
