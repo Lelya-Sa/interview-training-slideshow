@@ -66,30 +66,51 @@ function loadSlides() {
     
     try {
         // In Vercel, __dirname points to /var/task/api
-        // Go up to project root (slideshow-app) to find the markdown file
-        // The file should be copied there during build
-        const markdownPath = path.join(__dirname, '../full_stack_interview_answers.md');
+        // Go up to project root (/var/task) to find the markdown file
+        const projectRoot = path.resolve(__dirname, '..');
+        const markdownPath = path.join(projectRoot, 'full_stack_interview_answers.md');
+        
+        console.log('Looking for markdown at:', markdownPath);
+        console.log('__dirname:', __dirname);
+        console.log('Project root:', projectRoot);
+        
+        // List files in project root to debug
+        try {
+            const rootFiles = fs.readdirSync(projectRoot);
+            console.log('Files in project root:', rootFiles.slice(0, 10));
+        } catch (e) {
+            console.log('Could not list project root:', e.message);
+        }
         
         if (!fs.existsSync(markdownPath)) {
             console.error('Markdown file not found at:', markdownPath);
-            console.error('__dirname:', __dirname);
-            console.error('Trying alternative path...');
-            // Try alternative path
-            const altPath = path.join(__dirname, '../../full_stack_interview_answers.md');
-            if (fs.existsSync(altPath)) {
-                const content = fs.readFileSync(altPath, 'utf8');
-                slidesDataCache = parseMarkdown(content);
-                return slidesDataCache;
+            // Try alternative paths
+            const altPaths = [
+                path.join(projectRoot, '../full_stack_interview_answers.md'),
+                path.join(__dirname, '../../full_stack_interview_answers.md'),
+                '/var/task/full_stack_interview_answers.md'
+            ];
+            
+            for (const altPath of altPaths) {
+                console.log('Trying alternative path:', altPath);
+                if (fs.existsSync(altPath)) {
+                    console.log('Found at:', altPath);
+                    const content = fs.readFileSync(altPath, 'utf8');
+                    slidesDataCache = parseMarkdown(content);
+                    return slidesDataCache;
+                }
             }
+            console.error('Could not find markdown file in any location');
             return [];
         }
         
+        console.log('Found markdown file at:', markdownPath);
         const content = fs.readFileSync(markdownPath, 'utf8');
         slidesDataCache = parseMarkdown(content);
         return slidesDataCache;
     } catch (err) {
         console.error('Error loading markdown:', err.message);
-        console.error('Attempted path:', path.join(__dirname, '../full_stack_interview_answers.md'));
+        console.error('Stack:', err.stack);
         return [];
     }
 }
