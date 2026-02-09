@@ -16,60 +16,63 @@ console.log('Project root:', projectRoot);
 console.log('Client directory:', clientDir);
 console.log('Build directory:', buildDir);
 
-// Step 1: Build React app in client directory
-// Use absolute paths and cwd option instead of process.chdir()
-console.log('\n📦 Step 1: Building React app...');
-try {
-  execSync('npm run build', { 
-    stdio: 'inherit',
-    cwd: clientDir  // Use cwd option instead of changing directory
-  });
-  console.log('✅ React build completed');
-} catch (error) {
-  console.error('❌ React build failed');
-  process.exit(1);
-}
+// Step 1: Build React app directly into root build directory
+// Use BUILD_PATH environment variable to tell React where to build
+console.log('\n📦 Step 1: Building React app directly to root build directory...');
 
-// Step 2: Copy to build directory (we're already at root)
-console.log('\n📋 Step 2: Copying build output to root...');
-
-if (!fs.existsSync(clientBuildDir)) {
-  console.error('❌ Client build directory does not exist:', clientBuildDir);
-  process.exit(1);
-}
-
-// Remove existing build directory
+// Remove existing build directory if it exists
 if (fs.existsSync(buildDir)) {
   console.log('🗑️  Removing existing build directory...');
   fs.rmSync(buildDir, { recursive: true, force: true });
 }
 
-// Copy function
-function copyRecursiveSync(src, dest) {
-  const exists = fs.existsSync(src);
-  const stats = exists && fs.statSync(src);
-  const isDirectory = exists && stats.isDirectory();
-  
-  if (isDirectory) {
-    fs.mkdirSync(dest, { recursive: true });
-    fs.readdirSync(src).forEach(childItemName => {
-      copyRecursiveSync(
-        path.join(src, childItemName),
-        path.join(dest, childItemName)
-      );
-    });
-  } else {
-    fs.copyFileSync(src, dest);
-  }
+// Set BUILD_PATH to build directly into root build directory
+// This avoids any copying and ensures the directory is exactly where Vercel expects it
+const buildPath = path.relative(clientDir, buildDir); // Relative path from client to root/build
+console.log('📍 BUILD_PATH set to:', buildPath);
+
+try {
+  execSync('npm run build', { 
+    stdio: 'inherit',
+    cwd: clientDir,
+    env: {
+      ...process.env,
+      BUILD_PATH: buildPath  // Tell React to build to ../build instead of ./build
+    }
+  });
+  console.log('✅ React build completed directly to root build directory');
+} catch (error) {
+  console.error('❌ React build failed');
+  process.exit(1);
 }
 
-// Copy everything to root build directory
-copyRecursiveSync(clientBuildDir, buildDir);
+// Verify the build was created in the right place
+if (!fs.existsSync(buildDir)) {
+  console.error('❌ Build directory was not created at expected location:', buildDir);
+  process.exit(1);
+}
 
-// CRITICAL: Ensure client/build still exists (for dashboard compatibility)
-// The dashboard might be set to "client/build", so we need both
+// Also ensure client/build exists for dashboard compatibility (if dashboard is set to client/build)
 if (!fs.existsSync(clientBuildDir)) {
-  console.log('⚠️  client/build was removed, recreating for dashboard compatibility...');
+  console.log('📋 Creating client/build for dashboard compatibility...');
+  // Copy function
+  function copyRecursiveSync(src, dest) {
+    const exists = fs.existsSync(src);
+    const stats = exists && fs.statSync(src);
+    const isDirectory = exists && stats.isDirectory();
+    
+    if (isDirectory) {
+      fs.mkdirSync(dest, { recursive: true });
+      fs.readdirSync(src).forEach(childItemName => {
+        copyRecursiveSync(
+          path.join(src, childItemName),
+          path.join(dest, childItemName)
+        );
+      });
+    } else {
+      fs.copyFileSync(src, dest);
+    }
+  }
   copyRecursiveSync(buildDir, clientBuildDir);
 }
 
