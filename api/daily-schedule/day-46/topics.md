@@ -1,0 +1,61 @@
+# Day 46 - Topic Summary (Rebalanced)
+
+## Core Topics (6 topics) - 70-80% Focus
+
+### Logic Questions
+- **Path**: `../../algorithms/logic-questions/questions.md`
+- **Priority**: CRITICAL
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Leetcode
+- **Path**: `../../algorithms/leetcode/questions.md`
+- **Priority**: CRITICAL
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Data Structures
+- **Path**: `../../algorithms/data-structures/questions.md`
+- **Priority**: CRITICAL
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Storage
+- **Path**: `../../backend/storage/questions.md`
+- **Priority**: MEDIUM
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Data Model
+- **Path**: `../../databases/data-model/questions.md`
+- **Priority**: HIGH
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### System Design
+- **Path**: `../../architecture/system-design/questions.md`
+- **Priority**: CRITICAL
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+
+## Extra Topics (3 topics) - 20-30% Focus (Optional)
+
+### Security Keys
+- **Path**: `../../security/security-keys/questions.md`
+- **Priority**: LOW
+- **Category**: EXTRA (For hightech acceptance)
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Scaling
+- **Path**: `../../devops/scaling/questions.md`
+- **Priority**: LOW
+- **Category**: EXTRA (For hightech acceptance)
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### Event Sourcing
+- **Path**: `../../advanced-patterns/event-sourcing/questions.md`
+- **Priority**: LOW
+- **Category**: EXTRA (For hightech acceptance)
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
