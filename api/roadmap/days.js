@@ -185,6 +185,9 @@ module.exports = (req, res) => {
 
 function processDays(entries, roadmapPath, res) {
     const days = [];
+    const skippedDays = [];
+    
+    console.log(`Processing ${entries.length} entries from ${roadmapPath}`);
     
     entries.forEach(entry => {
         if (entry.isDirectory() && entry.name.startsWith('day-')) {
@@ -194,28 +197,44 @@ function processDays(entries, roadmapPath, res) {
             // Check if README.md exists before trying to parse
             const readmePath = path.join(dayPath, 'README.md');
             if (!fs.existsSync(readmePath)) {
-                console.warn(`Skipping day ${dayNumber}: README.md not found at ${readmePath}`);
+                const warning = `Day ${dayNumber}: README.md not found at ${readmePath}`;
+                console.warn(warning);
+                skippedDays.push({ day: dayNumber, reason: 'README.md not found', path: readmePath });
                 return; // Skip this day
             }
             
-            const dayData = parseDayReadme(dayPath);
-            
-            if (dayData) {
-                days.push({
-                    dayNumber,
-                    ...dayData
-                });
-            } else {
-                console.warn(`Skipping day ${dayNumber}: Failed to parse day data`);
+            try {
+                const dayData = parseDayReadme(dayPath);
+                
+                if (dayData) {
+                    days.push({
+                        dayNumber,
+                        ...dayData
+                    });
+                } else {
+                    const warning = `Day ${dayNumber}: Failed to parse day data`;
+                    console.warn(warning);
+                    skippedDays.push({ day: dayNumber, reason: 'Parse failed', path: dayPath });
+                }
+            } catch (err) {
+                const warning = `Day ${dayNumber}: Error parsing - ${err.message}`;
+                console.error(warning);
+                skippedDays.push({ day: dayNumber, reason: err.message, path: dayPath });
             }
         }
     });
     
     days.sort((a, b) => a.dayNumber - b.dayNumber);
     
+    console.log(`Successfully loaded ${days.length} days. Skipped ${skippedDays.length} days.`);
+    if (skippedDays.length > 0) {
+        console.log('Skipped days:', skippedDays.slice(0, 5).map(d => `Day ${d.day}: ${d.reason}`));
+    }
+    
     res.json({
         success: true,
         count: days.length,
-        days: days
+        days: days,
+        skipped: skippedDays.length > 0 ? skippedDays.length : undefined
     });
 }
