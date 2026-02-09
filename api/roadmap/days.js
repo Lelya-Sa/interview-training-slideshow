@@ -118,10 +118,11 @@ module.exports = (req, res) => {
     
     // In Vercel, __dirname points to /var/task/api/roadmap
     // The daily-schedule directory should be in the api directory itself
-    const roadmapPath = path.join(__dirname, '../daily-schedule');
+    // Try api directory first (where files are committed)
+    const apiSchedulePath = path.join(__dirname, '../daily-schedule');
     const days = [];
     
-    console.log('Looking for daily-schedule at:', roadmapPath);
+    console.log('Looking for daily-schedule at:', apiSchedulePath);
     console.log('__dirname:', __dirname);
     
     // List files in api directory to debug
@@ -134,35 +135,36 @@ module.exports = (req, res) => {
     }
     
     try {
-        if (!fs.existsSync(roadmapPath)) {
-            console.error('Daily schedule not found at:', roadmapPath);
-            // Try alternative paths (project root)
-            const altPaths = [
-                path.join(__dirname, '../../daily-schedule'),
-                '/var/task/daily-schedule'
-            ];
-            
-            for (const altPath of altPaths) {
-                console.log('Trying alternative path:', altPath);
-                if (fs.existsSync(altPath)) {
-                    console.log('Found at:', altPath);
-                    const entries = fs.readdirSync(altPath, { withFileTypes: true });
-                    return processDays(entries, altPath, res);
-                }
-            }
-            
-            console.error('Could not find daily-schedule in any location');
-            return res.status(404).json({
-                success: false,
-                message: 'Daily schedule directory not found',
-                attemptedPath: roadmapPath,
-                __dirname: __dirname
-            });
+        // Check api directory first (where files are committed)
+        if (fs.existsSync(apiSchedulePath)) {
+            console.log('Found daily-schedule at:', apiSchedulePath);
+            const entries = fs.readdirSync(apiSchedulePath, { withFileTypes: true });
+            return processDays(entries, apiSchedulePath, res);
         }
         
-        console.log('Found daily-schedule at:', roadmapPath);
-        const entries = fs.readdirSync(roadmapPath, { withFileTypes: true });
-        return processDays(entries, roadmapPath, res);
+        console.error('Daily schedule not found at:', apiSchedulePath);
+        // Try alternative paths (project root - fallback)
+        const altPaths = [
+            path.join(__dirname, '../../daily-schedule'),
+            '/var/task/daily-schedule'
+        ];
+        
+        for (const altPath of altPaths) {
+            console.log('Trying alternative path:', altPath);
+            if (fs.existsSync(altPath)) {
+                console.log('Found at:', altPath);
+                const entries = fs.readdirSync(altPath, { withFileTypes: true });
+                return processDays(entries, altPath, res);
+            }
+        }
+        
+        console.error('Could not find daily-schedule in any location');
+        return res.status(404).json({
+            success: false,
+            message: 'Daily schedule directory not found',
+            attemptedPath: apiSchedulePath,
+            __dirname: __dirname
+        });
     } catch (err) {
         console.error('Error reading roadmap:', err);
         res.status(500).json({
