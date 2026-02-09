@@ -65,14 +65,31 @@ function loadSlides() {
     }
     
     try {
-        // In Vercel, __dirname points to the api folder
-        // Go up to project root to find the markdown file
-        const markdownPath = path.join(__dirname, '../../full_stack_interview_answers.md');
+        // In Vercel, __dirname points to /var/task/api
+        // Go up to project root (slideshow-app) to find the markdown file
+        // The file should be copied there during build
+        const markdownPath = path.join(__dirname, '../full_stack_interview_answers.md');
+        
+        if (!fs.existsSync(markdownPath)) {
+            console.error('Markdown file not found at:', markdownPath);
+            console.error('__dirname:', __dirname);
+            console.error('Trying alternative path...');
+            // Try alternative path
+            const altPath = path.join(__dirname, '../../full_stack_interview_answers.md');
+            if (fs.existsSync(altPath)) {
+                const content = fs.readFileSync(altPath, 'utf8');
+                slidesDataCache = parseMarkdown(content);
+                return slidesDataCache;
+            }
+            return [];
+        }
+        
         const content = fs.readFileSync(markdownPath, 'utf8');
         slidesDataCache = parseMarkdown(content);
         return slidesDataCache;
     } catch (err) {
         console.error('Error loading markdown:', err.message);
+        console.error('Attempted path:', path.join(__dirname, '../full_stack_interview_answers.md'));
         return [];
     }
 }

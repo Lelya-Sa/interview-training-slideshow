@@ -104,35 +104,32 @@ module.exports = (req, res) => {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
     
-    // In Vercel, __dirname points to the api/roadmap folder
-    const roadmapPath = path.join(__dirname, '../../../daily-schedule');
+    // In Vercel, __dirname points to /var/task/api/roadmap
+    // Go up to project root (slideshow-app) to find daily-schedule
+    // The directory should be copied there during build
+    const roadmapPath = path.join(__dirname, '../../daily-schedule');
     const days = [];
     
     try {
+        if (!fs.existsSync(roadmapPath)) {
+            console.error('Daily schedule not found at:', roadmapPath);
+            console.error('__dirname:', __dirname);
+            // Try alternative path
+            const altPath = path.join(__dirname, '../../../daily-schedule');
+            if (fs.existsSync(altPath)) {
+                const entries = fs.readdirSync(altPath, { withFileTypes: true });
+                return processDays(entries, altPath, res);
+            }
+            return res.status(404).json({
+                success: false,
+                message: 'Daily schedule directory not found',
+                attemptedPath: roadmapPath
+            });
+        }
+        
         const entries = fs.readdirSync(roadmapPath, { withFileTypes: true });
         
-        entries.forEach(entry => {
-            if (entry.isDirectory() && entry.name.startsWith('day-')) {
-                const dayNumber = parseInt(entry.name.replace('day-', ''));
-                const dayPath = path.join(roadmapPath, entry.name);
-                const dayData = parseDayReadme(dayPath);
-                
-                if (dayData) {
-                    days.push({
-                        dayNumber,
-                        ...dayData
-                    });
-                }
-            }
-        });
-        
-        days.sort((a, b) => a.dayNumber - b.dayNumber);
-        
-        res.json({
-            success: true,
-            count: days.length,
-            days: days
-        });
+        return processDays(entries, roadmapPath, res);
     } catch (err) {
         console.error('Error reading roadmap:', err);
         res.status(500).json({
@@ -142,3 +139,30 @@ module.exports = (req, res) => {
         });
     }
 };
+
+function processDays(entries, roadmapPath, res) {
+    const days = [];
+    
+    entries.forEach(entry => {
+        if (entry.isDirectory() && entry.name.startsWith('day-')) {
+            const dayNumber = parseInt(entry.name.replace('day-', ''));
+            const dayPath = path.join(roadmapPath, entry.name);
+            const dayData = parseDayReadme(dayPath);
+            
+            if (dayData) {
+                days.push({
+                    dayNumber,
+                    ...dayData
+                });
+            }
+        }
+    });
+    
+    days.sort((a, b) => a.dayNumber - b.dayNumber);
+    
+    res.json({
+        success: true,
+        count: days.length,
+        days: days
+    });
+}

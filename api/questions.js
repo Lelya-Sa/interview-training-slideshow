@@ -94,10 +94,15 @@ module.exports = (req, res) => {
     try {
         let normalizedPath = questionPath.replace(/\//g, path.sep);
         
-        // In Vercel, __dirname points to the api folder
+        // In Vercel, __dirname points to /var/task/api
         // Go up to project root (slideshow-app) to find markdown files
+        // Files should be copied there during build
         const projectRoot = path.resolve(__dirname, '../');
         const fullPath = path.resolve(projectRoot, normalizedPath);
+        
+        console.log('Questions API - Project root:', projectRoot);
+        console.log('Questions API - Normalized path:', normalizedPath);
+        console.log('Questions API - Full path:', fullPath);
         
         const resolvedPath = path.resolve(fullPath);
         const resolvedRoot = path.resolve(projectRoot);

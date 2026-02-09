@@ -11,10 +11,68 @@ const clientDir = path.join(projectRoot, 'client');
 const buildDir = path.join(projectRoot, 'build');
 const clientBuildDir = path.join(clientDir, 'build');
 
+// Parent directory (intreview_training) where markdown files are located
+const parentDir = path.join(projectRoot, '..');
+
 console.log('🔨 Starting build process...');
 console.log('Project root:', projectRoot);
 console.log('Client directory:', clientDir);
 console.log('Build directory:', buildDir);
+
+// Step 0: Copy markdown files from parent directory to slideshow-app
+// This ensures they're available in the Vercel deployment
+console.log('\n📋 Step 0: Copying markdown files from parent directory...');
+try {
+  const markdownFiles = [
+    path.join(parentDir, 'full_stack_interview_answers.md'),
+    path.join(parentDir, 'daily-schedule')
+  ];
+  
+  // Copy full_stack_interview_answers.md
+  const sourceMarkdown = markdownFiles[0];
+  const destMarkdown = path.join(projectRoot, 'full_stack_interview_answers.md');
+  if (fs.existsSync(sourceMarkdown)) {
+    fs.copyFileSync(sourceMarkdown, destMarkdown);
+    console.log('✅ Copied full_stack_interview_answers.md');
+  } else {
+    console.log('⚠️  full_stack_interview_answers.md not found at:', sourceMarkdown);
+  }
+  
+  // Copy daily-schedule directory
+  const sourceSchedule = markdownFiles[1];
+  const destSchedule = path.join(projectRoot, 'daily-schedule');
+  if (fs.existsSync(sourceSchedule)) {
+    if (fs.existsSync(destSchedule)) {
+      fs.rmSync(destSchedule, { recursive: true, force: true });
+    }
+    copyRecursiveSync(sourceSchedule, destSchedule);
+    console.log('✅ Copied daily-schedule directory');
+  } else {
+    console.log('⚠️  daily-schedule not found at:', sourceSchedule);
+  }
+} catch (err) {
+  console.error('⚠️  Warning: Could not copy markdown files:', err.message);
+  // Continue anyway - maybe files are already there
+}
+
+// Helper function for recursive copy
+function copyRecursiveSync(src, dest) {
+  const exists = fs.existsSync(src);
+  const stats = exists && fs.statSync(src);
+  const isDirectory = exists && stats.isDirectory();
+  
+  if (isDirectory) {
+    fs.mkdirSync(dest, { recursive: true });
+    fs.readdirSync(src).forEach(childItemName => {
+      copyRecursiveSync(
+        path.join(src, childItemName),
+        path.join(dest, childItemName)
+      );
+    });
+  } else {
+    fs.copyFileSync(src, dest);
+  }
+}
 
 // Step 1: Build React app directly into root build directory
 // Use BUILD_PATH environment variable to tell React where to build
@@ -55,24 +113,6 @@ if (!fs.existsSync(buildDir)) {
 // Also ensure client/build exists for dashboard compatibility (if dashboard is set to client/build)
 if (!fs.existsSync(clientBuildDir)) {
   console.log('📋 Creating client/build for dashboard compatibility...');
-  // Copy function
-  function copyRecursiveSync(src, dest) {
-    const exists = fs.existsSync(src);
-    const stats = exists && fs.statSync(src);
-    const isDirectory = exists && stats.isDirectory();
-    
-    if (isDirectory) {
-      fs.mkdirSync(dest, { recursive: true });
-      fs.readdirSync(src).forEach(childItemName => {
-        copyRecursiveSync(
-          path.join(src, childItemName),
-          path.join(dest, childItemName)
-        );
-      });
-    } else {
-      fs.copyFileSync(src, dest);
-    }
-  }
   copyRecursiveSync(buildDir, clientBuildDir);
 }
 
