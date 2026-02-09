@@ -5,9 +5,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Get the project root - this script should be in the root
-const projectRoot = __dirname;
-const sourceDir = path.join(projectRoot, 'client', 'build');
-const destDir = path.join(projectRoot, 'build');
+// Use process.cwd() to get the actual working directory (where npm run build was executed from)
+const projectRoot = process.cwd();
+const sourceDir = path.resolve(projectRoot, 'client', 'build');
+const destDir = path.resolve(projectRoot, 'build');
 
 console.log('📦 Copy build script starting...');
 console.log('Project root:', projectRoot);
