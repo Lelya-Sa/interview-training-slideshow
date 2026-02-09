@@ -4,15 +4,17 @@
 const fs = require('fs');
 const path = require('path');
 
-const sourceDir = path.join(__dirname, 'client', 'build');
-const destDir = path.join(__dirname, 'build');
+// Get the project root - this script should be in the root
+const projectRoot = __dirname;
+const sourceDir = path.join(projectRoot, 'client', 'build');
+const destDir = path.join(projectRoot, 'build');
 
 console.log('📦 Copy build script starting...');
+console.log('Project root:', projectRoot);
 console.log('Source:', sourceDir);
 console.log('Destination:', destDir);
-console.log('Source exists:', fs.existsSync(sourceDir));
 console.log('Current working directory:', process.cwd());
-console.log('__dirname:', __dirname);
+console.log('Source exists:', fs.existsSync(sourceDir));
 
 // Check if source exists
 if (!fs.existsSync(sourceDir)) {
@@ -54,6 +56,11 @@ console.log('📋 Copying files...');
 copyRecursiveSync(sourceDir, destDir);
 
 // Verify the copy
+if (!fs.existsSync(destDir)) {
+  console.error('❌ ERROR: Build directory was not created!');
+  process.exit(1);
+}
+
 const destFiles = fs.readdirSync(destDir);
 console.log('✅ Successfully copied client/build to build/');
 console.log('📊 Files in build directory:', destFiles.length);
@@ -66,4 +73,7 @@ if (!fs.existsSync(indexPath)) {
   process.exit(1);
 }
 
+// Final verification - list the absolute path
 console.log('✅ Build directory is ready for deployment');
+console.log('📍 Absolute path to build directory:', path.resolve(destDir));
+console.log('✅ Verification complete - build directory exists and contains files');
