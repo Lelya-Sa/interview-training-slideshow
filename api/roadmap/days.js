@@ -190,6 +190,14 @@ function processDays(entries, roadmapPath, res) {
         if (entry.isDirectory() && entry.name.startsWith('day-')) {
             const dayNumber = parseInt(entry.name.replace('day-', ''));
             const dayPath = path.join(roadmapPath, entry.name);
+            
+            // Check if README.md exists before trying to parse
+            const readmePath = path.join(dayPath, 'README.md');
+            if (!fs.existsSync(readmePath)) {
+                console.warn(`Skipping day ${dayNumber}: README.md not found at ${readmePath}`);
+                return; // Skip this day
+            }
+            
             const dayData = parseDayReadme(dayPath);
             
             if (dayData) {
@@ -197,6 +205,8 @@ function processDays(entries, roadmapPath, res) {
                     dayNumber,
                     ...dayData
                 });
+            } else {
+                console.warn(`Skipping day ${dayNumber}: Failed to parse day data`);
             }
         }
     });
