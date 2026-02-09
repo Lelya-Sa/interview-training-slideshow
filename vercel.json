@@ -4,10 +4,7 @@
   "installCommand": "npm run install-all",
   "functions": {
     "api/**/*.js": {
-      "includeFiles": [
-        "full_stack_interview_answers.md",
-        "daily-schedule/**"
-      ]
+      "includeFiles": "full_stack_interview_answers.md,daily-schedule/**"
     }
   },
   "rewrites": [
