@@ -25,6 +25,13 @@ try {
 function parseDayReadme(dayPath) {
     try {
         const readmePath = path.join(dayPath, 'README.md');
+        
+        // Check if README.md exists
+        if (!fs.existsSync(readmePath)) {
+            console.warn(`README.md not found for day at: ${dayPath}`);
+            return null;
+        }
+        
         const content = fs.readFileSync(readmePath, 'utf8');
         
         const day = {
