@@ -83,16 +83,49 @@ console.log('📍 Absolute path to build directory:', path.resolve(destDir));
 try {
   fs.writeFileSync(path.join(destDir, '.vercel-ready'), 'ready');
   console.log('✅ Created .vercel-ready marker file');
+  
+  // Force sync all file system operations
+  const fd = fs.openSync(path.join(destDir, '.vercel-ready'), 'r+');
+  fs.fsyncSync(fd);
+  fs.closeSync(fd);
+  console.log('✅ File system synced');
 } catch (err) {
   console.error('⚠️  Warning: Could not create marker file:', err.message);
 }
 
-// Final verification
+// Final verification - double check everything exists
 const finalCheck = fs.existsSync(destDir) && fs.existsSync(indexPath);
 if (!finalCheck) {
   console.error('❌ FATAL: Build directory verification failed!');
+  console.error('Dest exists:', fs.existsSync(destDir));
+  console.error('Index exists:', fs.existsSync(indexPath));
   process.exit(1);
+}
+
+// List all files in build directory to prove it exists
+try {
+  const allFiles = [];
+  function listFiles(dir, base = '') {
+    const items = fs.readdirSync(dir);
+    items.forEach(item => {
+      const fullPath = path.join(dir, item);
+      const relPath = base ? `${base}/${item}` : item;
+      const stat = fs.statSync(fullPath);
+      if (stat.isDirectory()) {
+        allFiles.push(`${relPath}/`);
+        listFiles(fullPath, relPath);
+      } else {
+        allFiles.push(relPath);
+      }
+    });
+  }
+  listFiles(destDir);
+  console.log('📋 All files in build directory:', allFiles.length);
+  console.log('📄 First 10 files:', allFiles.slice(0, 10));
+} catch (err) {
+  console.error('⚠️  Could not list files:', err.message);
 }
 
 console.log('✅ Verification complete - build directory exists and contains files');
 console.log('✅ All files written and synced to disk');
+console.log('✅ READY FOR VERCEL DEPLOYMENT');
