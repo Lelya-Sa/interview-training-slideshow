@@ -64,9 +64,16 @@ function copyRecursiveSync(src, dest) {
 // Copy everything to root build directory
 copyRecursiveSync(clientBuildDir, buildDir);
 
-// ALSO keep client/build (it already exists from React build)
-// This way it works regardless of whether dashboard is set to "build" or "client/build"
+// CRITICAL: Ensure client/build still exists (for dashboard compatibility)
+// The dashboard might be set to "client/build", so we need both
+if (!fs.existsSync(clientBuildDir)) {
+  console.log('⚠️  client/build was removed, recreating for dashboard compatibility...');
+  copyRecursiveSync(buildDir, clientBuildDir);
+}
+
 console.log('✅ Build exists at both root/build and client/build for maximum compatibility');
+console.log('📍 Root build:', fs.existsSync(buildDir) ? '✅ EXISTS' : '❌ MISSING');
+console.log('📍 Client build:', fs.existsSync(clientBuildDir) ? '✅ EXISTS' : '❌ MISSING');
 
 // Step 3: Verify build directory exists
 console.log('\n✅ Step 3: Verifying build directory...');
