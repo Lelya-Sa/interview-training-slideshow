@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd client && npm run build && cd .. && mkdir -p build && cp -r client/build/* build/ 2>/dev/null || (if not exist build mkdir build && xcopy /E /I /Y client\\build\\* build\\)",
+  "buildCommand": "cd client && npm run build && cd .. && mkdir -p build && cp -r client/build/* build/",
   "outputDirectory": "build",
   "installCommand": "npm run install-all",
   "rewrites": [
