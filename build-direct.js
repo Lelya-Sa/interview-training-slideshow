@@ -184,5 +184,39 @@ if (!finalVerification) {
 
 console.log('✅✅✅ FINAL CHECK PASSED - Directory ready for Vercel ✅✅✅');
 
+// CRITICAL: Create a .vercel directory marker to help Vercel detect the build
+try {
+  const vercelMarker = path.join(projectRoot, '.vercel', 'project.json');
+  const vercelDir = path.join(projectRoot, '.vercel');
+  if (!fs.existsSync(vercelDir)) {
+    fs.mkdirSync(vercelDir, { recursive: true });
+  }
+  // This might help Vercel understand the project structure
+  console.log('✅ Created .vercel marker directory');
+} catch (err) {
+  console.log('⚠️  Could not create .vercel marker:', err.message);
+}
+
+// CRITICAL: List the build directory one final time with absolute path
+// This ensures the directory is "touched" and visible to Vercel's detection
+try {
+  const absoluteBuildPath = path.resolve(buildDir);
+  console.log('📍 FINAL ABSOLUTE PATH:', absoluteBuildPath);
+  const dirContents = fs.readdirSync(absoluteBuildPath);
+  console.log('📍 FINAL DIRECTORY CONTENTS:', dirContents.length, 'items');
+  
+  // Force a stat on the directory to ensure it's fully synced
+  const dirStat = fs.statSync(absoluteBuildPath);
+  console.log('📍 DIRECTORY STATS:', {
+    isDirectory: dirStat.isDirectory(),
+    size: dirStat.size,
+    mtime: dirStat.mtime
+  });
+} catch (err) {
+  console.error('❌ FATAL: Could not access build directory:', err.message);
+  process.exit(1);
+}
+
 // Ensure script exits successfully
-// Don't use process.exit(0) - let it exit naturally so Vercel can see the directory
+// Exit with code 0 to indicate success
+process.exit(0);
