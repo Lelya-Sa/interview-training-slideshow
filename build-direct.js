@@ -124,4 +124,44 @@ try {
   process.exit(1);
 }
 
-console.log('✅ Ready for Vercel deployment');
+// CRITICAL: Create a symlink or ensure Vercel can find the directory
+// Sometimes Vercel needs the directory to be "touched" after creation
+try {
+  // Touch the index.html to ensure it's fully written
+  const indexPath = path.join(buildDir, 'index.html');
+  const stats = fs.statSync(indexPath);
+  fs.utimesSync(indexPath, stats.atime, stats.mtime);
+  
+  // Also ensure the directory itself is "fresh"
+  const buildStats = fs.statSync(buildDir);
+  fs.utimesSync(buildDir, buildStats.atime, buildStats.mtime);
+  
+  console.log('✅ Directory timestamps updated for Vercel detection');
+} catch (err) {
+  console.error('⚠️  Warning: Could not update timestamps:', err.message);
+}
+
+// Final check - list directory contents one more time
+console.log('\n🔍 Final directory check:');
+try {
+  const finalList = fs.readdirSync(buildDir, { withFileTypes: true });
+  console.log(`✅ Build directory contains ${finalList.length} items:`);
+  finalList.forEach(item => {
+    const itemPath = path.join(buildDir, item.name);
+    const itemStats = fs.statSync(itemPath);
+    console.log(`   - ${item.name} (${item.isDirectory() ? 'dir' : 'file'}, ${itemStats.size} bytes)`);
+  });
+} catch (err) {
+  console.error('❌ Could not list directory:', err.message);
+}
+
+console.log('\n✅ Ready for Vercel deployment');
+console.log('📍 Absolute path verified:', fs.existsSync(buildDir) ? 'YES' : 'NO');
+console.log('📍 Directory is readable:', (() => {
+  try {
+    fs.readdirSync(buildDir);
+    return 'YES';
+  } catch {
+    return 'NO';
+  }
+})());
