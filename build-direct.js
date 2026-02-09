@@ -94,6 +94,23 @@ try {
   console.error('⚠️  Warning:', err.message);
 }
 
+// CRITICAL: Ensure we're at the root directory when script exits
+process.chdir(projectRoot);
+
+// Final verification - list directory to prove it exists to Vercel
 console.log('\n✅ Build complete!');
 console.log('📍 Build directory:', path.resolve(buildDir));
+console.log('📍 Current working directory:', process.cwd());
+console.log('📍 Build dir relative to cwd:', path.relative(process.cwd(), buildDir));
+
+// List the build directory one more time to ensure it's visible
+try {
+  const finalCheck = fs.readdirSync(buildDir);
+  console.log('✅ Final verification - build directory contains', finalCheck.length, 'items');
+  console.log('✅ Items:', finalCheck);
+} catch (err) {
+  console.error('❌ FATAL: Could not read build directory:', err.message);
+  process.exit(1);
+}
+
 console.log('✅ Ready for Vercel deployment');
