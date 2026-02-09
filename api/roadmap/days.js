@@ -188,15 +188,42 @@ function processDays(entries, roadmapPath, res) {
     const skippedDays = [];
     
     console.log(`Processing ${entries.length} entries from ${roadmapPath}`);
+    console.log(`Roadmap path exists: ${fs.existsSync(roadmapPath)}`);
+    
+    // List what's actually in the directory
+    try {
+        const dirContents = fs.readdirSync(roadmapPath);
+        console.log(`Directory contents (first 10):`, dirContents.slice(0, 10));
+    } catch (e) {
+        console.error(`Cannot read directory: ${e.message}`);
+    }
     
     entries.forEach(entry => {
         if (entry.isDirectory() && entry.name.startsWith('day-')) {
             const dayNumber = parseInt(entry.name.replace('day-', ''));
             const dayPath = path.join(roadmapPath, entry.name);
             
+            // Check if day directory exists
+            if (!fs.existsSync(dayPath)) {
+                console.warn(`Day ${dayNumber}: Directory not found at ${dayPath}`);
+                skippedDays.push({ day: dayNumber, reason: 'Directory not found', path: dayPath });
+                return;
+            }
+            
+            // List files in day directory
+            try {
+                const dayFiles = fs.readdirSync(dayPath);
+                console.log(`Day ${dayNumber} files:`, dayFiles);
+            } catch (e) {
+                console.warn(`Day ${dayNumber}: Cannot list directory: ${e.message}`);
+            }
+            
             // Check if README.md exists before trying to parse
             const readmePath = path.join(dayPath, 'README.md');
-            if (!fs.existsSync(readmePath)) {
+            const readmeExists = fs.existsSync(readmePath);
+            console.log(`Day ${dayNumber}: README.md exists at ${readmePath}? ${readmeExists}`);
+            
+            if (!readmeExists) {
                 const warning = `Day ${dayNumber}: README.md not found at ${readmePath}`;
                 console.warn(warning);
                 skippedDays.push({ day: dayNumber, reason: 'README.md not found', path: readmePath });
@@ -211,6 +238,7 @@ function processDays(entries, roadmapPath, res) {
                         dayNumber,
                         ...dayData
                     });
+                    console.log(`Day ${dayNumber}: Successfully parsed`);
                 } else {
                     const warning = `Day ${dayNumber}: Failed to parse day data`;
                     console.warn(warning);
