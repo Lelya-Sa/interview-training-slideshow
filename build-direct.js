@@ -168,5 +168,18 @@ console.log('📍 Directory is readable:', (() => {
   }
 })());
 
+// CRITICAL: Final check - ensure directory is definitely there before exit
+// Vercel checks immediately after build command, so we need to be 100% sure
+const finalVerification = fs.existsSync(buildDir) && 
+                          fs.existsSync(path.join(buildDir, 'index.html')) &&
+                          fs.statSync(buildDir).isDirectory();
+
+if (!finalVerification) {
+  console.error('❌ CRITICAL: Build directory verification failed before exit!');
+  process.exit(1);
+}
+
+console.log('✅✅✅ FINAL CHECK PASSED - Directory ready for Vercel ✅✅✅');
+
 // Ensure script exits successfully
-process.exit(0);
+// Don't use process.exit(0) - let it exit naturally so Vercel can see the directory
