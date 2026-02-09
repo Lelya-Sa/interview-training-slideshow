@@ -80,9 +80,8 @@ function loadSlides() {
     
     try {
         // In Vercel, __dirname points to /var/task/api
-        // Go up to project root (/var/task) to find the markdown file
-        const projectRoot = path.resolve(__dirname, '..');
-        const markdownPath = path.join(projectRoot, 'full_stack_interview_answers.md');
+        // The markdown file should be in the api directory itself
+        const markdownPath = path.join(__dirname, 'full_stack_interview_answers.md');
         
         console.log('Looking for markdown at:', markdownPath);
         console.log('__dirname:', __dirname);
@@ -98,10 +97,10 @@ function loadSlides() {
         
         if (!fs.existsSync(markdownPath)) {
             console.error('Markdown file not found at:', markdownPath);
-            // Try alternative paths
+            // Try alternative paths (project root)
+            const projectRoot = path.resolve(__dirname, '..');
             const altPaths = [
-                path.join(projectRoot, '../full_stack_interview_answers.md'),
-                path.join(__dirname, '../../full_stack_interview_answers.md'),
+                path.join(projectRoot, 'full_stack_interview_answers.md'),
                 '/var/task/full_stack_interview_answers.md'
             ];
             

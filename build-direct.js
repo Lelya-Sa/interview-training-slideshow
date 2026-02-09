@@ -19,34 +19,35 @@ console.log('Project root:', projectRoot);
 console.log('Client directory:', clientDir);
 console.log('Build directory:', buildDir);
 
-// Step 0: Copy markdown files from parent directory to slideshow-app
-// This ensures they're available in the Vercel deployment
-console.log('\n📋 Step 0: Copying markdown files from parent directory...');
+// Step 0: Copy markdown files from parent directory to api directory
+// This ensures they're included with the serverless functions in Vercel
+console.log('\n📋 Step 0: Copying markdown files to api directory...');
 try {
+  const apiDir = path.join(projectRoot, 'api');
   const markdownFiles = [
     path.join(parentDir, 'full_stack_interview_answers.md'),
     path.join(parentDir, 'daily-schedule')
   ];
   
-  // Copy full_stack_interview_answers.md
+  // Copy full_stack_interview_answers.md to api directory
   const sourceMarkdown = markdownFiles[0];
-  const destMarkdown = path.join(projectRoot, 'full_stack_interview_answers.md');
+  const destMarkdown = path.join(apiDir, 'full_stack_interview_answers.md');
   if (fs.existsSync(sourceMarkdown)) {
     fs.copyFileSync(sourceMarkdown, destMarkdown);
-    console.log('✅ Copied full_stack_interview_answers.md');
+    console.log('✅ Copied full_stack_interview_answers.md to api/');
   } else {
     console.log('⚠️  full_stack_interview_answers.md not found at:', sourceMarkdown);
   }
   
-  // Copy daily-schedule directory
+  // Copy daily-schedule directory to api directory
   const sourceSchedule = markdownFiles[1];
-  const destSchedule = path.join(projectRoot, 'daily-schedule');
+  const destSchedule = path.join(apiDir, 'daily-schedule');
   if (fs.existsSync(sourceSchedule)) {
     if (fs.existsSync(destSchedule)) {
       fs.rmSync(destSchedule, { recursive: true, force: true });
     }
     copyRecursiveSync(sourceSchedule, destSchedule);
-    console.log('✅ Copied daily-schedule directory');
+    console.log('✅ Copied daily-schedule directory to api/');
   } else {
     console.log('⚠️  daily-schedule not found at:', sourceSchedule);
   }

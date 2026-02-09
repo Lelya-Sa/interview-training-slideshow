@@ -2,11 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "installCommand": "npm run install-all",
-  "functions": {
-    "api/**/*.js": {
-      "includeFiles": "full_stack_interview_answers.md,daily-schedule/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/api/(.*)",

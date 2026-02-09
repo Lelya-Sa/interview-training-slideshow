@@ -117,9 +117,8 @@ module.exports = (req, res) => {
     }
     
     // In Vercel, __dirname points to /var/task/api/roadmap
-    // Go up to project root (/var/task) to find daily-schedule
-    const projectRoot = path.resolve(__dirname, '../..');
-    const roadmapPath = path.join(projectRoot, 'daily-schedule');
+    // The daily-schedule directory should be in the api directory itself
+    const roadmapPath = path.join(__dirname, '../daily-schedule');
     const days = [];
     
     console.log('Looking for daily-schedule at:', roadmapPath);
@@ -137,10 +136,10 @@ module.exports = (req, res) => {
     try {
         if (!fs.existsSync(roadmapPath)) {
             console.error('Daily schedule not found at:', roadmapPath);
-            // Try alternative paths
+            // Try alternative paths (project root)
+            const projectRoot = path.resolve(__dirname, '../..');
             const altPaths = [
-                path.join(projectRoot, '../daily-schedule'),
-                path.join(__dirname, '../../../daily-schedule'),
+                path.join(projectRoot, 'daily-schedule'),
                 '/var/task/daily-schedule'
             ];
             
@@ -158,8 +157,7 @@ module.exports = (req, res) => {
                 success: false,
                 message: 'Daily schedule directory not found',
                 attemptedPath: roadmapPath,
-                __dirname: __dirname,
-                projectRoot: projectRoot
+                __dirname: __dirname
             });
         }
         

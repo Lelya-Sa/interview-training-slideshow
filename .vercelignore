@@ -1,5 +1,6 @@
 node_modules
 server
-*.md
 .git
 .env
+# Don't ignore markdown files - we need them for the API
+# *.md
