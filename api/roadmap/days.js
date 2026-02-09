@@ -123,14 +123,14 @@ module.exports = (req, res) => {
     
     console.log('Looking for daily-schedule at:', roadmapPath);
     console.log('__dirname:', __dirname);
-    console.log('Project root:', projectRoot);
     
-    // List files in project root to debug
+    // List files in api directory to debug
     try {
-        const rootFiles = fs.readdirSync(projectRoot);
-        console.log('Files in project root:', rootFiles.slice(0, 20));
+        const apiDir = path.resolve(__dirname, '..');
+        const apiFiles = fs.readdirSync(apiDir);
+        console.log('Files in api directory:', apiFiles.slice(0, 20));
     } catch (e) {
-        console.log('Could not list project root:', e.message);
+        console.log('Could not list api directory:', e.message);
     }
     
     try {

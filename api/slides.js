@@ -85,14 +85,13 @@ function loadSlides() {
         
         console.log('Looking for markdown at:', markdownPath);
         console.log('__dirname:', __dirname);
-        console.log('Project root:', projectRoot);
         
-        // List files in project root to debug
+        // List files in api directory to debug
         try {
-            const rootFiles = fs.readdirSync(projectRoot);
-            console.log('Files in project root:', rootFiles.slice(0, 10));
+            const apiFiles = fs.readdirSync(__dirname);
+            console.log('Files in api directory:', apiFiles.slice(0, 10));
         } catch (e) {
-            console.log('Could not list project root:', e.message);
+            console.log('Could not list api directory:', e.message);
         }
         
         if (!fs.existsSync(markdownPath)) {
