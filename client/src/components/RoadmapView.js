@@ -33,9 +33,19 @@ function RoadmapView({ onSelectDay }) {
         setLoading(true);
         const response = await axios.get('/api/roadmap/days');
         
+        console.log('Roadmap API response:', response.data);
+        console.log('Days count:', response.data.days?.length);
+        console.log('First day:', response.data.days?.[0]);
+        
         if (response.data.success) {
-          setDays(response.data.days);
+          const daysArray = response.data.days || [];
+          console.log('Setting days:', daysArray.length);
+          setDays(daysArray);
           setError(null);
+          
+          if (daysArray.length === 0) {
+            setError('No days found in roadmap');
+          }
         } else {
           setError('Failed to load roadmap');
         }
