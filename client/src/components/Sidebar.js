@@ -26,7 +26,7 @@
 // useEffect: Hook for side effects (checking achievements)
 // Interview: "I use useEffect to check achievements whenever gameState changes"
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 // React: The React library
 // useEffect: Hook that runs side effects
 
@@ -73,7 +73,7 @@ function Sidebar({ gameState, totalSlides, onUnlockAchievement }) {
   // Each achievement has: id, name, description, condition function, points
   // Interview: "I define achievements as data - easy to add/remove"
   
-  const achievements = [
+  const achievements = useMemo(() => [
     // Achievement 1: First slide completed
     { 
       id: 'first', // Unique identifier
@@ -121,7 +121,7 @@ function Sidebar({ gameState, totalSlides, onUnlockAchievement }) {
       condition: () => gameState.points >= 500, // At least 500 points
       points: 100 
     }
-  ];
+  ], [gameState.completedSlides.size, gameState.points]);
   // achievements: Array of 5 achievement objects
 
   // ============================================

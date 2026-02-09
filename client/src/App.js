@@ -30,7 +30,7 @@
 // useState, useEffect: React Hooks (functions that add features to components)
 // Interview: "I use functional components with hooks - modern React approach"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 // React: Required for JSX to work
 // useState: Hook for managing component state
 // useEffect: Hook for side effects (API calls, subscriptions, etc.)
@@ -280,7 +280,7 @@ function App() {
   // direction: -1 for previous, 1 for next
   // Interview: "I pass functions as props to child components"
   
-  const changeSlide = (direction) => {
+  const changeSlide = useCallback((direction) => {
     // Calculate new index
     const newIndex = currentSlide + direction;
     // direction is -1 or 1
@@ -296,7 +296,7 @@ function App() {
       // This triggers re-render with new slide
     }
     // If invalid, do nothing (button will be disabled)
-  };
+  }, [currentSlide, slidesData.length]);
 
   // ============================================
   // STEP 8: MARK SLIDE AS COMPLETE
@@ -305,7 +305,7 @@ function App() {
   // index: The slide index to mark complete
   // Interview: "I use functional setState to ensure I have latest state"
   
-  const markComplete = (index) => {
+  const markComplete = useCallback((index) => {
     // Check if already completed
     // Set.has(): Check if value exists in Set (O(1) operation)
     // Interview: "Set.has() is faster than Array.includes() for large sets"
@@ -346,7 +346,7 @@ function App() {
       };
       // React sees new object reference and re-renders
     });
-  };
+  }, [gameState.completedSlides]);
 
   // ============================================
   // STEP 9: UNLOCK ACHIEVEMENT
