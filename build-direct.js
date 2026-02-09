@@ -17,18 +17,20 @@ console.log('Client directory:', clientDir);
 console.log('Build directory:', buildDir);
 
 // Step 1: Build React app in client directory
+// Use absolute paths and cwd option instead of process.chdir()
 console.log('\n📦 Step 1: Building React app...');
-process.chdir(clientDir);
 try {
-  execSync('npm run build', { stdio: 'inherit' });
+  execSync('npm run build', { 
+    stdio: 'inherit',
+    cwd: clientDir  // Use cwd option instead of changing directory
+  });
   console.log('✅ React build completed');
 } catch (error) {
   console.error('❌ React build failed');
   process.exit(1);
 }
 
-// Step 2: Go back to root and copy to build directory
-process.chdir(projectRoot);
+// Step 2: Copy to build directory (we're already at root)
 console.log('\n📋 Step 2: Copying build output to root...');
 
 if (!fs.existsSync(clientBuildDir)) {
@@ -106,7 +108,7 @@ try {
 }
 
 // CRITICAL: Ensure we're at the root directory when script exits
-process.chdir(projectRoot);
+// (We never changed directories, so we're already here)
 
 // Final verification - list directory to prove it exists to Vercel
 console.log('\n✅ Build complete!');
