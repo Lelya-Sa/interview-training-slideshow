@@ -7,12 +7,27 @@ const path = require('path');
 const sourceDir = path.join(__dirname, 'client', 'build');
 const destDir = path.join(__dirname, 'build');
 
+console.log('📦 Copy build script starting...');
+console.log('Source:', sourceDir);
+console.log('Destination:', destDir);
+console.log('Source exists:', fs.existsSync(sourceDir));
+console.log('Current working directory:', process.cwd());
+console.log('__dirname:', __dirname);
+
+// Check if source exists
+if (!fs.existsSync(sourceDir)) {
+  console.error('❌ Source directory does not exist:', sourceDir);
+  process.exit(1);
+}
+
 // Remove destination if it exists
 if (fs.existsSync(destDir)) {
+  console.log('🗑️  Removing existing build directory...');
   fs.rmSync(destDir, { recursive: true, force: true });
 }
 
 // Create destination directory
+console.log('📁 Creating build directory...');
 fs.mkdirSync(destDir, { recursive: true });
 
 // Copy function
@@ -35,5 +50,20 @@ function copyRecursiveSync(src, dest) {
 }
 
 // Copy everything
+console.log('📋 Copying files...');
 copyRecursiveSync(sourceDir, destDir);
+
+// Verify the copy
+const destFiles = fs.readdirSync(destDir);
 console.log('✅ Successfully copied client/build to build/');
+console.log('📊 Files in build directory:', destFiles.length);
+console.log('📄 Sample files:', destFiles.slice(0, 5));
+
+// Ensure index.html exists
+const indexPath = path.join(destDir, 'index.html');
+if (!fs.existsSync(indexPath)) {
+  console.error('❌ ERROR: index.html not found in build directory!');
+  process.exit(1);
+}
+
+console.log('✅ Build directory is ready for deployment');
