@@ -12,10 +12,11 @@ const path = require('path');
 // Force Vercel to include the daily-schedule directory
 // Check if it exists to ensure it's included in the bundle
 try {
-    const schedulePath = path.join(__dirname, '../../daily-schedule');
-    if (fs.existsSync(schedulePath)) {
+    // Check api directory first (where files are committed)
+    const apiSchedulePath = path.join(__dirname, '../daily-schedule');
+    if (fs.existsSync(apiSchedulePath)) {
         // Directory exists, will be included in bundle
-        console.log('Daily schedule directory will be included:', schedulePath);
+        console.log('Daily schedule directory will be included:', apiSchedulePath);
     }
 } catch (e) {
     // Ignore - we'll read it at runtime
