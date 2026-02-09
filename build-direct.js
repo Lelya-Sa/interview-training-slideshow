@@ -217,6 +217,32 @@ try {
   process.exit(1);
 }
 
+// CRITICAL: Write a marker file that Vercel can detect
+// This helps Vercel understand the build is complete
+try {
+  const vercelBuildMarker = path.join(buildDir, '.vercel-build-complete');
+  fs.writeFileSync(vercelBuildMarker, JSON.stringify({
+    timestamp: new Date().toISOString(),
+    buildPath: path.resolve(buildDir),
+    files: fs.readdirSync(buildDir).length
+  }));
+  console.log('✅ Created Vercel build marker file');
+} catch (err) {
+  console.log('⚠️  Could not create marker file:', err.message);
+}
+
+// CRITICAL: Ensure the build directory is the last thing we touch
+// This ensures it's fresh when Vercel checks
+try {
+  // Touch the directory one more time
+  const dirStat = fs.statSync(buildDir);
+  fs.utimesSync(buildDir, new Date(), new Date());
+  console.log('✅ Final directory touch completed');
+} catch (err) {
+  console.log('⚠️  Could not touch directory:', err.message);
+}
+
 // Ensure script exits successfully
-// Exit with code 0 to indicate success
-process.exit(0);
+// Let it exit naturally - don't use process.exit(0) as it might interfere
+// with Vercel's detection timing
+console.log('✅ Build script completed successfully');
