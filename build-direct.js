@@ -9,6 +9,7 @@ const projectRoot = process.cwd();
 const clientDir = path.join(projectRoot, 'client');
 // Create build in root for vercel.json, but also ensure client/build exists for dashboard compatibility
 const buildDir = path.join(projectRoot, 'build');
+const clientBuildDir = path.join(clientDir, 'build');
 
 console.log('🔨 Starting build process...');
 console.log('Project root:', projectRoot);
