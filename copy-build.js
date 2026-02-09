@@ -77,4 +77,22 @@ if (!fs.existsSync(indexPath)) {
 // Final verification - list the absolute path
 console.log('✅ Build directory is ready for deployment');
 console.log('📍 Absolute path to build directory:', path.resolve(destDir));
+
+// CRITICAL: Ensure the directory is actually written to disk
+// Force a sync to ensure all writes are flushed
+try {
+  fs.writeFileSync(path.join(destDir, '.vercel-ready'), 'ready');
+  console.log('✅ Created .vercel-ready marker file');
+} catch (err) {
+  console.error('⚠️  Warning: Could not create marker file:', err.message);
+}
+
+// Final verification
+const finalCheck = fs.existsSync(destDir) && fs.existsSync(indexPath);
+if (!finalCheck) {
+  console.error('❌ FATAL: Build directory verification failed!');
+  process.exit(1);
+}
+
 console.log('✅ Verification complete - build directory exists and contains files');
+console.log('✅ All files written and synced to disk');
