@@ -7,6 +7,7 @@ const path = require('path');
 
 const projectRoot = process.cwd();
 const clientDir = path.join(projectRoot, 'client');
+// Create build in root for vercel.json, but also ensure client/build exists for dashboard compatibility
 const buildDir = path.join(projectRoot, 'build');
 
 console.log('🔨 Starting build process...');
@@ -28,8 +29,6 @@ try {
 // Step 2: Go back to root and copy to build directory
 process.chdir(projectRoot);
 console.log('\n📋 Step 2: Copying build output to root...');
-
-const clientBuildDir = path.join(clientDir, 'build');
 
 if (!fs.existsSync(clientBuildDir)) {
   console.error('❌ Client build directory does not exist:', clientBuildDir);
@@ -61,8 +60,12 @@ function copyRecursiveSync(src, dest) {
   }
 }
 
-// Copy everything
+// Copy everything to root build directory
 copyRecursiveSync(clientBuildDir, buildDir);
+
+// ALSO keep client/build (it already exists from React build)
+// This way it works regardless of whether dashboard is set to "build" or "client/build"
+console.log('✅ Build exists at both root/build and client/build for maximum compatibility');
 
 // Step 3: Verify build directory exists
 console.log('\n✅ Step 3: Verifying build directory...');
