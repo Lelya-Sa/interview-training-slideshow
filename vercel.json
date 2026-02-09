@@ -1,6 +1,6 @@
 {
-  "buildCommand": "cd client && npm run build && cd .. && ls -la client/ && cp -r client/build build",
-  "outputDirectory": "build",
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/build",
   "installCommand": "npm run install-all",
   "rewrites": [
     {
