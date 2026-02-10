@@ -85,7 +85,7 @@ try {
   // Continue anyway - maybe files are already there
 }
 
-// Helper function for recursive copy
+// Helper function for recursive copy (only markdown and README files)
 function copyRecursiveSync(src, dest) {
   const exists = fs.existsSync(src);
   const stats = exists && fs.statSync(src);
@@ -100,7 +100,17 @@ function copyRecursiveSync(src, dest) {
       );
     });
   } else {
-    fs.copyFileSync(src, dest);
+    // Only copy markdown files and README files (skip .js, .ts, .java, .py, etc.)
+    const ext = path.extname(src).toLowerCase();
+    const allowedExtensions = ['.md', '.txt'];
+    const isReadme = path.basename(src, ext).toLowerCase() === 'readme';
+    
+    if (allowedExtensions.includes(ext) || isReadme) {
+      fs.copyFileSync(src, dest);
+    } else {
+      // Skip non-markdown files to avoid conflicts (e.g., 001.js vs 001.ts)
+      // These implementation files aren't needed for the questions API
+    }
   }
 }
 
