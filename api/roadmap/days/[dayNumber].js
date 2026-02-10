@@ -195,30 +195,25 @@ module.exports = (req, res) => {
     
     // Get dayNumber from URL path
     // Vercel dynamic routes: /api/roadmap/days/1 -> [dayNumber].js
-    // Try multiple ways to extract the day number
+    // The parameter should be in req.query.dayNumber for Vercel dynamic routes
     let dayNumber = null;
     
-    // Method 1: From query parameter (Vercel's default)
-    if (req.query.dayNumber) {
+    // Method 1: From query parameter (Vercel's default for [param].js files)
+    if (req.query && req.query.dayNumber) {
         dayNumber = parseInt(req.query.dayNumber);
     }
-    // Method 2: From URL path
+    // Method 2: Extract from URL path as fallback
     else if (req.url) {
-        const urlMatch = req.url.match(/\/days\/(\d+)/);
+        // Match /api/roadmap/days/1 or /days/1
+        const urlMatch = req.url.match(/\/days\/(\d+)(?:\?|$|\/)/);
         if (urlMatch) {
             dayNumber = parseInt(urlMatch[1]);
         }
     }
-    // Method 3: From pathname if available
-    else if (req.pathname) {
-        const pathMatch = req.pathname.match(/\/days\/(\d+)/);
-        if (pathMatch) {
-            dayNumber = parseInt(pathMatch[1]);
-        }
-    }
     
+    console.log('=== Day Number Extraction ===');
     console.log('Request URL:', req.url);
-    console.log('Request query:', req.query);
+    console.log('Request query:', JSON.stringify(req.query));
     console.log('Extracted dayNumber:', dayNumber);
     
     if (!dayNumber || isNaN(dayNumber) || dayNumber < 1) {
@@ -226,7 +221,8 @@ module.exports = (req, res) => {
             success: false, 
             message: 'Invalid day number',
             url: req.url,
-            query: req.query
+            query: req.query,
+            hint: 'Expected /api/roadmap/days/1 format'
         });
     }
     

@@ -12,11 +12,5 @@
       "destination": "/index.html"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/roadmap/days/([^/]+)",
-      "dest": "/api/roadmap/days/[dayNumber]?dayNumber=$1"
-    }
-  ],
   "framework": null
 }
