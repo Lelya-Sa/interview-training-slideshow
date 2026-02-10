@@ -351,12 +351,15 @@ function processDays(entries, roadmapPath, res) {
                 return;
             }
             
-            // Check if README.md exists before trying to parse
+            // Check if README.md or topics.md exists before trying to parse
             const readmePath = path.join(dayPath, 'README.md');
+            const topicsPath = path.join(dayPath, 'topics.md');
             const readmeExists = fs.existsSync(readmePath);
+            const topicsExists = fs.existsSync(topicsPath);
             
             if (isDebugDay) {
-                console.log(`Day ${dayNumber}: README.md exists at ${readmePath}? ${readmeExists}`);
+                console.log(`Day ${dayNumber}: README.md exists? ${readmeExists}`);
+                console.log(`Day ${dayNumber}: topics.md exists? ${topicsExists}`);
                 if (readmeExists) {
                     try {
                         const stats = fs.statSync(readmePath);
@@ -365,33 +368,51 @@ function processDays(entries, roadmapPath, res) {
                         console.warn(`Day ${dayNumber}: Cannot stat README.md: ${e.message}`);
                     }
                 }
+                if (topicsExists) {
+                    try {
+                        const stats = fs.statSync(topicsPath);
+                        console.log(`Day ${dayNumber}: topics.md size: ${stats.size} bytes`);
+                    } catch (e) {
+                        console.warn(`Day ${dayNumber}: Cannot stat topics.md: ${e.message}`);
+                    }
+                }
             }
             
-            if (!readmeExists) {
+            if (!readmeExists && !topicsExists) {
                 if (isDebugDay) {
-                    console.warn(`Day ${dayNumber}: README.md not found at ${readmePath}`);
+                    console.warn(`Day ${dayNumber}: Neither README.md nor topics.md found`);
                     console.warn(`Day ${dayNumber}: Available files:`, dayFiles);
                 }
-                skippedDays.push({ day: dayNumber, reason: 'README.md not found', path: readmePath });
+                skippedDays.push({ day: dayNumber, reason: 'Neither README.md nor topics.md found', path: dayPath });
                 return; // Skip this day
             }
             
             try {
                 const dayData = parseDayReadme(dayPath);
                 
-                if (dayData) {
-                    days.push({
-                        dayNumber,
-                        ...dayData
-                    });
+                if (dayData && dayData.topics && dayData.topics.length > 0) {
+                    // Ensure dayNumber is set
+                    if (!dayData.dayNumber) {
+                        dayData.dayNumber = dayNumber;
+                    }
+                    days.push(dayData);
                     if (isDebugDay) {
-                        console.log(`Day ${dayNumber}: Successfully parsed`);
+                        console.log(`Day ${dayNumber}: Successfully parsed with ${dayData.topics.length} topics`);
                     }
                 } else {
                     if (isDebugDay) {
                         console.warn(`Day ${dayNumber}: Failed to parse day data`);
+                        console.warn(`Day ${dayNumber}: dayData:`, dayData ? JSON.stringify({ 
+                            topicsCount: dayData.topics?.length || 0,
+                            dayNumber: dayData.dayNumber,
+                            hasTopics: !!dayData.topics
+                        }, null, 2) : 'null');
                     }
-                    skippedDays.push({ day: dayNumber, reason: 'Parse failed', path: dayPath });
+                    skippedDays.push({ 
+                        day: dayNumber, 
+                        reason: dayData ? `No topics found (found ${dayData.topics?.length || 0})` : 'Parse returned null', 
+                        path: dayPath 
+                    });
                 }
             } catch (err) {
                 if (isDebugDay) {
