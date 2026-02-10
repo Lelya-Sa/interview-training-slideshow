@@ -187,45 +187,97 @@ function processDays(entries, roadmapPath, res) {
     const days = [];
     const skippedDays = [];
     
+    console.log(`\n=== PROCESSING DAYS ===`);
     console.log(`Processing ${entries.length} entries from ${roadmapPath}`);
     console.log(`Roadmap path exists: ${fs.existsSync(roadmapPath)}`);
     
     // List what's actually in the directory
     try {
         const dirContents = fs.readdirSync(roadmapPath);
-        console.log(`Directory contents (first 10):`, dirContents.slice(0, 10));
+        console.log(`Directory contents (first 20):`, dirContents.slice(0, 20));
+        console.log(`Total items in directory: ${dirContents.length}`);
+        
+        // Check if day directories exist
+        const dayDirs = dirContents.filter(item => {
+            const itemPath = path.join(roadmapPath, item);
+            try {
+                return fs.statSync(itemPath).isDirectory() && item.startsWith('day-');
+            } catch {
+                return false;
+            }
+        });
+        console.log(`Found ${dayDirs.length} day directories:`, dayDirs.slice(0, 5));
     } catch (e) {
         console.error(`Cannot read directory: ${e.message}`);
+        return res.status(500).json({
+            success: false,
+            message: 'Cannot read roadmap directory: ' + e.message
+        });
     }
+    
+    // Process only first 3 days for detailed debugging
+    let processedCount = 0;
+    const maxDebugDays = 3;
     
     entries.forEach(entry => {
         if (entry.isDirectory() && entry.name.startsWith('day-')) {
             const dayNumber = parseInt(entry.name.replace('day-', ''));
             const dayPath = path.join(roadmapPath, entry.name);
             
+            // Detailed logging for first few days
+            const isDebugDay = processedCount < maxDebugDays;
+            
+            if (isDebugDay) {
+                console.log(`\n--- Processing Day ${dayNumber} ---`);
+                console.log(`Day path: ${dayPath}`);
+                console.log(`Day path exists: ${fs.existsSync(dayPath)}`);
+            }
+            
             // Check if day directory exists
             if (!fs.existsSync(dayPath)) {
-                console.warn(`Day ${dayNumber}: Directory not found at ${dayPath}`);
+                if (isDebugDay) {
+                    console.warn(`Day ${dayNumber}: Directory not found at ${dayPath}`);
+                }
                 skippedDays.push({ day: dayNumber, reason: 'Directory not found', path: dayPath });
                 return;
             }
             
             // List files in day directory
+            let dayFiles = [];
             try {
-                const dayFiles = fs.readdirSync(dayPath);
-                console.log(`Day ${dayNumber} files:`, dayFiles);
+                dayFiles = fs.readdirSync(dayPath);
+                if (isDebugDay) {
+                    console.log(`Day ${dayNumber} files (${dayFiles.length}):`, dayFiles);
+                }
             } catch (e) {
-                console.warn(`Day ${dayNumber}: Cannot list directory: ${e.message}`);
+                if (isDebugDay) {
+                    console.warn(`Day ${dayNumber}: Cannot list directory: ${e.message}`);
+                }
+                skippedDays.push({ day: dayNumber, reason: 'Cannot list directory: ' + e.message, path: dayPath });
+                return;
             }
             
             // Check if README.md exists before trying to parse
             const readmePath = path.join(dayPath, 'README.md');
             const readmeExists = fs.existsSync(readmePath);
-            console.log(`Day ${dayNumber}: README.md exists at ${readmePath}? ${readmeExists}`);
+            
+            if (isDebugDay) {
+                console.log(`Day ${dayNumber}: README.md exists at ${readmePath}? ${readmeExists}`);
+                if (readmeExists) {
+                    try {
+                        const stats = fs.statSync(readmePath);
+                        console.log(`Day ${dayNumber}: README.md size: ${stats.size} bytes`);
+                    } catch (e) {
+                        console.warn(`Day ${dayNumber}: Cannot stat README.md: ${e.message}`);
+                    }
+                }
+            }
             
             if (!readmeExists) {
-                const warning = `Day ${dayNumber}: README.md not found at ${readmePath}`;
-                console.warn(warning);
+                if (isDebugDay) {
+                    console.warn(`Day ${dayNumber}: README.md not found at ${readmePath}`);
+                    console.warn(`Day ${dayNumber}: Available files:`, dayFiles);
+                }
                 skippedDays.push({ day: dayNumber, reason: 'README.md not found', path: readmePath });
                 return; // Skip this day
             }
@@ -238,17 +290,24 @@ function processDays(entries, roadmapPath, res) {
                         dayNumber,
                         ...dayData
                     });
-                    console.log(`Day ${dayNumber}: Successfully parsed`);
+                    if (isDebugDay) {
+                        console.log(`Day ${dayNumber}: Successfully parsed`);
+                    }
                 } else {
-                    const warning = `Day ${dayNumber}: Failed to parse day data`;
-                    console.warn(warning);
+                    if (isDebugDay) {
+                        console.warn(`Day ${dayNumber}: Failed to parse day data`);
+                    }
                     skippedDays.push({ day: dayNumber, reason: 'Parse failed', path: dayPath });
                 }
             } catch (err) {
-                const warning = `Day ${dayNumber}: Error parsing - ${err.message}`;
-                console.error(warning);
+                if (isDebugDay) {
+                    console.error(`Day ${dayNumber}: Error parsing - ${err.message}`);
+                    console.error(`Day ${dayNumber}: Stack:`, err.stack);
+                }
                 skippedDays.push({ day: dayNumber, reason: err.message, path: dayPath });
             }
+            
+            processedCount++;
         }
     });
     
