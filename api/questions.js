@@ -92,25 +92,48 @@ module.exports = (req, res) => {
     }
     
     try {
-        let normalizedPath = questionPath.replace(/\//g, path.sep);
+        // Paths from topics.md are like: ../../algorithms/logic-questions/questions.md
+        // These are relative to daily-schedule/day-XX/, but we need them relative to project root
+        // Remove ../.. prefix and normalize
+        let cleanPath = questionPath;
+        
+        // Remove leading ../.. or ../ prefixes
+        while (cleanPath.startsWith('../')) {
+            cleanPath = cleanPath.replace(/^\.\.\//, '');
+        }
+        
+        // Normalize slashes
+        let normalizedPath = cleanPath.replace(/\//g, path.sep);
         
         // In Vercel, __dirname points to /var/task/api
-        // Go up to project root (slideshow-app) to find markdown files
-        // Files should be copied there during build
-        const projectRoot = path.resolve(__dirname, '../');
-        const fullPath = path.resolve(projectRoot, normalizedPath);
+        // The markdown files should be in the api directory (copied during build)
+        // Try api directory first
+        const apiPath = path.join(__dirname, normalizedPath);
         
-        console.log('Questions API - Project root:', projectRoot);
+        console.log('Questions API - Original path:', questionPath);
+        console.log('Questions API - Cleaned path:', cleanPath);
         console.log('Questions API - Normalized path:', normalizedPath);
-        console.log('Questions API - Full path:', fullPath);
+        console.log('Questions API - API path:', apiPath);
+        console.log('Questions API - __dirname:', __dirname);
         
-        const resolvedPath = path.resolve(fullPath);
-        const resolvedRoot = path.resolve(projectRoot);
+        // Check if file exists in api directory
+        let resolvedPath = apiPath;
+        let resolvedRoot = __dirname; // /var/task/api
         
-        if (!resolvedPath.startsWith(resolvedRoot)) {
+        // Security check - ensure resolved path is within api directory
+        const absoluteResolved = path.resolve(resolvedPath);
+        const absoluteRoot = path.resolve(resolvedRoot);
+        
+        console.log('Questions API - Absolute resolved:', absoluteResolved);
+        console.log('Questions API - Absolute root:', absoluteRoot);
+        console.log('Questions API - Is within root?', absoluteResolved.startsWith(absoluteRoot));
+        
+        if (!absoluteResolved.startsWith(absoluteRoot)) {
             return res.status(403).json({
                 success: false,
-                message: 'Access denied - path outside project root'
+                message: 'Access denied - path outside api root',
+                attemptedPath: absoluteResolved,
+                root: absoluteRoot
             });
         }
         
