@@ -49,6 +49,7 @@ try {
   }
   
   // Copy question markdown directories (frontend, backend, apis, algorithms, architecture, etc.)
+  // Only copy questions.md and README.md files to avoid conflicts
   const questionDirs = [
     'frontend',
     'backend',
@@ -61,7 +62,52 @@ try {
     'design-patterns'
   ];
   
-  console.log('📚 Copying question markdown directories...');
+  console.log('📚 Copying question markdown files (questions.md and README.md only)...');
+  
+  function shouldCopyFile(filePath) {
+    const ext = path.extname(filePath).toLowerCase();
+    const basename = path.basename(filePath, ext).toLowerCase();
+    // Only copy .md files that are questions.md or README.md
+    return ext === '.md' && (basename === 'questions' || basename === 'readme');
+  }
+  
+  function copyMarkdownFilesOnly(src, dest) {
+    if (!fs.existsSync(src)) {
+      return;
+    }
+    
+    const stats = fs.statSync(src);
+    
+    if (stats.isDirectory()) {
+      if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+      }
+      
+      const entries = fs.readdirSync(src);
+      for (const entry of entries) {
+        const srcPath = path.join(src, entry);
+        const destPath = path.join(dest, entry);
+        
+        try {
+          const entryStats = fs.statSync(srcPath);
+          if (entryStats.isFile() && shouldCopyFile(srcPath)) {
+            fs.copyFileSync(srcPath, destPath);
+          } else if (entryStats.isDirectory()) {
+            copyMarkdownFilesOnly(srcPath, destPath);
+          }
+        } catch (err) {
+          // Skip files we can't access
+        }
+      }
+    } else if (stats.isFile() && shouldCopyFile(src)) {
+      const destParent = path.dirname(dest);
+      if (!fs.existsSync(destParent)) {
+        fs.mkdirSync(destParent, { recursive: true });
+      }
+      fs.copyFileSync(src, dest);
+    }
+  }
+  
   questionDirs.forEach(dirName => {
     const sourceDir = path.join(parentDir, dirName);
     const destDir = path.join(apiDir, dirName);
@@ -71,8 +117,8 @@ try {
         if (fs.existsSync(destDir)) {
           fs.rmSync(destDir, { recursive: true, force: true });
         }
-        copyRecursiveSync(sourceDir, destDir);
-        console.log(`✅ Copied ${dirName}/ directory to api/`);
+        copyMarkdownFilesOnly(sourceDir, destDir);
+        console.log(`✅ Copied ${dirName}/ markdown files to api/`);
       } catch (err) {
         console.error(`⚠️  Could not copy ${dirName}/:`, err.message);
       }
