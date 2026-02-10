@@ -137,11 +137,38 @@ module.exports = (req, res) => {
             });
         }
         
+        // Check if file exists
         if (!fs.existsSync(resolvedPath)) {
+            // List directory to see what's actually there
+            const parentDir = path.dirname(resolvedPath);
+            let dirContents = [];
+            try {
+                if (fs.existsSync(parentDir)) {
+                    dirContents = fs.readdirSync(parentDir).slice(0, 10);
+                }
+            } catch (e) {
+                // Ignore
+            }
+            
+            console.log('Questions API - File not found at:', resolvedPath);
+            console.log('Questions API - Parent directory exists?', fs.existsSync(parentDir));
+            console.log('Questions API - Parent directory contents:', dirContents);
+            
+            // Try to list api directory to see what's available
+            try {
+                const apiFiles = fs.readdirSync(__dirname).slice(0, 20);
+                console.log('Questions API - Files in api directory:', apiFiles);
+            } catch (e) {
+                console.log('Questions API - Could not list api directory:', e.message);
+            }
+            
             return res.status(404).json({
                 success: false,
                 message: 'Questions file not found: ' + questionPath,
-                attemptedPath: resolvedPath
+                attemptedPath: resolvedPath,
+                parentDir: parentDir,
+                parentDirExists: fs.existsSync(parentDir),
+                parentDirContents: dirContents
             });
         }
         
