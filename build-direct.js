@@ -24,13 +24,9 @@ console.log('Build directory:', buildDir);
 console.log('\n📋 Step 0: Copying markdown files to api directory...');
 try {
   const apiDir = path.join(projectRoot, 'api');
-  const markdownFiles = [
-    path.join(parentDir, 'full_stack_interview_answers.md'),
-    path.join(parentDir, 'daily-schedule')
-  ];
   
   // Copy full_stack_interview_answers.md to api directory
-  const sourceMarkdown = markdownFiles[0];
+  const sourceMarkdown = path.join(parentDir, 'full_stack_interview_answers.md');
   const destMarkdown = path.join(apiDir, 'full_stack_interview_answers.md');
   if (fs.existsSync(sourceMarkdown)) {
     fs.copyFileSync(sourceMarkdown, destMarkdown);
@@ -40,7 +36,7 @@ try {
   }
   
   // Copy daily-schedule directory to api directory
-  const sourceSchedule = markdownFiles[1];
+  const sourceSchedule = path.join(parentDir, 'daily-schedule');
   const destSchedule = path.join(apiDir, 'daily-schedule');
   if (fs.existsSync(sourceSchedule)) {
     if (fs.existsSync(destSchedule)) {
@@ -51,6 +47,39 @@ try {
   } else {
     console.log('⚠️  daily-schedule not found at:', sourceSchedule);
   }
+  
+  // Copy question markdown directories (frontend, backend, apis, algorithms, architecture, etc.)
+  const questionDirs = [
+    'frontend',
+    'backend',
+    'apis',
+    'algorithms',
+    'architecture',
+    'databases',
+    'devops',
+    'security',
+    'design-patterns'
+  ];
+  
+  console.log('📚 Copying question markdown directories...');
+  questionDirs.forEach(dirName => {
+    const sourceDir = path.join(parentDir, dirName);
+    const destDir = path.join(apiDir, dirName);
+    
+    if (fs.existsSync(sourceDir)) {
+      try {
+        if (fs.existsSync(destDir)) {
+          fs.rmSync(destDir, { recursive: true, force: true });
+        }
+        copyRecursiveSync(sourceDir, destDir);
+        console.log(`✅ Copied ${dirName}/ directory to api/`);
+      } catch (err) {
+        console.error(`⚠️  Could not copy ${dirName}/:`, err.message);
+      }
+    } else {
+      console.log(`⚠️  ${dirName}/ not found at:`, sourceDir);
+    }
+  });
 } catch (err) {
   console.error('⚠️  Warning: Could not copy markdown files:', err.message);
   // Continue anyway - maybe files are already there
