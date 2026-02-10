@@ -58,6 +58,8 @@ function parseDayReadme(dayPath) {
             let currentTopic = null;
             let inCoreTopics = false;
             
+            console.log(`Parsing topics.md format for day at: ${dayPath}`);
+            
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i];
                 
@@ -66,18 +68,21 @@ function parseDayReadme(dayPath) {
                     const match = line.match(/Day (\d+)/);
                     if (match) {
                         day.dayNumber = parseInt(match[1]);
+                        console.log(`Extracted day number: ${day.dayNumber}`);
                     }
                 }
                 
                 // Check if we're in Core Topics section
                 if (line.includes('Core Topics')) {
                     inCoreTopics = true;
+                    console.log(`Found Core Topics section at line ${i}`);
                     continue;
                 }
                 
                 // Check if we're in Extra Topics section (skip for now)
                 if (line.includes('Extra Topics')) {
                     inCoreTopics = false;
+                    console.log(`Found Extra Topics section at line ${i}, stopping core topics`);
                     continue;
                 }
                 
@@ -91,18 +96,40 @@ function parseDayReadme(dayPath) {
                             text: match[1].trim(),
                             completed: false
                         };
+                        console.log(`Found topic: ${currentTopic.name}`);
                     }
                 }
                 
                 // Path line (format: - **Path**: `...`)
-                if (line.match(/- \*\*Path\*\*:\s*`([^`]+)`/)) {
-                    const match = line.match(/- \*\*Path\*\*:\s*`([^`]+)`/);
+                // Try multiple patterns to match the path
+                const pathPatterns = [
+                    /- \*\*Path\*\*:\s*`([^`]+)`/,  // - **Path**: `...`
+                    /Path:\s*`([^`]+)`/,            // Path: `...`
+                    /- Path:\s*`([^`]+)`/           // - Path: `...`
+                ];
+                
+                for (const pattern of pathPatterns) {
+                    const match = line.match(pattern);
                     if (match && currentTopic) {
                         currentTopic.path = match[1];
                         currentTopic.text += `\n  - Path: \`${match[1]}\``;
                         day.topics.push(currentTopic);
+                        console.log(`Added topic with path: ${currentTopic.name} -> ${currentTopic.path}`);
                         currentTopic = null;
+                        break; // Found the path, move to next topic
                     }
+                }
+            }
+            
+            console.log(`Parsed ${day.topics.length} topics from topics.md`);
+            console.log(`Day number: ${day.dayNumber}`);
+            
+            // If no day number was found, try to extract from path
+            if (!day.dayNumber) {
+                const pathMatch = dayPath.match(/day-(\d+)/);
+                if (pathMatch) {
+                    day.dayNumber = parseInt(pathMatch[1]);
+                    console.log(`Extracted day number from path: ${day.dayNumber}`);
                 }
             }
         } else {
