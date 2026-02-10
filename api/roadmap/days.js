@@ -218,6 +218,31 @@ module.exports = (req, res) => {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
     
+    // Check if this is a request for a specific day
+    // URL format: /api/roadmap/days/1 or /api/roadmap/days?dayNumber=1
+    let dayNumber = null;
+    
+    // Method 1: From query parameter
+    if (req.query && req.query.dayNumber) {
+        dayNumber = parseInt(req.query.dayNumber);
+    }
+    // Method 2: Extract from URL path
+    else if (req.url) {
+        const urlMatch = req.url.match(/\/days\/(\d+)(?:\?|$|\/)/);
+        if (urlMatch) {
+            dayNumber = parseInt(urlMatch[1]);
+        }
+    }
+    
+    // If a specific day is requested, return only that day
+    if (dayNumber && !isNaN(dayNumber) && dayNumber >= 1) {
+        console.log(`Fetching specific day: ${dayNumber}`);
+        return handleSingleDay(req, res, dayNumber);
+    }
+    
+    // Otherwise, return all days
+    console.log('Fetching all days');
+    
     // In Vercel, __dirname points to /var/task/api/roadmap
     // The daily-schedule directory should be in the api directory itself
     // Try api directory first (where files are committed)
