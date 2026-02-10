@@ -193,12 +193,41 @@ module.exports = (req, res) => {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
     
-    // Get dayNumber from query (Vercel dynamic routes use the filename pattern)
-    // The filename is [dayNumber].js, so Vercel extracts it as req.query.dayNumber
-    const dayNumber = parseInt(req.query.dayNumber);
+    // Get dayNumber from URL path
+    // Vercel dynamic routes: /api/roadmap/days/1 -> [dayNumber].js
+    // Try multiple ways to extract the day number
+    let dayNumber = null;
     
-    if (isNaN(dayNumber) || dayNumber < 1) {
-        return res.status(400).json({ success: false, message: 'Invalid day number' });
+    // Method 1: From query parameter (Vercel's default)
+    if (req.query.dayNumber) {
+        dayNumber = parseInt(req.query.dayNumber);
+    }
+    // Method 2: From URL path
+    else if (req.url) {
+        const urlMatch = req.url.match(/\/days\/(\d+)/);
+        if (urlMatch) {
+            dayNumber = parseInt(urlMatch[1]);
+        }
+    }
+    // Method 3: From pathname if available
+    else if (req.pathname) {
+        const pathMatch = req.pathname.match(/\/days\/(\d+)/);
+        if (pathMatch) {
+            dayNumber = parseInt(pathMatch[1]);
+        }
+    }
+    
+    console.log('Request URL:', req.url);
+    console.log('Request query:', req.query);
+    console.log('Extracted dayNumber:', dayNumber);
+    
+    if (!dayNumber || isNaN(dayNumber) || dayNumber < 1) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Invalid day number',
+            url: req.url,
+            query: req.query
+        });
     }
     
     // In Vercel, __dirname points to /var/task/api/roadmap/days
