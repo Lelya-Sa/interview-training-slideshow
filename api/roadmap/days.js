@@ -465,3 +465,54 @@ function processDays(entries, roadmapPath, res) {
         skipped: skippedDays.length > 0 ? skippedDays.length : undefined
     });
 }
+
+// ============================================
+// HANDLE SINGLE DAY REQUEST
+// ============================================
+function handleSingleDay(req, res, dayNumber) {
+    // In Vercel, __dirname points to /var/task/api/roadmap
+    // The daily-schedule directory should be in the api directory itself
+    const apiSchedulePath = path.join(__dirname, '../daily-schedule');
+    const dayPath = path.join(apiSchedulePath, `day-${String(dayNumber).padStart(2, '0')}`);
+    
+    console.log(`Looking for day ${dayNumber} at: ${dayPath}`);
+    console.log(`__dirname: ${__dirname}`);
+    
+    // Check if day directory exists
+    if (!fs.existsSync(dayPath)) {
+        console.error(`Day directory not found: ${dayPath}`);
+        return res.status(404).json({
+            success: false,
+            message: `Day ${dayNumber} not found`,
+            attemptedPath: dayPath
+        });
+    }
+    
+    try {
+        const dayData = parseDayReadme(dayPath);
+        
+        if (dayData && dayData.topics && dayData.topics.length > 0) {
+            // Ensure dayNumber is set
+            if (!dayData.dayNumber) {
+                dayData.dayNumber = dayNumber;
+            }
+            return res.json({
+                success: true,
+                day: dayData
+            });
+        } else {
+            return res.status(404).json({
+                success: false,
+                message: `Day ${dayNumber} not found or has no topics`,
+                attemptedPath: dayPath
+            });
+        }
+    } catch (err) {
+        console.error(`Error reading day ${dayNumber}:`, err.message);
+        return res.status(500).json({
+            success: false,
+            message: 'Error reading day',
+            error: err.message
+        });
+    }
+}
