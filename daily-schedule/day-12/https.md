@@ -1,0 +1,22 @@
+# Https
+
+## 📖 Study Material
+**Path**: `../../apis/https/questions.md`
+
+## 🎯 Today's Tasks
+- Answer **3** questions
+- Focus on: **TLS basics**
+
+## ❓ Questions/Problems
+1. 
+2. 
+3. 
+
+## 📝 Notes
+
+
+## ✅ Completed
+- [ ] Read material
+- [ ] Answered questions/implemented
+- [ ] Understood concepts
+- [ ] Ready to move on

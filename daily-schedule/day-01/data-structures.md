@@ -1,0 +1,21 @@
+# Data Structures
+
+## 📖 Study Material
+**Path**: `../../algorithms/data-structures/implementations/js/array.js`
+
+## 🎯 Today's Tasks
+- Implement: **Array**
+
+## ❓ Questions/Problems
+1. 
+2. 
+3. 
+
+## 📝 Notes
+
+
+## ✅ Completed
+- [ ] Read material
+- [ ] Answered questions/implemented
+- [ ] Understood concepts
+- [ ] Ready to move on
