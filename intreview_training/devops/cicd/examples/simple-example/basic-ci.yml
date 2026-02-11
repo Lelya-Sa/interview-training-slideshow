@@ -1,0 +1,50 @@
+# Simple CI/CD Example - Perfect for Beginners
+# This is a minimal GitHub Actions workflow to get started
+# Location: .github/workflows/basic-ci.yml
+
+name: Basic CI Pipeline
+
+# Trigger on every push and pull request
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Single job that does everything
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Get the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # Step 2: Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm install
+      
+      # Step 4: Run tests
+      - name: Run tests
+        run: npm test
+      
+      # Step 5: Build the app
+      - name: Build application
+        run: npm run build
+
+# That's it! This simple pipeline:
+# 1. Gets your code
+# 2. Sets up Node.js
+# 3. Installs dependencies
+# 4. Runs tests
+# 5. Builds the application
+#
+# If any step fails, the pipeline stops and reports the error.
+# This ensures only working code gets merged.

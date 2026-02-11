@@ -1,0 +1,22 @@
+# Html
+
+## 📖 Study Material
+**Path**: `../../frontend/html/questions.md`
+
+## 🎯 Today's Tasks
+- Answer **2** questions
+- Focus on: **semantic HTML**
+
+## ❓ Questions/Problems
+1. 
+2. 
+3. 
+
+## 📝 Notes
+
+
+## ✅ Completed
+- [ ] Read material
+- [ ] Answered questions/implemented
+- [ ] Understood concepts
+- [ ] Ready to move on

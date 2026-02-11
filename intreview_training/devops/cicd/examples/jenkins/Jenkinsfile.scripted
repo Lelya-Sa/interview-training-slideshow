@@ -1,0 +1,111 @@
+// Jenkins Scripted Pipeline for Node.js/React Application
+// More flexible than Declarative, allows complex logic
+// Location: Jenkinsfile (in repository root)
+
+node {
+    // Define environment variables
+    def NODE_VERSION = '18'
+    def DOCKER_REGISTRY = 'your-registry.com'
+    def IMAGE_NAME = 'myapp'
+    
+    try {
+        stage('Checkout') {
+            checkout scm
+            def gitCommit = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+            env.GIT_COMMIT_SHORT = gitCommit
+        }
+        
+        stage('Setup Node.js') {
+            sh """
+                nvm install ${NODE_VERSION}
+                nvm use ${NODE_VERSION}
+                node --version
+            """
+        }
+        
+        stage('Install Dependencies') {
+            sh 'npm ci'
+        }
+        
+        stage('Lint') {
+            try {
+                sh 'npm run lint'
+            } catch (Exception e) {
+                echo "Linting failed: ${e.message}"
+                // Continue pipeline
+            }
+        }
+        
+        stage('Test') {
+            // Run tests in parallel
+            parallel(
+                unit: {
+                    sh 'npm run test:unit'
+                },
+                integration: {
+                    sh 'npm run test:integration'
+                }
+            )
+            
+            // Publish test results
+            junit 'test-results/**/*.xml'
+        }
+        
+        stage('Build') {
+            sh 'npm run build'
+            archiveArtifacts artifacts: 'build/**/*', fingerprint: true
+        }
+        
+        if (env.BRANCH_NAME == 'main') {
+            stage('Build Docker Image') {
+                def dockerImage = docker.build("${DOCKER_REGISTRY}/${IMAGE_NAME}:${env.GIT_COMMIT_SHORT}")
+                dockerImage.push()
+                dockerImage.push("latest")
+            }
+            
+            stage('Deploy to Staging') {
+                echo "Deploying ${env.GIT_COMMIT_SHORT} to staging..."
+                // Add deployment logic
+            }
+            
+            stage('Deploy to Production') {
+                // Manual approval
+                def userInput = input(
+                    id: 'userInput',
+                    message: 'Deploy to production?',
+                    parameters: [
+                        choice(
+                            choices: ['Yes', 'No'],
+                            description: 'Choose deployment option',
+                            name: 'deploy'
+                        )
+                    ]
+                )
+                
+                if (userInput == 'Yes') {
+                    echo "Deploying ${env.GIT_COMMIT_SHORT} to production..."
+                    // Add deployment logic
+                } else {
+                    echo 'Deployment cancelled by user'
+                }
+            }
+        }
+        
+        // Mark build as successful
+        currentBuild.result = 'SUCCESS'
+        
+    } catch (Exception e) {
+        // Mark build as failed
+        currentBuild.result = 'FAILURE'
+        throw e
+    } finally {
+        // Cleanup
+        cleanWs()
+        
+        // Send notifications
+        if (currentBuild.result == 'FAILURE') {
+            echo "Pipeline failed: ${e.message}"
+            // Send failure notification
+        }
+    }
+}
