@@ -1,19 +1,22 @@
-# Data Structures
+﻿# Data Structures
 
-## 📖 Study Material
+## ­ƒôû Study Material
 **Path**: `../../algorithms/data-structures/questions.md`
 
-## 🎯 Today's Tasks
+## ­ƒÄ» Today's Tasks
+- Answer **5** questions (Questions 26-30)
 
-## ❓ Questions/Problems
-1. 
-2. 
-3. 
+## ÔØô Questions/Problems
+1. Question 26
+2. Question 27
+3. Question 28
+4. Question 29
+5. Question 30
 
-## 📝 Notes
+## ­ƒôØ Notes
 
 
-## ✅ Completed
+## Ô£à Completed
 - [ ] Read material
 - [ ] Answered questions/implemented
 - [ ] Understood concepts

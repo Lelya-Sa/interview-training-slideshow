@@ -1,20 +1,22 @@
-# Data Structures
+﻿# Data Structures
 
-## 📖 Study Material
-**Path**: `../../algorithms/data-structures/implementations/js/array.js`
+## ­ƒôû Study Material
+**Path**: `../../algorithms/data-structures/questions.md`
 
-## 🎯 Today's Tasks
-- Implement: **Array**
+## ­ƒÄ» Today's Tasks
+- Answer **5** questions (Questions 1-5)
 
-## ❓ Questions/Problems
-1. 
-2. 
-3. 
+## ÔØô Questions/Problems
+1. Question 1
+2. Question 2
+3. Question 3
+4. Question 4
+5. Question 5
 
-## 📝 Notes
+## ­ƒôØ Notes
 
 
-## ✅ Completed
+## Ô£à Completed
 - [ ] Read material
 - [ ] Answered questions/implemented
 - [ ] Understood concepts
