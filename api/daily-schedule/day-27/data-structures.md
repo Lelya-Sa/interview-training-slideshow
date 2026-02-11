@@ -4,14 +4,14 @@
 **Path**: `../../algorithms/data-structures/questions.md`
 
 ## ­ƒÄ» Today's Tasks
-- Answer **5** questions (Questions 16-20)
+- Answer **5** questions (Questions 131-135)
 
 ## ÔØô Questions/Problems
-1. Question 16
-2. Question 17
-3. Question 18
-4. Question 19
-5. Question 20
+1. Question 131
+2. Question 132
+3. Question 133
+4. Question 134
+5. Question 135
 
 ## ­ƒôØ Notes
 
