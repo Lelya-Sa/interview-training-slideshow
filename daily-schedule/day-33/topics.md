@@ -68,6 +68,12 @@
 - **Category**: CORE
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 
+### Design Patterns Overview
+- **Path**: `../../design-patterns/questions.md`
+- **Priority**: MEDIUM
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
 
 ## Extra Topics (1 topics) - 20-30% Focus (Optional)
 

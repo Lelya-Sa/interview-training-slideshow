@@ -74,6 +74,12 @@
 - **Category**: CORE
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 
+### Design Patterns Overview
+- **Path**: `../../design-patterns/questions.md`
+- **Priority**: MEDIUM
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
 ### Oop
 - **Path**: `../../oop/questions.md`
 - **Priority**: MEDIUM
