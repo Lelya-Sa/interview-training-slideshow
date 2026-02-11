@@ -98,6 +98,12 @@
 - **Category**: CORE
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 
+### Design Patterns Overview
+- **Path**: `../../design-patterns/questions.md`
+- **Priority**: MEDIUM
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
 ### Singleton
 - **Path**: `../../design-patterns/creational/singleton/questions.md`
 - **Priority**: HIGH
