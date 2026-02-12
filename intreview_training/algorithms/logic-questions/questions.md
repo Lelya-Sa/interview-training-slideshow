@@ -14,7 +14,7 @@ See [questions/README.md](./questions/README.md) for complete list and categorie
 
 ## Question Categories
 
-### 🧩 Classic Brain Teasers & Puzzles (20+ questions)
+## 🧩 Classic Brain Teasers & Puzzles (20+ questions)
 **Perfect for junior developers - pure logic problems:**
 - Two Eggs Problem
 - Light Bulb Switches
@@ -40,7 +40,7 @@ See [questions/README.md](./questions/README.md) for complete list and categorie
 - 100 Doors Problem
 - And more...
 
-### 🏗️ System Design Logic (15 questions)
+## 🏗️ System Design Logic (15 questions)
 - Design URL Shortener
 - Rate Limiting Design
 - Consistent Hashing
@@ -48,7 +48,7 @@ See [questions/README.md](./questions/README.md) for complete list and categorie
 - Session Storage Design
 - And more...
 
-### 🐛 Debugging & Problem Solving (15 questions)
+## 🐛 Debugging & Problem Solving (15 questions)
 - Debug Slow API
 - Race Condition Debug
 - Memory Leak Detection
@@ -56,7 +56,7 @@ See [questions/README.md](./questions/README.md) for complete list and categorie
 - Optimize N+1 Queries
 - And more...
 
-### 📊 Architecture & Scalability (5 questions)
+## 📊 Architecture & Scalability (5 questions)
 - Database Replication Lag
 - Distributed Transactions
 - Cache Stampede
@@ -764,3 +764,15 @@ These questions cover the most common logic problems, system design thinking, an
 
 ### 225. You have 8 ropes; each burns in 60 minutes but unevenly. How do you measure 10 minutes?
 **Answer:** With 8 ropes: get 30, 15, 22.5, 11.25, 5.625 min segments. 10 min is between 11.25 and 15; use 11.25 as approximation or combine segments. Practical: use ropes to get decreasing segments; 10 min approximately 11.25 or refine with more ropes.
+
+### 226. 100 Prisoners and 100 Boxes: Each of 100 prisoners must find their number in one of 100 boxes; each may open at most 50 boxes; they can agree a strategy beforehand. If all find their number, they are freed. What strategy gives the best chance?
+**Answer:** Follow the cycle: each prisoner starts at the box with their number, then goes to the box whose number is inside, and repeats. They find their number if their number is in a cycle of length ≤ 50. Probability that a random permutation has no cycle longer than 50 is about 31%. So the group survives with ~31% probability (much better than random).
+
+### 227. Coin Weighing: You have 12 coins; one is counterfeit (lighter or heavier, unknown). Using a balance scale only 3 times, how do you find the counterfeit and whether it is lighter or heavier?
+**Answer:** Weigh 4 vs 4. If equal, the fake is in the remaining 4: weigh 3 of those vs 3 good; if equal the 4th is fake (one more weigh to see light/heavy); if unequal you know which group of 3 and whether heavy or light, then weigh 1 vs 1 to find it. If first 4 vs 4 unequal, use the heavier group and lighter group in the next two weighings (e.g. weigh 2 heavy + 1 light vs 1 heavy + 2 good) to identify the fake and its type in at most 3 weighings total.
+
+### 228. Pirate Gold: Five pirates must divide 100 gold coins. The senior proposes a split; all vote (including proposer); if ≥ half agree, it stands; else the proposer is thrown overboard and the next senior proposes. Pirates are rational and greedy (maximize own coins, then prefer to kill). What should the senior propose?
+**Answer:** Work backward. With 2 pirates, senior takes all 100 (gets own vote). With 3, senior gives 1 to the last pirate (who would get 0 if senior died), takes 99; 2–1. With 4, senior gives 1 each to pirates 3 and 4 (who get 0 in 3-pirate case), takes 98; 3–1. With 5, senior gives 1 each to pirates 3 and 5 (who get 0 in 4-pirate case), takes 98; 3–2. So propose (98, 0, 1, 0, 1).
+
+### 229. Cannibals and Missionaries: Three missionaries and three cannibals must cross a river in a boat that holds at most two. If cannibals ever outnumber missionaries on either bank, they eat the missionaries. How do they all get across?
+**Answer:** Various solutions. One: (1) Two cannibals cross, one returns. (2) Two cannibals cross, one returns. (3) Two missionaries cross, one missionary and one cannibal return. (4) Two missionaries cross, one cannibal returns. (5) Two cannibals cross, one returns. (6) Two cannibals cross. At no point do cannibals outnumber missionaries on either side.
