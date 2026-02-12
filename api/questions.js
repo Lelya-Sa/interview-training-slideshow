@@ -11,61 +11,132 @@ const path = require('path');
 
 function parseQuestionsFromMarkdown(content) {
     const questions = [];
-    const lines = content.split('\n');
+    // Normalize line endings: replace \r\n with \n, then \r with \n
+    const normalizedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const lines = normalizedContent.split('\n');
     
     let currentQuestion = null;
     let currentAnswer = [];
-    let inCodeBlock = false;
+    let questionNumber = 0;
+    let inQuestionBlock = false;
     
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
         
-        const questionMatch = line.match(/^###\s+\d+\.\s+(.+)$/);
+        // Match question format: ### 1. Question text or ### Question text (without number)
+        // Trim line to handle \r and other whitespace
+        const trimmedLine = line.trim();
+        const questionMatch = trimmedLine.match(/^###\s+(?:\d+\.\s+)?(.+)$/);
         
         if (questionMatch) {
-            if (currentQuestion && currentAnswer.length > 0) {
-                const answerText = currentAnswer.join('\n').trim();
-                if (answerText.length > 5) {
-                    questions.push({
-                        question: currentQuestion.trim(),
-                        answer: answerText
-                    });
+            const questionText = questionMatch[1];
+            // Check if this is a language subsection (JavaScript, Python, etc.) - not a real question
+            const isLanguageSubsection = ['JavaScript', 'Python', 'Java', 'TypeScript', 'C++', 'C#', 'Go', 'Rust'].includes(questionText);
+            
+            if (!isLanguageSubsection) {
+                // Save previous question if exists
+                if (currentQuestion && currentAnswer.length > 0) {
+                    let answerText = currentAnswer.join('\n').trim();
+                    // Remove leading "**Answer:**" or "**Answer:** " if present (only at the very start)
+                    answerText = answerText.replace(/^\*\*Answer:\*\*\s*/i, '').trim();
+                    
+                    // Only remove leading dashes/list markers if they're formatting (not content)
+                    // Don't remove list items that are part of the answer content
+                    const finalAnswer = answerText;
+                    
+                    if (finalAnswer.length > 3) {
+                        questions.push({
+                            question: currentQuestion.trim(),
+                            answer: finalAnswer,
+                            questionNumber: questionNumber
+                        });
+                        questionNumber++;
+                    } else {
+                        console.log(`⚠️ Question "${currentQuestion.substring(0, 50)}..." has answer too short (${finalAnswer.length} chars)`);
+                    }
+                }
+                
+                // Start new question
+                currentQuestion = questionText;
+                currentAnswer = [];
+                inQuestionBlock = true;
+            } else {
+                // This is a language subsection, add to current answer
+                if (inQuestionBlock && currentQuestion) {
+                    currentAnswer.push(line);
                 }
             }
-            
-            currentQuestion = questionMatch[1];
-            currentAnswer = [];
-        } else if (currentQuestion !== null) {
-            if (line.includes('```')) {
-                inCodeBlock = !inCodeBlock;
-            }
-            
-            if (!inCodeBlock && line.match(/^##\s/) && currentAnswer.length > 0) {
-                const answerText = currentAnswer.join('\n').trim();
-                if (answerText.length > 5) {
-                    questions.push({
-                        question: currentQuestion.trim(),
-                        answer: answerText
-                    });
+        } else if (currentQuestion !== null && inQuestionBlock) {
+            // Check for separator (---) or section headers (##) - these mark the end of a question
+            const trimmedLine = line.trim();
+            if (trimmedLine === '---' || trimmedLine.match(/^##\s+/)) {
+                // Save current question if we have answer content
+                if (currentAnswer.length > 0) {
+                    let answerText = currentAnswer.join('\n').trim();
+                    // Remove leading "**Answer:**" or "**Answer:** " if present (only at the very start)
+                    answerText = answerText.replace(/^\*\*Answer:\*\*\s*/i, '').trim();
+                    
+                    // Only remove leading dashes/list markers if they're formatting (not content)
+                    // Don't remove list items that are part of the answer content
+                    const finalAnswer = answerText;
+                    
+                    if (finalAnswer.length > 3) {
+                        questions.push({
+                            question: currentQuestion.trim(),
+                            answer: finalAnswer,
+                            questionNumber: questionNumber
+                        });
+                        questionNumber++;
+                    } else {
+                        console.log(`⚠️ Question "${currentQuestion.substring(0, 50)}..." has answer too short (${finalAnswer.length} chars)`);
+                    }
                 }
+                // Reset for next section
                 currentQuestion = null;
                 currentAnswer = [];
-            } else {
-                currentAnswer.push(line);
+                inQuestionBlock = false;
+                continue;
             }
+            
+            // Collect answer lines (everything until next question or separator)
+            // Include empty lines as they might be part of formatting
+            currentAnswer.push(line);
         }
     }
     
+    // Don't forget the last question
     if (currentQuestion && currentAnswer.length > 0) {
-        const answerText = currentAnswer.join('\n').trim();
-        if (answerText.length > 5) {
+        let answerText = currentAnswer.join('\n').trim();
+        // Remove leading "**Answer:**" or "**Answer:** " if present (only at the very start)
+        answerText = answerText.replace(/^\*\*Answer:\*\*\s*/i, '').trim();
+        
+        // Only remove leading dashes/list markers if they're formatting (not content)
+        // Don't remove list items that are part of the answer content
+        const finalAnswer = answerText;
+        
+        if (finalAnswer.length > 3) {
             questions.push({
                 question: currentQuestion.trim(),
-                answer: answerText
+                answer: finalAnswer,
+                questionNumber: questionNumber
             });
+        } else {
+            console.log(`⚠️ Last question "${currentQuestion.substring(0, 50)}..." has answer too short (${finalAnswer.length} chars)`);
         }
     }
     
+    console.log(`Parsed ${questions.length} questions from markdown`);
+    if (questions.length === 0) {
+        console.log('⚠️ No questions parsed. First 20 lines:', lines.slice(0, 20));
+        // Try to find why - check for question patterns
+        const questionLines = lines.filter((line, idx) => line.match(/^###\s+(?:\d+\.\s+)?(.+)$/));
+        console.log(`Found ${questionLines.length} potential question headers:`, questionLines.slice(0, 5));
+    } else {
+        console.log(`✅ Successfully parsed questions. Sample:`, questions.slice(0, 2).map(q => ({
+            question: q.question.substring(0, 50) + '...',
+            answerLength: q.answer.length
+        })));
+    }
     return questions;
 }
 
@@ -82,13 +153,62 @@ module.exports = (req, res) => {
         return res.status(405).json({ success: false, message: 'Method not allowed' });
     }
     
-    const { path: questionPath } = req.query;
+    const { path: questionPath, dayNumber, topicName, count } = req.query;
     
     if (!questionPath) {
         return res.status(400).json({
             success: false,
             message: 'Path parameter required'
         });
+    }
+    
+    // Helper function to select questions for a specific day (progressive learning)
+    function selectQuestionsForDay(allQuestions, dayNum, requestedCount) {
+        if (!allQuestions || allQuestions.length === 0) {
+            return [];
+        }
+        
+        // If no count specified, return all questions
+        if (!requestedCount || requestedCount === 'all') {
+            return allQuestions;
+        }
+        
+        const countNum = parseInt(requestedCount);
+        if (isNaN(countNum) || countNum <= 0) {
+            return allQuestions;
+        }
+        
+        // Use day number as seed to select different questions each day
+        // This ensures progressive learning - different questions each day
+        const daySeed = dayNum || 1;
+        const questionsPerDay = Math.min(countNum, allQuestions.length);
+        
+        // Calculate starting index based on day (ensures different questions each day)
+        // For progressive learning: Day 1 starts at 0, Day 2 starts at questionsPerDay, etc.
+        // Use a simple offset that advances each day, wrapping around when needed
+        // This ensures Day 1 and Day 2 show different questions
+        let startIndex = (daySeed - 1) * questionsPerDay;
+        
+        // Wrap around if we exceed the available questions
+        if (startIndex >= allQuestions.length) {
+            startIndex = startIndex % allQuestions.length;
+        }
+        
+        // Select questions starting from calculated index
+        const selected = [];
+        for (let i = 0; i < questionsPerDay; i++) {
+            const index = (startIndex + i) % allQuestions.length;
+            selected.push(allQuestions[index]);
+        }
+        
+        console.log(`Day ${dayNum}: Selecting ${selected.length} questions starting from index ${startIndex} (total available: ${allQuestions.length}, requested: ${countNum})`);
+        if (selected.length > 0) {
+            console.log(`  First question: "${selected[0].question.substring(0, 50)}..."`);
+            console.log(`  Last question: "${selected[selected.length - 1].question.substring(0, 50)}..."`);
+            console.log(`  Question indices: ${selected.map((q, i) => (startIndex + i) % allQuestions.length).join(', ')}`);
+        }
+        
+        return selected;
     }
     
     try {
@@ -173,13 +293,23 @@ module.exports = (req, res) => {
         }
         
         const content = fs.readFileSync(resolvedPath, 'utf8');
-        const questions = parseQuestionsFromMarkdown(content);
+        const allQuestions = parseQuestionsFromMarkdown(content);
+        
+        // Select questions based on day number and count if provided
+        let selectedQuestions = allQuestions;
+        if (dayNumber && count) {
+            const dayNum = parseInt(dayNumber);
+            selectedQuestions = selectQuestionsForDay(allQuestions, dayNum, count);
+            console.log(`Selected ${selectedQuestions.length} questions for day ${dayNum} (requested: ${count}, available: ${allQuestions.length})`);
+        }
         
         res.json({
             success: true,
-            count: questions.length,
-            questions: questions,
-            path: questionPath
+            count: selectedQuestions.length,
+            totalAvailable: allQuestions.length,
+            questions: selectedQuestions,
+            path: questionPath,
+            dayNumber: dayNumber ? parseInt(dayNumber) : null
         });
     } catch (err) {
         console.error('Error reading questions:', err.message);

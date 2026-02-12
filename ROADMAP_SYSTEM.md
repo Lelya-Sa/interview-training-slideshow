@@ -52,6 +52,20 @@
 4. **Completion Banner**: Celebration when day is 100% complete
 5. **Persistence**: Progress saved in browser localStorage
 
+## 📐 Question counts and progressive logic
+
+**Per-day counts (same in app, server, and scripts):**
+- **Logic questions**: 3/day  
+- **LeetCode**: 2/day  
+- **Data structures**: 5/day  
+- **Other topics** (JavaScript, React, Node, etc.): 12/day  
+
+**Progressive selection:** For each topic, Day 1 gets questions 1..N, Day 2 gets N+1..2N, Day 3 gets 2N+1..3N, etc. (no overlap, no gaps until the pool is exhausted, then it wraps).
+
+- **Server:** `server/routes/questions.js` → `selectQuestionsForDay(allQuestions, dayNum, count)` uses `startIndex = (dayNum - 1) * questionsPerDay` and returns that slice (with wrap).
+- **Client:** `QuestionsView.js` → `getQuestionCountForTopic(topicName)` returns the fixed count per topic; the API is called with `dayNumber` and `count`.
+- **Verification:** From repo root run `node scripts/verify-question-progression.js` to check that each topic has enough questions for its scheduled days and to print Day → question ranges.
+
 ## 📁 How It Works
 
 ### Data Flow

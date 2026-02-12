@@ -146,8 +146,13 @@ function RoadmapView({ onSelectDay }) {
                 </div>
                 
                 <div className="day-stats">
-                  <span>{day.topics?.length || 0} Topics</span>
-                  <span>{day.corePractice?.length || 0} Practice Items</span>
+                  <span>
+                    {day.topics?.filter(t => t.category === 'CORE' || !t.category).length || 0} Core
+                    {day.topics?.filter(t => t.category === 'EXTRA').length > 0 && (
+                      <span> + {day.topics.filter(t => t.category === 'EXTRA').length} Extra</span>
+                    )}
+                  </span>
+                  <span>{day.corePractice?.length || 0} Practice</span>
                 </div>
               </div>
             );

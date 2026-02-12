@@ -56,7 +56,7 @@ function parseDayReadme(dayPath) {
         if (fileType === 'topics.md') {
             // Parse topics.md format
             let currentTopic = null;
-            let inCoreTopics = false;
+            let currentCategory = 'CORE'; // Default to CORE, will be updated when we see section headers
             
             console.log(`Parsing topics.md format for day at: ${dayPath}`);
             
@@ -74,29 +74,30 @@ function parseDayReadme(dayPath) {
                 
                 // Check if we're in Core Topics section
                 if (line.includes('Core Topics')) {
-                    inCoreTopics = true;
+                    currentCategory = 'CORE';
                     console.log(`Found Core Topics section at line ${i}`);
                     continue;
                 }
                 
-                // Check if we're in Extra Topics section (skip for now)
+                // Check if we're in Extra Topics section - continue parsing but mark as EXTRA
                 if (line.includes('Extra Topics')) {
-                    inCoreTopics = false;
-                    console.log(`Found Extra Topics section at line ${i}, stopping core topics`);
+                    currentCategory = 'EXTRA';
+                    console.log(`Found Extra Topics section at line ${i}, continuing to parse extra topics`);
                     continue;
                 }
                 
                 // Topic name (starts with ###)
                 if (line.match(/^### (.+)$/)) {
                     const match = line.match(/^### (.+)$/);
-                    if (match && inCoreTopics) {
+                    if (match) {
                         currentTopic = {
                             name: match[1].trim(),
                             path: '',
                             text: match[1].trim(),
+                            category: currentCategory, // Track if it's CORE or EXTRA
                             completed: false
                         };
-                        console.log(`Found topic: ${currentTopic.name}`);
+                        console.log(`Found topic: ${currentTopic.name} (${currentCategory})`);
                     }
                 }
                 
@@ -111,10 +112,29 @@ function parseDayReadme(dayPath) {
                 for (const pattern of pathPatterns) {
                     const match = line.match(pattern);
                     if (match && currentTopic) {
-                        currentTopic.path = match[1];
-                        currentTopic.text += `\n  - Path: \`${match[1]}\``;
+                        // Clean the path: remove ../.. prefixes (relative to daily-schedule/day-XX/)
+                        let cleanPath = match[1];
+                        while (cleanPath.startsWith('../')) {
+                            cleanPath = cleanPath.replace(/^\.\.\//, '');
+                        }
+                        currentTopic.path = cleanPath;
+                        
+                        // Check next 2 lines for Category (Category comes after Path in the structure)
+                        for (let j = i + 1; j < Math.min(i + 3, lines.length); j++) {
+                            const nextLine = lines[j];
+                            if (nextLine.includes('**Category**:')) {
+                                if (nextLine.includes('EXTRA')) {
+                                    currentTopic.category = 'EXTRA';
+                                } else if (nextLine.includes('CORE')) {
+                                    currentTopic.category = 'CORE';
+                                }
+                                break;
+                            }
+                        }
+                        
+                        // Don't add path to text - it causes duplication
                         day.topics.push(currentTopic);
-                        console.log(`Added topic with path: ${currentTopic.name} -> ${currentTopic.path}`);
+                        console.log(`Added topic with path: ${currentTopic.name} -> ${currentTopic.path} (${currentTopic.category}, cleaned from ${match[1]})`);
                         currentTopic = null;
                         break; // Found the path, move to next topic
                     }
@@ -160,12 +180,17 @@ function parseDayReadme(dayPath) {
                                          (i + 1 < lines.length && lines[i + 1].match(/Path:\s*`([^`]+)`/));
                         
                         if (pathMatch) {
-                            path = pathMatch[1];
+                            // Clean the path: remove ../.. prefixes
+                            let cleanPath = pathMatch[1];
+                            while (cleanPath.startsWith('../')) {
+                                cleanPath = cleanPath.replace(/^\.\.\//, '');
+                            }
+                            path = cleanPath;
                         }
                         
                         day.topics.push({
                             name: nameMatch ? nameMatch[1] : item,
-                            text: item + (path ? `\n  - Path: \`${path}\`` : ''),
+                            text: item, // Don't add path to text to avoid duplication
                             path: path,
                             completed: false
                         });
@@ -177,8 +202,13 @@ function parseDayReadme(dayPath) {
                 else if (currentSection === 'topics' && line.match(/^\s+-\s+Path:\s*`([^`]+)`/)) {
                     const pathMatch = line.match(/Path:\s*`([^`]+)`/);
                     if (pathMatch && lastTopicIndex >= 0) {
-                        day.topics[lastTopicIndex].path = pathMatch[1];
-                        day.topics[lastTopicIndex].text += '\n  - Path: `' + pathMatch[1] + '`';
+                        // Clean the path: remove ../.. prefixes
+                        let cleanPath = pathMatch[1];
+                        while (cleanPath.startsWith('../')) {
+                            cleanPath = cleanPath.replace(/^\.\.\//, '');
+                        }
+                        day.topics[lastTopicIndex].path = cleanPath;
+                        // Don't add path to text to avoid duplication
                     }
                 }
                 
