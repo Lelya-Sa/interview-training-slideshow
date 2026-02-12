@@ -1275,3 +1275,942 @@ app.get('/metrics', async (req, res) => {
 ### 275. What is the difference between require and import in Node.js ESM?
 **Answer:** In ESM ("type": "module") use import/export only; require is not available. In CommonJS use require/module.exports. Use dynamic import() for async load in ESM.
 
+### 276. How do you implement graceful shutdown with open connections?
+**Answer:** On SIGTERM/SIGINT set flag; stop accepting new requests; wait for active requests to finish (track count or use server.close callback); then exit. Use server.close() and clearInterval for timers.
+
+### 277. What is the purpose of process.env in Node.js?
+**Answer:** process.env holds environment variables. Use for config (port, DB URL, NODE_ENV). Don't commit secrets; use .env file with dotenv or platform env. Validate required vars at startup.
+
+### 278. Explain the difference between cluster and worker_threads.
+**Answer:** cluster: multiple processes, each with own event loop; for CPU scaling. worker_threads: threads in same process; share memory via SharedArrayBuffer. Use cluster for multi-core; workers for CPU-heavy tasks.
+
+### 279. How do you implement request timeout middleware?
+**Answer:** Set req.setTimeout(ms) or wrap next() in setTimeout that calls next(err). Or use express-timeout. Cancel long-running handlers; return 408 or 504. Clean up on timeout.
+
+### 280. What is the difference between __dirname and import.meta.url in ESM?
+**Answer:** __dirname is CommonJS (path to current dir). In ESM use path.dirname(fileURLToPath(import.meta.url)). import.meta.url is file URL; convert for path operations.
+
+### 281. How do you implement health check endpoint?
+**Answer:** GET /health returns 200 and { status: 'ok', db: true } or similar. Check DB connection; optional check disk/cache. Use for load balancer and k8s liveness. Keep fast and lightweight.
+
+### 282. Explain Node.js Buffer and when to use it.
+**Answer:** Buffer is fixed-size raw binary data. Use for file I/O, streams, crypto, network. Create with Buffer.alloc, from, or from string encoding. Don't use for large data; use streams.
+
+### 283. How do you implement CORS with credentials?
+**Answer:** res.set('Access-Control-Allow-Credentials', 'true'); Allow-Origin must be specific (no *). Allow methods and headers. Use for cookies/auth. Validate origin against whitelist.
+
+### 284. What is the purpose of process.nextTick?
+**Answer:** Schedules callback before next event loop phase. Use for deferring to after current stack; or to allow I/O before continuing. Don't starve event loop with recursive nextTick.
+
+### 285. How do you implement rate limiting per user?
+**Answer:** Track requests per user (id from token or IP); in-memory or Redis. Increment counter; reset or sliding window. Reject with 429 when over limit. Use express-rate-limit or custom.
+
+### 286. Explain the difference between setImmediate and setTimeout(0).
+**Answer:** setImmediate runs in check phase; setTimeout(0) in timers. Order can differ. Use setImmediate for "after I/O" deferral; setTimeout for delay. Both are macrotasks.
+
+### 287. How do you implement structured logging?
+**Answer:** Log JSON with timestamp, level, message, context (reqId, userId). Use pino or winston. Avoid console in production. Correlate requests with id in header or middleware.
+
+### 288. What is the difference between stream.readable and stream.writable?
+**Answer:** Readable: source (fs.createReadStream, http IncomingMessage). Writable: destination (fs.createWriteStream, res). Duplex: both. Transform: read and write with transform.
+
+### 289. How do you implement request ID (correlation ID)?
+**Answer:** Middleware: generate or read X-Request-Id; set on req; add to res header and logs. Use uuid. Propagate to downstream services. Use for tracing and debugging.
+
+### 290. Explain Node.js crypto module use cases.
+**Answer:** Hash (createHash), HMAC, sign/verify (createSign), encrypt/decrypt (createCipher). Use for passwords (bcrypt or scrypt), JWT, TLS. Never store plain passwords.
+
+### 291. How do you implement API versioning in URL?
+**Answer:** /v1/users, /v2/users. Router per version or prefix; middleware to set version. Document and deprecate old versions. Use for breaking changes.
+
+### 292. What is the purpose of process.cwd()?
+**Answer:** process.cwd() is current working directory (where node was started). __dirname is script directory. Use cwd for relative paths from project root; __dirname for paths relative to file.
+
+### 293. How do you implement compression middleware?
+**Answer:** Use compression middleware (gzip); res with compressible content-type. Reduces payload. Set Vary: Accept-Encoding. Optional for JSON APIs; useful for HTML/assets.
+
+### 294. Explain the difference between pipe and pipeline.
+**Answer:** stream.pipe(dest) pipes one stream; pipeline(...streams, cb) pipes multiple and handles errors and cleanup. Prefer pipeline for multiple streams and error handling.
+
+### 295. How do you implement request body size limit?
+**Answer:** express.json({ limit: '1mb' }); or body-parser limit. Reject with 413 if larger. Protect against large payload DoS. Set per route or global.
+
+### 296. What is the difference between require.cache and import cache?
+**Answer:** require.cache is object of loaded modules (can delete to reload). ESM has its own cache; no direct clear in Node. Use for clearing cache in tests or hot reload.
+
+### 297. How do you implement WebSocket with Express?
+**Answer:** Use ws or socket.io; attach to same HTTP server (server.on('upgrade')). Or separate WebSocket server. Handle connection, message, close. Use for real-time.
+
+### 298. Explain Node.js path module key methods.
+**Answer:** path.join, resolve (absolute path), dirname, basename, extname, parse. Use join for cross-platform paths. resolve for absolute from cwd or relative.
+
+### 299. How do you implement graceful drain (stop accepting, finish in-flight)?
+**Answer:** server.close() stops new connections; callback when all connections closed. Track in-flight requests; wait for them before exit. Use with SIGTERM handler.
+
+### 300. What is the purpose of NODE_OPTIONS?
+**Answer:** NODE_OPTIONS env var passes options to Node (e.g. --max-old-space-size=4096). Use for memory limit or flags in deployment. Check docs for allowed options.
+
+### 301. How do you implement static file caching headers?
+**Answer:** Set Cache-Control (max-age, immutable for hashed assets); ETag optional. Use express.static with maxAge or custom middleware. Balance freshness and performance.
+
+### 302. Explain the difference between spawn and exec.
+**Answer:** spawn streams output; exec buffers and returns when done. Use spawn for long-running or large output; exec for short commands and simple output. Always sanitize input.
+
+### 303. How do you implement CSRF protection?
+**Answer:** CSRF token in form or header; validate against session or signed cookie. Use csurf middleware or custom. SameSite cookie helps. Use for state-changing requests.
+
+### 304. What is the difference between res.send and res.json?
+**Answer:** res.send can send string, object (as JSON), Buffer. res.json sets Content-Type application/json and JSON.stringify. Use res.json for API; res.send for flexibility.
+
+### 305. How do you implement request logging (morgan)?
+**Answer:** Use morgan middleware; format 'combined' or 'dev'. Log to stdout or stream. Add request id. Use for access logs. Don't log sensitive headers or body.
+
+### 306. Explain Node.js util.promisify.
+**Answer:** util.promisify(fn) wraps callback-based function to return Promise. Use for fs, http, etc. Node 8+. Or use fs.promises for promise-based fs.
+
+### 307. How do you implement response time header?
+**Answer:** Middleware: record start time; on finish set X-Response-Time. Use process.hrtime or Date. Helps debugging and monitoring.
+
+### 308. What is the purpose of process.exit(code)?
+**Answer:** process.exit(0) success; non-zero failure. Use after graceful shutdown or on fatal error. Let event loop drain first when possible; exit(1) for uncaught error.
+
+### 309. How do you implement API key authentication?
+**Answer:** Middleware: read key from header (X-API-Key) or query; validate against store; 401 if invalid. Use for server-to-server. Rate limit and rotate keys.
+
+### 310. Explain the difference between EventEmitter and callback.
+**Answer:** EventEmitter: multiple listeners, emit events. Callback: one function for result. Use EventEmitter for pub/sub; callback for one-off async. Both are async patterns.
+
+### 311. How do you implement request validation with Zod?
+**Answer:** Define schema; parse req.body with schema.parse; catch ZodError and return 400 with details. Use for type-safe validation. Replace manual checks.
+
+### 312. What is the difference between global and globalThis?
+**Answer:** global is Node alias for global object. globalThis is standard (ES2020) cross-platform. Use globalThis for portable code; global in Node only.
+
+### 313. How do you implement file upload with progress?
+**Answer:** Use multer with memoryStorage or custom; track bytes in stream; emit progress. Or use busboy and count chunks. Send progress to client via SSE or WebSocket.
+
+### 314. Explain Node.js child_process.execFile.
+**Answer:** execFile runs executable without shell; safer than exec (no shell expansion). Pass args array. Use for running binaries. Sanitize args.
+
+### 315. How do you implement response caching (in-memory)?
+**Answer:** Cache key from URL + query; store response and headers; on hit return cached. Set TTL. Use for idempotent GET. Invalidate on update or use short TTL.
+
+### 316. What is the purpose of module.exports vs exports?
+**Answer:** module.exports is the actual export. exports is shorthand; assigning exports = x doesn't work (only exports.foo = x). Use module.exports for single export or default.
+
+### 317. How do you implement request/response logging with body (dev only)?
+**Answer:** Log req.body and res.body in dev; skip in production (PII, size). Use middleware that buffers and logs. Or use debug library with namespace.
+
+### 318. Explain the difference between readFile and createReadStream.
+**Answer:** readFile loads entire file into memory. createReadStream reads in chunks; use for large files. Prefer streams for files and network; readFile for small configs.
+
+### 319. How do you implement JWT refresh token flow?
+**Answer:** Access token short-lived; refresh token long-lived, stored securely. Endpoint exchanges refresh for new access; rotate refresh optional. Revoke refresh on logout. Use httpOnly cookie for refresh.
+
+### 320. What is the difference between res.end and res.send?
+**Answer:** res.end sends and closes; no automatic headers. res.send sets Content-Type and can send object as JSON. Use res.send for Express; res.end for raw http.
+
+### 321. How do you implement database connection pooling?
+**Answer:** Use pool from pg, mysql2, etc.; limit pool size; reuse connections. Don't create new connection per request. Configure min/max; handle pool errors.
+
+### 322. Explain Node.js os module key methods.
+**Answer:** os.cpus(), freemem(), totalmem(), platform(), hostname(). Use for monitoring or platform-specific logic. Don't overuse; prefer env for config.
+
+### 323. How do you implement request timeout with AbortController?
+**Answer:** AbortController; setTimeout to abort after ms; pass signal to fetch or axios. Cancel in-flight request. Use for API calls with timeout. Clean up on abort.
+
+### 324. What is the purpose of require.resolve?
+**Answer:** require.resolve('module') returns path to module. Use for finding module path or checking if module exists. Doesn't load module. Useful for tooling.
+
+### 325. How do you implement graceful shutdown with database?
+**Answer:** On SIGTERM close DB pool (wait for connections); then server.close(). Ensure no new queries; wait for in-flight. Use pool.end() and await.
+
+### 326. Explain the difference between middleware and route handler.
+**Answer:** Middleware: function(req, res, next); can run for multiple routes; call next() or end. Route handler: handles specific method/path; doesn't call next. Middleware for auth, logging, body.
+
+### 327. How do you implement API documentation with Swagger?
+**Answer:** Define OpenAPI spec (YAML/JS); serve with swagger-ui-express. Annotate routes or generate from code. Use for interactive docs and client generation.
+
+### 328. What is the difference between cluster and PM2?
+**Answer:** cluster is Node built-in (fork workers). PM2 is process manager: cluster mode, restart, logs, monitoring. Use PM2 in production for process management; cluster for bare Node.
+
+### 329. How do you implement request validation with Joi?
+**Answer:** Joi.validate(req.body, schema); return 400 with details on error. Use for validation and sanitization. Replace manual checks. Joi or Zod are common choices.
+
+### 330. Explain Node.js dns module.
+**Answer:** dns.lookup, dns.resolve for hostname to IP. dns.promises for Promise API. Use for custom DNS or checking. Prefer fetch/axios for HTTP (they resolve).
+
+### 331. How do you implement CORS preflight cache?
+**Answer:** Set Access-Control-Max-Age for preflight response; browser caches preflight. Reduces OPTIONS requests. Use for stable CORS config.
+
+### 332. What is the purpose of process.memoryUsage()?
+**Answer:** Returns heap used, external, etc. Use for monitoring and debugging memory. Don't use for business logic; use for metrics and alerts.
+
+### 333. How do you implement WebSocket authentication?
+**Answer:** Validate token on connection (query or header); reject or close if invalid. Use same JWT/session as HTTP. Pass token in connection URL or first message.
+
+### 334. Explain the difference between res.redirect and res.redirect(308).
+**Answer:** res.redirect(302) temporary; res.redirect(308) permanent. 301/302 may change method (GET); 307/308 preserve method. Use 308 for permanent redirect with same method.
+
+### 335. How do you implement request deduplication (idempotency)?
+**Answer:** Client sends Idempotency-Key; server stores result by key; on repeat return same result. Use for POST/PATCH. TTL for keys. Prevents duplicate charges etc.
+
+### 336. What is the difference between Buffer.alloc and Buffer.from?
+**Answer:** Buffer.alloc(size) creates zero-filled. Buffer.from(array|string) from data. Use alloc for empty buffer; from for existing data. Never use deprecated new Buffer().
+
+### 337. How do you implement response compression per route?
+**Answer:** Use compression middleware per route or conditional (compress only for certain types). Or skip compression for small or already compressed. Same as global but scoped.
+
+### 338. Explain Node.js stream Transform.
+**Answer:** Transform is Duplex; read and write; override _transform(chunk, enc, cb); call cb(null, output). Use for parsing, compression, encryption. Pipeline with other streams.
+
+### 339. How do you implement rate limiting with Redis?
+**Answer:** Increment key per user/IP; EXPIRE for window; check limit. Or use sliding window with sorted set. Use for distributed rate limit across instances. Library: rate-limiter-flexible.
+
+### 340. What is the purpose of --inspect flag?
+**Answer:** Enables DevTools debugger. Use --inspect for breakpoints and profiling. --inspect-brk to pause on start. Use for debugging Node apps.
+
+### 341. How do you implement request context (async local storage)?
+**Answer:** AsyncLocalStorage for request-scoped data (request id, user). Run middleware that sets storage.run(context, next). Use for passing context without passing args. Node 12+.
+
+### 342. Explain the difference between app.use and app.METHOD.
+**Answer:** app.use(middleware) runs for all methods and paths (or mounted path). app.get(path, handler) runs for GET and path. Use use for global middleware; METHOD for routes.
+
+### 343. How do you implement health check with DB ping?
+**Answer:** /health runs SELECT 1 or pool.query('SELECT 1'); return 503 if DB down. Use for readiness probe. Keep fast; don't run heavy queries.
+
+### 344. What is the difference between require() and import() dynamic?
+**Answer:** require() is sync; import() is async and returns Promise. Use dynamic import() in ESM for code split or conditional load. require in CommonJS only.
+
+### 345. How do you implement file download with resume (Range)?
+**Answer:** Read Range header; stream from offset; set 206 and Content-Range. Use fs.createReadStream with start/end. Support Range for large files.
+
+### 346. Explain Node.js http module createServer.
+**Answer:** createServer((req, res) => {}). req is IncomingMessage; res is ServerResponse. Use for raw HTTP. Express wraps this. Handle req.url and method.
+
+### 347. How do you implement API versioning in header?
+**Answer:** Accept or custom header (e.g. X-API-Version); middleware reads and routes. Same as URL versioning but header-based. Use for version negotiation.
+
+### 348. What is the purpose of process.argv?
+**Answer:** process.argv is array of CLI args (first is node, second is script). Use for CLI tools. Parse with minimist or yargs. Don't use for secrets (use env).
+
+### 349. How do you implement request size limit per route?
+**Answer:** express.json({ limit }) per route with router.use or inline. Different limits for upload vs JSON. Reject with 413 when exceeded.
+
+### 350. Explain the difference between stream.finish and stream.end.
+**Answer:** finish event when writable stream finished (after end and flush). end() method signals no more data. Use finish for knowing when write is fully done.
+
+### 351. How do you implement WebSocket heartbeat (ping/pong)?
+**Answer:** Set interval to send ping; expect pong. Close if no pong. Use for detecting dead connections. ws library has ping/pong. Clear interval on close.
+
+### 352. What is the difference between npm and npx?
+**Answer:** npm installs packages; npx runs package without global install (or runs local). Use npx for one-off (create-react-app, jest). npx uses cache.
+
+### 353. How do you implement error handler middleware (four args)?
+**Answer:** (err, req, res, next) => {}; must have four args. Log err; send 500 or appropriate status. Use for central error handling. Don't forget next(err) in routes.
+
+### 354. Explain Node.js fs.promises.
+**Answer:** fs.promises has promise-based fs (readFile, writeFile, etc.). Use instead of util.promisify(fs.readFile). Node 10+. Cleaner than callbacks.
+
+### 355. How do you implement request validation with express-validator?
+**Answer:** body(), param(), query() with validators; validationResult(req); return 400 with errors. Use for validation and sanitization. Chain validators.
+
+### 356. What is the purpose of process.platform?
+**Answer:** process.platform is 'darwin', 'win32', 'linux'. Use for platform-specific code (path, exec). Prefer cross-platform libraries when possible.
+
+### 357. How do you implement static files with etag?
+**Answer:** express.static with etag: true (default). Or custom: compute hash of file; set ETag header; handle If-None-Match for 304. Use for caching.
+
+### 358. Explain the difference between res.json and res.jsonp.
+**Answer:** res.json sends JSON. res.jsonp sends JSON with callback wrapper for JSONP. Use jsonp for legacy cross-domain; prefer CORS for modern APIs.
+
+### 359. How do you implement request timeout per route?
+**Answer:** req.setTimeout(ms) in route or middleware for that path. Or wrap handler in Promise.race with timeout. Same as global but per route.
+
+### 360. What is the difference between EventEmitter.once and on?
+**Answer:** once adds listener that runs once then removed. on runs every time. Use once for one-off (e.g. connection). Reduces memory leak risk.
+
+### 361. How do you implement response schema validation?
+**Answer:** Validate res body with schema before sending (in dev or middleware). Use for ensuring API contract. Library: ajv or Zod. Optional; useful for strict APIs.
+
+### 362. Explain Node.js url module.
+**Answer:** url.parse or new URL() for parsing URL. pathname, searchParams, host. Use for routing or query parsing. URL is standard; url module is legacy.
+
+### 363. How do you implement graceful shutdown with Redis?
+**Answer:** On SIGTERM disconnect Redis client (quit()); wait for in-flight; then server.close(). Use for clean shutdown. Redis client has disconnect.
+
+### 364. What is the purpose of NODE_ENV?
+**Answer:** NODE_ENV is convention (development, production, test). Used by Express and others for behavior (caching, errors). Set in deployment. Don't rely for secrets.
+
+### 365. How do you implement API key rotation?
+**Answer:** Support multiple valid keys; add new key; deprecate old; remove after grace period. Store keys with expiry. Use for security without downtime.
+
+### 366. Explain the difference between pipe and manual read/write.
+**Answer:** pipe handles backpressure and cleanup. Manual read/write requires handling pause/resume and errors. Prefer pipe or pipeline for stream handling.
+
+### 367. How do you implement request logging with PII redaction?
+**Answer:** Redact Authorization, Cookie, body fields (password, email). Use middleware that clones and redacts before log. Comply with privacy; don't log tokens.
+
+### 368. What is the difference between res.write and res.end?
+**Answer:** res.write sends chunk; res.end sends and closes. Must call res.end when done. Use write for streaming response; end to finish.
+
+### 369. How do you implement WebSocket room (broadcast to group)?
+**Answer:** Maintain map of room -> Set of clients; join/leave room; broadcast to room only. Use for chat channels or game rooms. socket.io has rooms built-in.
+
+### 370. Explain Node.js querystring module.
+**Answer:** querystring.parse(str) for query string to object. Legacy; prefer URLSearchParams or new URL(). Use for parsing ?key=value.
+
+### 371. How do you implement response timeout?
+**Answer:** Set res.setTimeout(ms); on timeout close or send 504. Protect against slow clients. Use with request timeout for full control.
+
+### 372. What is the purpose of process.hrtime?
+**Answer:** process.hrtime() returns high-resolution time [seconds, nanoseconds]. Use for measuring duration. Prefer process.hrtime.bigint() for simpler diff. Don't use for wall clock.
+
+### 373. How do you implement request body validation with type coercion?
+**Answer:** Schema with coercion (number from string, date from string); Zod or Joi transform. Validate and coerce in one step. Document expected types.
+
+### 374. Explain the difference between middleware order and route order.
+**Answer:** Middleware runs in order of app.use; route runs first match. Put auth before protected routes; body parser before routes that read body. Order matters.
+
+### 375. How do you implement file upload with virus scan?
+**Answer:** After upload run virus scan (ClamAV or cloud API); quarantine or delete if infected. Use queue for async scan. Don't serve file until scanned.
+
+### 376. What is the difference between stream.pause and stream.destroy?
+**Answer:** pause() pauses readable; resume() continues. destroy() closes stream and emits error. Use pause for backpressure; destroy for cleanup and error.
+
+### 377. How do you implement API documentation with Postman?
+**Answer:** Export OpenAPI or Postman collection; share with team. Generate from code or write manually. Use for testing and docs. Postman can import OpenAPI.
+
+### 378. Explain Node.js net module for TCP.
+**Answer:** net.createServer for TCP server; socket for connection. Use for custom protocol or non-HTTP. Raw TCP; handle framing yourself. Use for WebSocket or RPC.
+
+### 379. How do you implement request retry with backoff?
+**Answer:** Retry failed request with exponential backoff; max retries; retry on 5xx or network error. Use for resilience. Library: axios-retry or p-retry.
+
+### 380. What is the purpose of process.stdin/stdout?
+**Answer:** process.stdin is readable stream (input); process.stdout writable (output). Use for CLI input/output. Set encoding for string. Use readline for line-by-line.
+
+### 381. How do you implement CORS with dynamic origin?
+**Answer:** Check Origin header against whitelist (regex or list); set Allow-Origin to that origin. Use for multi-tenant or dynamic subdomains. Never reflect arbitrary Origin.
+
+### 382. Explain the difference between res.sendStatus and res.status().send.
+**Answer:** res.sendStatus(200) sets status and sends "OK". res.status(200).send(body) sends custom body. Use sendStatus for status-only; status().send for body.
+
+### 383. How do you implement database transaction in API?
+**Answer:** Begin transaction; run queries; commit or rollback on error. Use pool connection for transaction; release when done. Wrap in try/catch.
+
+### 384. What is the difference between require and dynamic import in CommonJS?
+**Answer:** In CommonJS require() is sync; dynamic import() returns Promise (available in Node). Use import() for conditional or async load. require for sync.
+
+### 385. How do you implement request correlation across services?
+**Answer:** Generate or propagate X-Request-Id; pass to downstream (header); log in each service. Use for distributed tracing. Jaeger or OpenTelemetry for full tracing.
+
+### 386. Explain Node.js stream backpressure.
+**Answer:** When writable is slow, readable pauses; when writable drains, readable resumes. pipe handles this. Use for memory control. Don't ignore backpressure.
+
+### 387. How do you implement rate limiting by IP and by user?
+**Answer:** Two limits: by IP (anonymous) and by user (authenticated). Apply stricter limit for IP; higher for user. Use for fair usage and abuse prevention.
+
+### 388. What is the purpose of --max-old-space-size?
+**Answer:** Sets V8 heap size (MB). Use when Node runs out of memory. Increase for large apps. Monitor before increasing; fix leaks if possible.
+
+### 389. How do you implement WebSocket with reconnection (client)?
+**Answer:** On close or error schedule reconnect with backoff; limit max retries. Use for resilient client. Server should accept reconnection; optional heartbeat.
+
+### 390. Explain the difference between app.listen and server.listen.
+**Answer:** app.listen() creates server and listens. server = http.createServer(app); server.listen() for same server (e.g. for WebSocket attach). Use server when you need server reference.
+
+### 391. How do you implement request validation error response format?
+**Answer:** Return 400 with { error: 'ValidationError', details: [{ path, message }] }. Use from Joi/Zod format. Consistent format for client handling.
+
+### 392. What is the difference between Buffer and Uint8Array?
+**Answer:** Buffer extends Uint8Array; Node-specific. Uint8Array is standard. Use Buffer in Node for compatibility; Uint8Array for portable code. Buffer has extra methods.
+
+### 393. How do you implement static file with immutable cache?
+**Answer:** Set Cache-Control: max-age=31536000, immutable for hashed filenames. Use for assets with content hash. No revalidation needed.
+
+### 394. Explain Node.js events module.
+**Answer:** EventEmitter class; on, emit, once, removeListener. Use for custom events. Node core uses it (stream, http). Don't overuse; prefer callbacks for one-off.
+
+### 395. How do you implement API versioning with content negotiation?
+**Answer:** Accept header or Accept-Version; server returns versioned response. Same resource, different representation. Use for versioning without URL change.
+
+### 396. What is the purpose of process.uptime()?
+**Answer:** process.uptime() returns seconds since process start. Use for monitoring and health. Don't use for business logic.
+
+### 397. How do you implement request body parsing for XML?
+**Answer:** Use xml2js or fast-xml-parser; parse req.body (raw) to JSON. Validate and use. Use for legacy APIs. Consider security (billion laughs, etc.).
+
+### 398. Explain the difference between res.set and res.header.
+**Answer:** res.set(key, value) and res.header(key, value) are same; set single header. res.set(object) sets multiple. Use for setting response headers.
+
+### 399. How do you implement graceful shutdown with message queue?
+**Answer:** On SIGTERM stop consuming; finish current message; close connection. Use for RabbitMQ, SQS. Don't accept new messages; ack/nack and drain.
+
+### 400. What is the difference between npm install and npm ci?
+**Answer:** npm install updates lockfile; npm ci installs from lockfile exactly (deletes node_modules first). Use npm ci in CI for reproducible builds. Faster and strict.
+
+### 401. How do you implement request context with AsyncLocalStorage?
+**Answer:** AsyncLocalStorage.run(context, () => next()); in middleware set context (req id, user). Access in downstream without passing. Use for logging and auth context. Node 12+.
+
+### 402. Explain Node.js stream Duplex.
+**Answer:** Duplex is both readable and writable (e.g. TCP socket). Implement _read and _write. Use for bidirectional streams. Transform is Duplex with transform logic.
+
+### 403. How do you implement health check with dependencies?
+**Answer:** /health checks app; /ready checks DB, Redis, etc. Return 503 if dependency down. Use for k8s readiness. Separate liveness (app up) and readiness (can serve).
+
+### 404. What is the purpose of process.chdir()?
+**Answer:** process.chdir(path) changes current working directory. Use sparingly; can affect relative paths. Prefer absolute paths or __dirname. Rare in server code.
+
+### 405. How do you implement response streaming (SSE)?
+**Answer:** Set headers (Content-Type: text/event-stream); res.write for each event; keep connection open. Use for server-sent events. Handle client disconnect.
+
+### 406. Explain the difference between res.location and res.redirect.
+**Answer:** res.location(url) sets Location header only; res.redirect(url) sets status and Location and optionally sends body. Use redirect for full redirect response.
+
+### 407. How do you implement request validation with TypeScript?
+**Answer:** Define interface; validate at runtime (Zod, io-ts) and infer type. Or use class-validator. Type-safe validation. Don't trust client; always validate.
+
+### 408. What is the difference between cluster and fork?
+**Answer:** cluster module forks workers and load balances. child_process.fork is single child. Use cluster for multi-core HTTP; fork for worker process. Cluster uses fork internally.
+
+### 409. How do you implement API rate limit response (Retry-After)?
+**Answer:** On 429 set Retry-After header (seconds or date). Client can wait and retry. Use for rate limit. Optional; client may use exponential backoff anyway.
+
+### 410. Explain Node.js stream PassThrough.
+**Answer:** PassThrough is Transform that passes data unchanged. Use for observing or teeing stream. Or for testing. Minimal transform.
+
+### 411. How do you implement request body parsing for multipart (file + fields)?
+**Answer:** Use multer or busboy; handle file stream and fields. Validate type and size. Store file or stream to storage. Use for upload forms.
+
+### 412. What is the purpose of process.emitWarning?
+**Answer:** process.emitWarning(msg) emits warning (deprecation, etc.). Use for deprecating API. Doesn't crash; can be listened with process.on('warning').
+
+### 413. How do you implement CORS for multiple origins?
+**Answer:** Check Origin against array of allowed origins; set Allow-Origin to request origin if allowed. Use for multiple frontends. Never use * with credentials.
+
+### 414. Explain the difference between middleware next() and next(err).
+**Answer:** next() passes to next middleware. next(err) skips to error handler. Use next(err) when error occurs; error handler (four args) catches. Don't call both.
+
+### 415. How do you implement request timeout with cleanup?
+**Answer:** Set req.setTimeout; on timeout call req.destroy() or res.end(408). Clean up in-flight work (abort fetch, close DB query). Use for preventing hung requests.
+
+### 416. What is the difference between stream and buffer for large file?
+**Answer:** Buffer loads all in memory; stream processes in chunks. Use stream for large file (upload, download). Buffer for small or when you need full content.
+
+### 417. How do you implement WebSocket with Express (same server)?
+**Answer:** const server = http.createServer(app); const wss = new WebSocket.Server({ server }); server.listen(port). Same port for HTTP and WebSocket. Handle upgrade in wss.
+
+### 418. Explain Node.js vm module (sandbox).
+**Answer:** vm.createContext, runInContext for sandboxed code. Not safe for untrusted code (escape possible). Use for simple sandbox; prefer isolate for real sandbox.
+
+### 419. How do you implement response caching with ETag?
+**Answer:** Compute ETag of response; set header; on If-None-Match return 304 if match. Use for conditional request. Reduces bandwidth.
+
+### 420. What is the purpose of process.kill?
+**Answer:** process.kill(pid, signal) sends signal to process. Use for graceful shutdown (SIGTERM) or force (SIGKILL). Same as kill command. Use from parent or orchestrator.
+
+### 421. How do you implement request validation with express-validator sanitization?
+**Answer:** Chain sanitize methods (trim, escape, toInt); run validation after. Use for preventing XSS and normalizing input. Validate and sanitize together.
+
+### 422. Explain the difference between res.append and res.set.
+**Answer:** res.append adds to existing header (e.g. multiple Set-Cookie). res.set replaces header. Use append for multiple values; set for single.
+
+### 423. How do you implement graceful shutdown with open WebSockets?
+**Answer:** On SIGTERM close WebSocket connections (send close frame); wait for drain; then server.close(). Track connections; close each. Use for clean shutdown.
+
+### 424. What is the difference between require and import for JSON?
+**Answer:** require('./file.json') loads JSON (Node only). import from JSON needs assert or experimental. Use require for JSON in Node; or readFile and parse.
+
+### 425. How do you implement API versioning with URL path?
+**Answer:** /v1/resource, /v2/resource. Router per version; or middleware that sets req.apiVersion. Use for breaking changes. Document deprecation.
+
+### 426. Explain Node.js stream Writable.
+**Answer:** Writable: _write(chunk, enc, cb). Use for writing to file, HTTP response. Implement _write; call cb when done. Handle backpressure (cb after write).
+
+### 427. How do you implement request logging with structured JSON?
+**Answer:** Log object with timestamp, level, msg, reqId, method, url, status, duration. Use pino or winston with format. Use for log aggregation (ELK, etc.).
+
+### 428. What is the purpose of process.config?
+**Answer:** process.config is build configuration (from node -p process.config). Rarely used. Use for debugging build options. Don't rely for app config.
+
+### 429. How do you implement file upload with size limit per file?
+**Answer:** Multer limits: fileSize; or check in middleware. Reject with 413 if over. Use for protecting disk and memory. Set per route or global.
+
+### 430. Explain the difference between res.cookie and res.clearCookie.
+**Answer:** res.cookie(name, value, options) sets cookie. res.clearCookie(name) clears by setting expired. Use for session and auth. Set httpOnly, secure in production.
+
+### 431. How do you implement request retry with circuit breaker?
+**Answer:** Retry with backoff; if failures exceed threshold open circuit (fail fast); after timeout try again. Use for resilience. Library: opossum or similar.
+
+### 432. What is the difference between cluster and worker_threads for CPU?
+**Answer:** cluster: multiple processes, no shared memory. worker_threads: threads, SharedArrayBuffer. Use cluster for multi-core HTTP; workers for CPU-heavy in process. Both offload CPU.
+
+### 433. How do you implement API documentation with ReDoc?
+**Answer:** Serve OpenAPI spec with ReDoc (HTML). Same spec as Swagger. Use for readable docs. ReDoc is single-page. Serve from /docs.
+
+### 434. Explain Node.js stream Readable.
+**Answer:** Readable: _read() to push data. Use for reading file, HTTP request. Implement _read; push chunks; push(null) when done. Handle backpressure.
+
+### 435. How do you implement request body parsing for raw text?
+**Answer:** express.text() or body-parser with type text. req.body is string. Use for webhooks or custom format. Set limit. Validate content-type.
+
+### 436. What is the purpose of process.execPath?
+**Answer:** process.execPath is path to Node binary. Use for spawning same Node version. Rare. Use for child_process or debugging.
+
+### 437. How do you implement response compression per content type?
+**Answer:** Compression middleware with filter: compress only text/html, application/json. Skip for images or already compressed. Use for bandwidth saving.
+
+### 438. Explain the difference between app.get and router.get.
+**Answer:** app.get is on app; router.get is on Router. Mount router with app.use('/path', router). Use router for modular routes. Same API.
+
+### 439. How do you implement request validation with custom validator?
+**Answer:** Middleware: check req.body/params; return 400 with message if invalid. Use schema library or custom. Centralize validation. Reuse validators.
+
+### 440. What is the difference between setImmediate and process.nextTick?
+**Answer:** nextTick runs before next phase; setImmediate in check phase. nextTick can starve I/O; use setImmediate for deferral. nextTick for same-turn deferral.
+
+### 441. How do you implement WebSocket with JWT auth?
+**Answer:** Pass token in query or first message; verify JWT; reject connection if invalid. Use same secret as HTTP. Parse and verify in connection handler.
+
+### 442. Explain Node.js stream pipeline error handling.
+**Answer:** pipeline(...streams, cb) passes errors to cb and destroys streams. Use instead of pipe for error handling. Prefer pipeline for multiple streams.
+
+### 443. How do you implement health check with cache?
+**Answer:** Cache health result for short time (e.g. 5s); return cached to avoid DB hit every time. Use for high-traffic health. Invalidate on failure.
+
+### 444. What is the purpose of process.release?
+**Answer:** process.release has name, sourceUrl, etc. Use for identifying Node version and distribution. Rare. Use for support or debugging.
+
+### 445. How do you implement request size limit with custom error?
+**Answer:** On limit exceeded return 413 with custom body { error: 'Payload too large', max: '1mb' }. Use body-parser limit and error handler. Document limit.
+
+### 446. Explain the difference between res.sendFile and res.download.
+**Answer:** res.sendFile sends file with Content-Disposition inline (display). res.download sets attachment (download). Use sendFile for view; download for save.
+
+### 447. How do you implement graceful shutdown with timers?
+**Answer:** On SIGTERM clearInterval/clearTimeout for all timers; then server.close(). Track timers or use AbortController. Use for clean shutdown.
+
+### 448. What is the difference between require and ESM import for side effects?
+**Answer:** require('module') runs module. import 'module' runs module (side effect). Both load once. Use for polyfills or init. Prefer explicit imports.
+
+### 449. How do you implement API key with scope (read/write)?
+**Answer:** Store scope per key; middleware checks scope for route (e.g. write required). Return 403 if insufficient. Use for fine-grained API keys.
+
+### 450. Explain Node.js stream highWaterMark.
+**Answer:** highWaterMark is buffer size; when exceeded readable pauses (backpressure). Set in stream options. Use for tuning memory vs throughput. Default is 16KB.
+
+### 451. How do you implement request validation with array (multiple items)?
+**Answer:** Schema for array (min/max length, item schema); validate req.body.items. Use Joi.array().items(schema) or Zod array. Use for bulk operations.
+
+### 452. What is the purpose of process.versions?
+**Answer:** process.versions has node, v8, etc. Use for debugging and support. Log in startup or health. Don't use for business logic.
+
+### 453. How do you implement CORS with credentials and custom header?
+**Answer:** Allow-Credentials: true; Allow-Origin specific; Allow-Headers for custom (e.g. X-Requested-With). Expose headers if client needs. Use for auth headers.
+
+### 454. Explain the difference between res.json and res.send with object.
+**Answer:** res.json sets Content-Type application/json and stringifies. res.send(object) does same for object. Use res.json for API; equivalent for objects.
+
+### 455. How do you implement database connection retry on startup?
+**Answer:** Retry connect with backoff (e.g. 5 retries); exit if failed. Use for Docker Compose (DB may start after app). Wait for DB before accepting requests.
+
+### 456. What is the difference between stream and callback for async?
+**Answer:** Stream: chunk-based, backpressure. Callback: one result. Use stream for large or continuous data; callback for single result. Both are async.
+
+### 457. How do you implement request timeout with AbortSignal?
+**Answer:** AbortController; setTimeout to abort; pass signal to fetch or axios. Cancel in-flight. Use for API calls. Clean up on timeout.
+
+### 458. Explain Node.js stream finished utility.
+**Answer:** require('stream').finished(stream, cb) calls cb when stream closes or errors. Use for knowing when stream is done. Replaces manual event handling.
+
+### 459. How do you implement response schema (OpenAPI)?
+**Answer:** Document response schema in OpenAPI; validate in dev with middleware. Use for API contract. Optional runtime validation. Use for client generation.
+
+### 460. What is the purpose of process.binding?
+**Answer:** process.binding is internal C++ bindings. Deprecated; don't use. Use public API only. For debugging only. May be removed.
+
+### 461. How do you implement file upload with type validation (magic bytes)?
+**Answer:** Check file buffer magic bytes (first bytes) for type; don't trust extension or Content-Type. Use for security. Reject invalid types.
+
+### 462. Explain the difference between res.redirect(301) and (302).
+**Answer:** 301 permanent; 302 temporary. Search engines treat differently. Use 301 for permanent move; 302 for temporary. 307/308 preserve method.
+
+### 463. How do you implement graceful shutdown with DB transactions?
+**Answer:** On SIGTERM don't start new transactions; wait for in-flight to commit/rollback; then close pool. Use for data integrity. Track active transactions.
+
+### 464. What is the difference between npm script and node script?
+**Answer:** npm run script runs from package.json scripts (with node_modules in PATH). node script.js runs directly. Use npm for project scripts; node for one-off.
+
+### 465. How do you implement request validation with conditional (if field A then B required)?
+**Answer:** Custom validator or Joi.when: if A present then B required. Use for conditional validation. Document rules. Use ref() for cross-field.
+
+### 466. Explain Node.js stream destroy.
+**Answer:** stream.destroy() closes stream and emits error. Use for cleanup and error. Destroys both readable and writable. Call on error or cancel.
+
+### 467. How do you implement API versioning with query param?
+**Answer:** ?version=1 or ?api_version=2; middleware reads and routes. Same as header but query. Use for optional version. Less common than path.
+
+### 468. What is the purpose of process.connected (child)?
+**Answer:** process.connected is false after disconnect(). Use in child process to know if channel to parent is open. Use for cleanup. Child process only.
+
+### 469. How do you implement WebSocket with room and broadcast?
+**Answer:** Map room -> Set of sockets; socket.join(room); broadcast to room: room.forEach(s => s.send(msg)). Use for chat or game. socket.io has rooms.
+
+### 470. Explain the difference between middleware and error handler.
+**Answer:** Middleware: (req, res, next). Error handler: (err, req, res, next). Error handler has four args. Put error handler last. Only next(err) goes to error handler.
+
+### 471. How do you implement request body parsing for JSON with reviver?
+**Answer:** express.json({ reviver: (key, value) => ... }); reviver transforms parsed value. Use for Date or custom type. Same as JSON.parse reviver.
+
+### 472. What is the difference between res.status and res.sendStatus?
+**Answer:** res.status(code) returns chain (for send, json). res.sendStatus(code) sets status and sends status message. Use status() when sending body; sendStatus for status only.
+
+### 473. How do you implement rate limiting with sliding window?
+**Answer:** Store timestamps per key; remove older than window; count remaining; reject if over limit. Use for smooth limit. Redis sorted set for distributed.
+
+### 474. Explain Node.js stream pipeline.
+**Answer:** stream.pipeline(...streams, cb) pipes streams and calls cb on finish or error. Destroys all on error. Use for multiple streams. Prefer over pipe.
+
+### 475. How do you implement health check with detailed status?
+**Answer:** Return 200 with { status, db, redis, version }. Use for debugging. Optional; keep /health simple for load balancer. Use /health/detail for verbose.
+
+### 476. What is the purpose of process.disconnect (child)?
+**Answer:** process.disconnect() closes IPC channel to parent. Use in child after fork when done. Parent gets 'disconnect' event. Child process only.
+
+### 477. How do you implement request validation with async (DB check)?
+**Answer:** Async validator: check DB (e.g. unique email); return 400 if invalid. Use for uniqueness or external validation. Express-validator supports async.
+
+### 478. Explain the difference between app.use and app.all.
+**Answer:** app.use runs for all methods at path. app.all runs for all methods at path but as route (one handler). Use use for middleware; all for catch-all route.
+
+### 479. How do you implement response caching with Vary?
+**Answer:** Set Vary header (e.g. Accept-Encoding) when response varies. Cache uses Vary for key. Use for correct caching when response depends on header.
+
+### 480. What is the difference between Buffer.copy and Buffer.slice?
+**Answer:** copy copies to target buffer. slice returns new buffer sharing memory (not copy). Use copy for clone; slice for view. Be careful with slice and write.
+
+### 481. How do you implement WebSocket with ping/pong timeout?
+**Answer:** Set interval to send ping; set timeout for pong; close if no pong. Use for detecting dead connections. Clear on pong. ws has ping/pong.
+
+### 482. Explain Node.js stream readableLength.
+**Answer:** readableLength is bytes in internal buffer. Use for monitoring backpressure. Don't use for business logic. Debugging and metrics.
+
+### 483. How do you implement request validation with file type (upload)?
+**Answer:** Check mimetype and/or magic bytes; whitelist allowed (e.g. image/*). Reject with 400 if invalid. Use for security. Don't trust client.
+
+### 484. What is the purpose of process.stdout.write?
+**Answer:** process.stdout.write(data) writes to stdout (no newline). Use for progress or log without newline. Set encoding for string. Use for CLI output.
+
+### 485. How do you implement CORS preflight cache (Max-Age)?
+**Answer:** Set Access-Control-Max-Age in OPTIONS response. Browser caches preflight. Reduces OPTIONS requests. Use for stable CORS. Max 86400 often.
+
+### 486. Explain the difference between res.end and res.send with buffer.
+**Answer:** res.end(buffer) sends buffer. res.send(buffer) sets Content-Type and sends. Use res.send for Express; res.end for raw. Both send and close.
+
+### 487. How do you implement graceful shutdown with active requests?
+**Answer:** Track in-flight count (increment on request, decrement on response); on SIGTERM stop accepting; wait for count 0 or timeout; then exit. Use for clean shutdown.
+
+### 488. What is the difference between cluster and PM2 cluster mode?
+**Answer:** Cluster is Node API. PM2 cluster mode uses cluster and adds restart, log, monitoring. Use PM2 in production. Same concept; PM2 is process manager.
+
+### 489. How do you implement API documentation with code generation?
+**Answer:** OpenAPI spec; generate client/server with openapi-generator or similar. Use for type-safe client. Keep spec in sync with code. Use for SDK.
+
+### 490. Explain Node.js stream writableFinished.
+**Answer:** writableFinished is true after end() and flush. Use for knowing when write is done. Check before closing. Use with finish event.
+
+### 491. How do you implement request body parsing for URL-encoded?
+**Answer:** express.urlencoded({ extended: true }) for application/x-www-form-urlencoded. req.body is object. Use for forms. Set limit. extended for nested objects.
+
+### 492. What is the purpose of process.stderr?
+**Answer:** process.stderr is writable stream for errors. Use for error output. console.error writes to stderr. Use for separating log and error. Redirect in deployment.
+
+### 493. How do you implement request validation with regex pattern?
+**Answer:** Schema with pattern (string format); Joi.pattern or Zod regex. Use for email, phone, etc. Document pattern. Don't rely for security (use allowlist).
+
+### 494. Explain the difference between res.setHeader and res.header.
+**Answer:** res.setHeader is Node API; res.header is Express (same as set). Use for setting single header. res.set can set multiple. Express wraps Node.
+
+### 495. How do you implement response streaming with backpressure?
+**Answer:** Use writable stream; respect backpressure (drain event). Don't write until drain if write returns false. Use for large response. Pipe handles this.
+
+### 496. What is the difference between require and import for default export?
+**Answer:** require: const x = require('m'); default is module.exports. import: import x from 'm'; default is export default. Same concept; different syntax.
+
+### 497. How do you implement WebSocket with reconnection (server)?
+**Answer:** Server accepts reconnection; client sends same session id; server restores state optional. Use for resilient client. Server should be stateless or restore.
+
+### 498. Explain Node.js stream Readable.from.
+**Answer:** Readable.from(iterable) creates readable from iterable. Use for converting array or generator to stream. Node 10+. Simple way to create readable.
+
+### 499. How do you implement request validation with nested object?
+**Answer:** Schema with nested schema (Joi.object({ user: Joi.object({ name: ... }) })). Validate full tree. Use for complex body. Document structure.
+
+### 500. What is the purpose of process.getgid/getuid (Unix)?
+**Answer:** process.getgid()/getuid() return group/user id. Use for dropping privileges. Unix only. Use for security (run as non-root). Rare in Node apps.
+
+### 501. How do you implement API versioning with header (Accept-Version)?
+**Answer:** Read Accept-Version or X-API-Version; route to version handler. Same URL, different implementation. Use for version negotiation. Document header.
+
+### 502. Explain the difference between stream and event for async.
+**Answer:** Stream: data in chunks; backpressure. Event: emit when done. Use stream for data flow; event for signals. Both use EventEmitter under the hood.
+
+### 503. How do you implement request timeout with middleware?
+**Answer:** Middleware: req.setTimeout(ms); req.on('timeout', () => ...). Or wrap next in Promise.race with timeout. Use for global or per-route timeout.
+
+### 504. What is the difference between res.json and res.type().json()?
+**Answer:** res.json(body) sets Content-Type and sends. res.type('json').send(body) same effect. Use res.json for API. type() for custom content type.
+
+### 505. How do you implement graceful shutdown with HTTP keep-alive?
+**Answer:** server.close() stops new connections; existing keep-alive may stay. Set timeout or track connections. Use for clean shutdown. Node closes idle after timeout.
+
+### 506. Explain Node.js stream Transform flush.
+**Answer:** _flush(cb) called when no more input; use for emitting final data. Call cb() when done. Use for compression (flush remaining). Optional in Transform.
+
+### 507. How do you implement request validation with enum?
+**Answer:** Schema with enum (allowed values); Joi.valid(...) or Zod.enum. Use for status, type, etc. Reject with 400 if invalid. Document allowed values.
+
+### 508. What is the purpose of process.send (child)?
+**Answer:** process.send(msg) sends message to parent (when channel open). Use for IPC in fork. Parent receives in child.on('message'). Child process only.
+
+### 509. How do you implement CORS with regex origin?
+**Answer:** Check Origin against regex (e.g. /^https://.*\.example\.com$/); set Allow-Origin if match. Use for dynamic subdomains. Validate carefully; avoid ReDoS.
+
+### 510. Explain the difference between app.route and router.route.
+**Answer:** app.route(path) returns chainable route for same path. router.route(path) same for router. Use for grouping GET/POST on same path. Reduces repetition.
+
+### 511. How do you implement response caching with Cache-Control?
+**Answer:** Set Cache-Control: max-age=3600, public. Use for static or cacheable API. private for user-specific. no-store for sensitive. Use for HTTP caching.
+
+### 512. What is the difference between Buffer.allocUnsafe and Buffer.alloc?
+**Answer:** allocUnsafe is faster but may contain old data; alloc zero-fills. Use alloc for security; allocUnsafe when you overwrite entirely. Don't use allocUnsafe for sensitive.
+
+### 513. How do you implement WebSocket with authentication middleware?
+**Answer:** On connection validate token (query or header); reject or close if invalid. Use same auth as HTTP. Optional: attach user to socket for handlers.
+
+### 514. Explain Node.js stream objectMode.
+**Answer:** objectMode: stream passes objects instead of buffers. Use for JSON stream or object stream. Set in options. No encoding; chunks are objects.
+
+### 515. How do you implement request validation with date format?
+**Answer:** Schema with date (ISO or format); Joi.date() or Zod with coerce. Validate and parse. Use for date fields. Document expected format.
+
+### 516. What is the purpose of process.throwDeprecation?
+**Answer:** process.throwDeprecation: when true, deprecation throws. Use for strict deprecation in dev. Default false. Use for finding deprecated usage.
+
+### 517. How do you implement API versioning with deprecation header?
+**Answer:** For deprecated version set Deprecation: true or Sunset: date header. Use for warning clients. Document migration path. RFC 8594.
+
+### 518. Explain the difference between res.send and res.json for number?
+**Answer:** res.send(42) sends "42" with default Content-Type. res.json(42) sends "42" with application/json. Use res.json for API. send may not set JSON type.
+
+### 519. How do you implement graceful shutdown with cleanup callback?
+**Answer:** On SIGTERM run cleanup (close DB, clear timers); then process.exit(0). Use async cleanup with timeout; exit(1) on timeout. Use for ordered shutdown.
+
+### 520. What is the difference between require and import for circular dependency?
+**Answer:** In CommonJS circular can work (partial exports). In ESM circular may fail; use dynamic import or restructure. Avoid circular when possible. ESM is stricter.
+
+### 521. How do you implement request validation with min/max length?
+**Answer:** Schema with min/max (string length, array length, number range); Joi.min/max or Zod. Use for validation. Document limits. Use for DoS prevention.
+
+### 522. Explain Node.js stream readableFlowing.
+**Answer:** readableFlowing is null, true, or false; indicates flow state. Use for debugging. Don't use for business logic. Internal state.
+
+### 523. How do you implement response compression with Brotli?
+**Answer:** Use compression with brotli option or compression middleware that supports Brotli. Use for better ratio than gzip. Check client Accept-Encoding.
+
+### 524. What is the purpose of process.traceDeprecation?
+**Answer:** process.traceDeprecation: when true, deprecation prints stack. Use for finding deprecated call sites. Default false. Use for debugging.
+
+### 525. How do you implement file upload with progress (server to client)?
+**Answer:** Send progress in response (chunked or SSE); or WebSocket. Client updates UI. Use for large upload feedback. Or use multipart with progress event.
+
+### 526. Explain the difference between middleware and route middleware.
+**Answer:** Middleware runs for path prefix; route middleware runs for specific route. Same function; different mount point. Use route middleware for route-specific (e.g. auth for one route).
+
+### 527. How do you implement request validation with custom message?
+**Answer:** Schema with .message() or custom validator that throws/returns message. Use for user-friendly errors. Document messages. Use for i18n optional.
+
+### 528. What is the difference between res.render and res.send?
+**Answer:** res.render(view, data) renders template and sends HTML. res.send sends raw. Use render for server-rendered HTML; send for API or static. Requires view engine.
+
+### 529. How do you implement graceful shutdown with queue drain?
+**Answer:** On SIGTERM stop enqueueing; wait for queue to drain (all messages processed); then close connections. Use for job queues. Don't accept new jobs.
+
+### 530. Explain Node.js stream pipeline with async transform.
+**Answer:** Use Transform with async _transform (async function); call cb after await. Use for async processing in pipeline. Handle errors in transform.
+
+### 531. How do you implement API versioning with default version?
+**Answer:** If no version in request use default (e.g. v1). Use header or query default. Document default. Use for backward compatibility.
+
+### 532. What is the purpose of process.umask (Unix)?
+**Answer:** process.umask(mask) sets file mode mask. Use for default file permissions. Unix only. Rare in Node. Use for creating files with restricted mode.
+
+### 533. How do you implement WebSocket with binary message?
+**Answer:** Send Buffer or ArrayBuffer; set binaryType if needed. Use for binary protocol. Parse on receive. Same API; binary instead of string.
+
+### 534. Explain the difference between res.vary and res.set('Vary').
+**Answer:** res.vary(field) appends to Vary header. res.set('Vary', 'Accept') sets. Use vary() for adding; set for replace. Use for cache key.
+
+### 535. How do you implement request validation with optional field?
+**Answer:** Schema with optional() or default; Joi.optional() or Zod.optional(). Use for optional body fields. Document optional vs required. Use for PATCH.
+
+### 536. What is the difference between stream and callback for file read?
+**Answer:** readFile: callback with full content. createReadStream: stream chunks. Use stream for large file; callback for small. Both are async.
+
+### 537. How do you implement response timeout with cleanup?
+**Answer:** res.setTimeout(ms); on timeout destroy res or end with 504. Clean up in-flight (abort DB). Use for slow client protection. Handle timeout event.
+
+### 538. Explain Node.js stream readableDidRead.
+**Answer:** readableDidRead is internal. Use for debugging read state. Don't use for app code. Node internal. Prefer readableLength or events.
+
+### 539. How do you implement CORS with credentials and wildcard origin (no)?
+**Answer:** Cannot use * with credentials. Must set specific Allow-Origin when credentials true. Use whitelist. Security requirement.
+
+### 540. What is the purpose of process.debugPort?
+**Answer:** process.debugPort is port for debugger when --inspect. Use for connecting DevTools. Rare. Use for debugging. Set by Node.
+
+### 541. How do you implement request validation with format (email, URL)?
+**Answer:** Schema with format (email, uri); Joi.email(), Zod.url(). Use for common formats. Validate and normalize. Don't rely for security alone.
+
+### 542. Explain the difference between app.param and router.param.
+**Answer:** app.param(name, fn) runs when route has :param; fn loads resource. router.param same for router. Use for loading user by id etc. Runs before route.
+
+### 543. How do you implement graceful shutdown with signal handler?
+**Answer:** process.on('SIGTERM', async () => { await shutdown(); process.exit(0); }). Use once; don't double-handle. Set flag to prevent new work. Use for clean exit.
+
+### 544. What is the difference between require and import for dynamic path?
+**Answer:** require(path) can use variable (with care). import() takes string; can be dynamic. require is sync; import() async. Use import() for dynamic in ESM.
+
+### 545. How do you implement API rate limit with Redis sliding window?
+**Answer:** Redis sorted set: key per user; score = timestamp; add current; remove older than window; count; compare to limit. Use for distributed sliding window.
+
+### 546. Explain Node.js stream writableCorked.
+**Answer:** writableCorked is count of cork. Use for debugging. cork()/uncork() for batching writes. Rare. Use for performance when batching.
+
+### 547. How do you implement request body parsing for GraphQL?
+**Answer:** Parse application/graphql or application/json; body is query and variables. Use graphql-http or express-graphql. Validate and execute. Use for GraphQL endpoint.
+
+### 548. What is the purpose of process.report?
+**Answer:** process.report has report on exception, etc. Use for diagnostic report. Node 11+. Use for debugging crashes. Set report directory.
+
+### 549. How do you implement WebSocket with heartbeat timeout?
+**Answer:** Set interval ping; set timeout for pong; clear timeout on pong; close if timeout. Use for dead connection detection. Same as ping/pong with timeout.
+
+### 550. Explain the difference between res.format and res.type.
+**Answer:** res.format({ 'application/json': () => res.json(...), 'text/html': () => res.render(...) }) content negotiation. res.type sets Content-Type. Use format for multiple representations.
+
+### 551. How do you implement request validation with allowUnknown?
+**Answer:** Joi.allowUnknown(true) allows extra keys; stripUnknown to remove. Use for permissive body (ignore extra). Document allowed. Use for forward compatibility.
+
+### 552. What is the difference between stream and promise for async?
+**Answer:** Stream: chunk-based, backpressure. Promise: single value. Use stream for large or continuous; promise for one result. Both are async patterns.
+
+### 553. How do you implement response caching with stale-while-revalidate?
+**Answer:** Cache-Control: max-age=60, stale-while-revalidate=300. Serve stale; revalidate in background. Use for better UX. Support varies.
+
+### 554. Explain Node.js stream finished (promise).
+**Answer:** require('stream/promises').finished(stream) returns promise when stream done or error. Use for async/await with stream. Node 10+. Cleaner than callback.
+
+### 555. How do you implement graceful shutdown with active WebSockets?
+**Answer:** On SIGTERM send close frame to each WebSocket; wait for close or timeout; then server.close(). Track connections. Use for clean shutdown.
+
+### 556. What is the purpose of process.noDeprecation?
+**Answer:** process.noDeprecation: when true, no deprecation warnings. Use for silencing. Default false. Use for legacy code temporarily. Prefer fixing.
+
+### 557. How do you implement API versioning with media type?
+**Answer:** Accept: application/vnd.api+v1+json; parse version from Accept. Use for content negotiation. Less common. Document media type.
+
+### 558. Explain the difference between res.redirect and res.redirect(301, url).
+**Answer:** res.redirect(301, url) permanent redirect. res.redirect(url) defaults 302. Use 301 for permanent; 302 for temporary. Same as status then redirect.
+
+### 559. How do you implement request validation with transform?
+**Answer:** Schema with transform (coerce, sanitize); Joi custom or Zod transform. Validate and transform in one step. Use for trimming, lowercasing, etc.
+
+### 560. What is the difference between cluster worker and main process?
+**Answer:** Main: manages workers, load balances. Worker: handles requests. cluster.isMaster (or isPrimary) to detect. Workers share no memory. Use for scaling.
+
+### 561. How do you implement WebSocket with compression?
+**Answer:** Enable permessage-deflate extension; negotiate in handshake. Use for large messages. ws supports it. Reduces bandwidth. Optional.
+
+### 562. Explain Node.js stream pipeline with streams (array).
+**Answer:** pipeline(...streams, cb) or pipeline(stream1, stream2, ..., cb). Same as spread. Use for piping multiple. Handles errors. Use for stream chain.
+
+### 563. How do you implement health check with timeout?
+**Answer:** Run health checks with timeout; if DB check hangs return 503. Use Promise.race with timeout. Use for avoiding stuck health. Set short timeout.
+
+### 564. What is the purpose of process.ppid?
+**Answer:** process.ppid is parent process id. Use for detecting parent. Rare. Use for process tree or debugging. Unix/Windows.
+
+### 565. How do you implement request validation with oneOf (discriminator)?
+**Answer:** Schema with oneOf (variant A or B); Joi.alternatives or Zod.discriminatedUnion. Use for polymorphic body. Document variants. Use for webhook with event types.
+
+### 566. Explain the difference between res.links and res.set('Link').
+**Answer:** res.links(links) sets Link header (multiple). res.set('Link', value) sets single. Use links() for pagination (next, prev). Use for HTTP Link header.
+
+### 567. How do you implement graceful shutdown with child processes?
+**Answer:** On SIGTERM kill children (SIGTERM first); wait for exit or timeout; then exit. Use for cleanup. Track child PIDs. Use Promise.all for wait.
+
+### 568. What is the difference between npm run and npx run?
+**Answer:** npm run runs script from package.json. npx runs package (local or remote). Use npm run for defined scripts; npx for one-off or binary. Different purposes.
+
+### 569. How do you implement API documentation with Swagger UI?
+**Answer:** swagger-ui-express serves UI from OpenAPI spec. Interactive docs. Use for exploration. Same spec for client gen. Serve at /api-docs or similar.
+
+### 570. Explain Node.js stream Readable.from with async iterator.
+**Answer:** Readable.from(asyncIterator) creates readable from async iterable. Use for streaming async source. Node 12+. Use for fetch body or async generator.
+
+### 571. How do you implement request validation with ref (cross-field)?
+**Answer:** Joi.ref('field') or Zod for cross-field (e.g. passwordConfirm must equal password). Use for confirmation fields. Document. Use for validation.
+
+### 572. What is the purpose of process.emit?
+**Answer:** process.emit is internal. Use process.emitWarning for warnings. Don't use emit directly. Use for event emission on process. Same as EventEmitter.
+
+### 573. How do you implement CORS with methods and headers?
+**Answer:** Set Access-Control-Allow-Methods (GET, POST, ...) and Allow-Headers (Content-Type, Authorization). Use for preflight. Reflect or whitelist. Use for API.
+
+### 574. Explain the difference between res.jsonp and res.json with callback.
+**Answer:** res.jsonp(body) wraps in callback(query param). res.json doesn't. Use jsonp for legacy; prefer CORS. Same for JSON; jsonp adds wrapper.
+
+### 575. How do you implement response streaming with NDJSON?
+**Answer:** Set Content-Type application/x-ndjson; write line per JSON object. Use for streaming JSON. Client parses line by line. Use for large list.
+
+### 576. What is the difference between require and import for default vs named?
+**Answer:** require: default is module.exports; named is .prop. import: default is import x; named is import { x }. Same concept; syntax differs. ESM has static analysis.
+
+### 577. How do you implement WebSocket with message queue (pub/sub)?
+**Answer:** Subscribe to Redis/RabbitMQ in server; on message broadcast to WebSocket clients. Use for multi-instance. Each instance subscribes; publish on event. Use for scale.
+
+### 578. Explain Node.js stream pipeline with Duplex.
+**Answer:** pipeline(readable, transform, writable) or include Duplex in chain. Duplex is both read and write. Use for bidirectional in pipeline. Same as Transform for one-way.
+
+### 579. How do you implement request validation with custom error code?
+**Answer:** Schema with .error() or custom that sets code; return 400 with { code: 'VALIDATION_ERROR', details }. Use for client handling. Document codes. Use for i18n.
+
+### 580. What is the purpose of process.channel (child)?
+**Answer:** process.channel is IPC channel to parent (when forked). Use for send/receive. Child process only. Use for parent-child communication. Undefined in main.
+
+### 581. How do you implement API versioning with feature flag?
+**Answer:** Feature flag per version; route to old or new handler. Use for gradual rollout. Same code path with flag. Use for canary. Document flag.
+
+### 582. Explain the difference between res.send and res.write + res.end.
+**Answer:** res.send does write + end and sets headers. res.write + res.end for streaming. Use send for single response; write/end for chunked. Send handles type.
+
+### 583. How do you implement graceful shutdown with timeout?
+**Answer:** On SIGTERM start shutdown; set timeout (e.g. 30s); if not done, exit(1). Use for avoiding hung shutdown. Force exit after timeout. Use for orchestration.
+
+### 584. What is the difference between stream and async iterator?
+**Answer:** Stream: Node API, backpressure. Async iterator: for await. Readable is async iterable in Node. Use for await for readable. Same data; different consumption.
+
+### 585. How do you implement request validation with file size (upload)?
+**Answer:** Check file.size in multer or middleware; reject with 413 if over limit. Use for upload limit. Set per file and total. Use for DoS prevention.
+
+### 586. Explain Node.js stream writableLength.
+**Answer:** writableLength is bytes in write buffer. Use for monitoring. Don't use for logic. Debugging. Use with drain for backpressure.
+
+### 587. How do you implement response caching with private?
+**Answer:** Cache-Control: private for user-specific. Use for authenticated response. Not cached by CDN. Use for user data. Public for shared.
+
+### 588. What is the purpose of process.allowedNodeEnvironmentFlags?
+**Answer:** process.allowedNodeEnvironmentFlags is Set of allowed NODE_OPTIONS flags. Use for checking. Node 10+. Rare. Use for security or validation.
+

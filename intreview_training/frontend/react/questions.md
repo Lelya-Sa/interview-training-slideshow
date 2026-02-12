@@ -1131,3 +1131,474 @@ function useWindowSize() {
 ### 275. How do you implement a custom hook for safe area (env(safe-area-inset))?
 **Answer:** useState for insets; useEffect that reads getComputedStyle or env() for safe-area-inset-*; set state. Or use CSS env() in styles. Use for notches and home indicator. Mainly mobile.
 
+### 276. What is the difference between controlled and uncontrolled components?
+**Answer:** Controlled: value and onChange from state; single source of truth. Uncontrolled: ref to DOM; read value when needed. Use controlled for validation and sync; uncontrolled for simple forms.
+
+### 277. Explain React.memo and when to use it.
+**Answer:** memo(Component) skips re-render if props are shallow-equal. Use for expensive children or when parent re-renders often. Don't overuse; measure first. Combine with useCallback/useMemo for props.
+
+### 278. How do you handle forms with multiple inputs?
+**Answer:** Single state object (e.g. { name, email }); one onChange that updates by name using event.target.name. Or useReducer for complex validation. Or form library (React Hook Form, Formik).
+
+### 279. What is the purpose of key prop in lists?
+**Answer:** key helps React identify which items changed/added/removed for efficient reconciliation. Use stable unique id (not index when list can reorder). Wrong key can cause bugs and wrong state.
+
+### 280. Explain useCallback and when to use it.
+**Answer:** useCallback(fn, deps) returns memoized function. Use when passing callback to memoized child to avoid unnecessary re-renders. Don't overuse; only when child is memo or callback is in deps.
+
+### 281. How do you implement error boundaries in function components?
+**Answer:** Error boundaries must be class components (getDerivedStateFromError, componentDidCatch). Wrap tree in class ErrorBoundary; use it from function components. React may add hook in future.
+
+### 282. What is the difference between useEffect and useLayoutEffect?
+**Answer:** useEffect runs after paint (async). useLayoutEffect runs after DOM update, before paint (sync). Use useLayoutEffect for measurements or DOM mutations that must be visible immediately.
+
+### 283. Explain useMemo and when to use it.
+**Answer:** useMemo(() => value, deps) returns memoized value. Use for expensive computation that depends on deps. Don't overuse; only when computation is costly. Not for every object/array.
+
+### 284. How do you pass callback to child without causing re-renders?
+**Answer:** useCallback for the callback; React.memo on child. Or pass dispatch if using useReducer (stable). Or context with stable value. Avoid inline functions as props when child is memoized.
+
+### 285. What is React Strict Mode and what does it do?
+**Answer:** StrictMode double-invokes render and effects in dev to surface side effects. Helps find impure code. No effect in production. Wrap app or subtree with <React.StrictMode>.
+
+### 286. Explain the difference between createElement and JSX.
+**Answer:** JSX compiles to React.createElement(type, props, ...children). Same result. JSX is syntactic sugar. Babel/TypeScript transform JSX to createElement calls.
+
+### 287. How do you implement infinite scroll with Intersection Observer?
+**Answer:** Ref on sentinel element; IntersectionObserver in useEffect; when visible load more (e.g. fetch next page); append to list. Cleanup observer on unmount. Use for feeds and long lists.
+
+### 288. What is the purpose of React.Fragment?
+**Answer:** Fragment groups children without adding DOM node. Use <>...</> or <Fragment>. Needed when returning multiple elements from component. Keyed Fragment <Fragment key={id}> when in list.
+
+### 289. Explain useRef for storing mutable value (not DOM).
+**Answer:** useRef(initial) returns { current }. Updating current does not trigger re-render. Use for previous value, timer id, or any mutable value that should not cause re-render.
+
+### 290. How do you avoid prop drilling?
+**Answer:** Context API (createContext, Provider, useContext); or state library (Redux, Zustand). Use Context for theme, auth, locale; avoid putting frequently changing data in Context (causes wide re-renders).
+
+### 291. What is the difference between useState and useReducer?
+**Answer:** useState for simple state; useReducer for complex state or when next state depends on previous. useReducer gives predictable updates and easier testing. Same as Redux pattern without middleware.
+
+### 292. Explain React 18 automatic batching.
+**Answer:** React 18 batches state updates in event handlers, promises, setTimeout, etc. Previously only React event handlers were batched. Fewer re-renders; more predictable. Use flushSync to opt out.
+
+### 293. How do you implement optimistic UI updates?
+**Answer:** Update UI immediately (setState); then send request; on failure revert state and show error. Use for likes, follow, etc. Improve perceived performance. Handle rollback and retry.
+
+### 294. What is the purpose of defaultProps?
+**Answer:** defaultProps set default values for props (class or function). For function components prefer default parameters: function Comp({ name = 'Guest' }). defaultProps still useful for legacy or type systems.
+
+### 295. Explain useImperativeHandle and forwardRef.
+**Answer:** forwardRef forwards ref to child. useImperativeHandle(ref, () => ({ focus, scroll }), deps) exposes custom methods to parent instead of DOM node. Use for encapsulating DOM or imperative API.
+
+### 296. How do you test React components?
+**Answer:** React Testing Library (render, screen, userEvent); test behavior not implementation. Jest for runner. Mock only when necessary (e.g. fetch). Prefer testing like user; avoid testing state directly.
+
+### 297. What is the difference between client and server components (React Server Components)?
+**Answer:** Server components run on server; no JS sent for them; can access DB directly. Client components run on client; interactive. Use server for static/data; client for hooks, events, browser APIs.
+
+### 298. Explain React 18 useTransition.
+**Answer:** useTransition() returns [isPending, startTransition]. Wrap non-urgent state updates in startTransition; React keeps UI responsive. Use for heavy updates (e.g. filtering list) without blocking input.
+
+### 299. How do you implement virtual list (windowing)?
+**Answer:** Render only visible items; track scroll position; compute which items to show; use fixed height container and placeholder for total height. Libraries: react-window, react-virtualized. Use for long lists.
+
+### 300. What is the purpose of children prop?
+**Answer:** children is the content between opening and closing tags. Passed as props.children. Use for composition (layout, wrapper). Can be single element, array, or nothing. React.Children utilities for iteration.
+
+### 301. Explain useDeferredValue.
+**Answer:** useDeferredValue(value) returns deferred version that may lag behind. Use for deferring non-urgent UI (e.g. search results) so urgent UI (input) stays responsive. React 18.
+
+### 302. How do you handle file upload in React?
+**Answer:** input type="file"; ref or onChange; FormData to append file; fetch with body FormData. Show progress via xhr.upload.onprogress. Validate type/size on client; validate on server.
+
+### 303. What is the difference between createRoot and render (React 18)?
+**Answer:** createRoot is new API; enables concurrent features (Suspense, transitions). Legacy render still works but no concurrent features. Use createRoot for new apps.
+
+### 304. Explain React 18 Suspense for data fetching.
+**Answer:** Suspense lets component "suspend" while loading; parent shows fallback. Still evolving for data; use with framework (e.g. Relay) or library. For now use loading state or React Query with Suspense.
+
+### 305. How do you implement dark mode with Context?
+**Answer:** ThemeContext (theme, setTheme); Provider wraps app; toggle in navbar; CSS variables or class on root (e.g. dark). Persist in localStorage. Use useContext(ThemeContext) in components.
+
+### 306. What is the purpose of propTypes?
+**Answer:** propTypes validate props at runtime (development). Use for documentation and catching bugs. TypeScript replaces for type checking. Still useful in plain JS projects.
+
+### 307. Explain useSyncExternalStore (React 18).
+**Answer:** useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot) subscribes to external store (e.g. Redux, global). Use for integrating external stores with concurrent rendering. Replaces useSubscription pattern.
+
+### 308. How do you implement drag and drop?
+**Answer:** HTML5 drag API (draggable, onDragStart, onDrop) or library (react-dnd, dnd-kit). Handle drag state and drop target. Use for reorder, upload, kanban. Accessibility: keyboard and screen reader.
+
+### 309. What is the difference between element and component?
+**Answer:** Element is plain object describing what to render (type, props). Component is function or class that returns elements. "Component" often used for both; element is the result of calling component.
+
+### 310. Explain React 18 useId.
+**Answer:** useId() returns unique id stable across server and client. Use for aria-describedby, htmlFor, or any unique id. Avoids hydration mismatch. Don't use for list keys (use item id).
+
+### 311. How do you implement accessibility (a11y) in React?
+**Answer:** Semantic HTML; aria-* attributes; keyboard nav (onKeyDown); focus management (useRef, useEffect); skip links; label and id. Use eslint-plugin-jsx-a11y. Test with screen reader and keyboard.
+
+### 312. What is the purpose of React.lazy and Suspense?
+**Answer:** React.lazy(() => import('./Comp')) loads component on demand. Wrap in Suspense with fallback. Use for code splitting and smaller initial bundle. Fallback shows while loading.
+
+### 313. Explain useInsertionEffect (React 18).
+**Answer:** useInsertionEffect runs before DOM mutations; for CSS-in-JS libraries to inject styles. Rare; use only in libraries. Prefer useEffect or useLayoutEffect for app code.
+
+### 314. How do you handle deep linking (URL and state)?
+**Answer:** Router (React Router); URL params and search params; sync state to URL (e.g. filters in query). useSearchParams, useParams. Use for shareable links and back/forward.
+
+### 315. What is the difference between mount and update?
+**Answer:** Mount: component added to tree; useEffect runs (empty deps). Update: re-render due to state/props; useEffect runs when deps change. Unmount: removed; cleanup runs.
+
+### 316. Explain React 18 startTransition for non-urgent updates.
+**Answer:** startTransition(scope) marks updates inside scope as non-urgent. React can interrupt and show pending state. Use for filtering, tab switch. Keeps input responsive.
+
+### 317. How do you implement undo/redo?
+**Answer:** Store history array of states; current index; on action push new state (or replace future); undo = index--; redo = index++. Use useReducer or external store. Consider limit on history size.
+
+### 318. What is the purpose of React DevTools?
+**Answer:** Inspect component tree, props, state; profile re-renders and performance; trace updates. Use for debugging and optimization. Profiler shows why component re-rendered.
+
+### 319. Explain compound components pattern.
+**Answer:** Parent and children work together (e.g. Tabs, TabList, Tab, TabPanel). Context in parent; children use context. Flexible composition. Example: Select and Option.
+
+### 320. How do you implement print-friendly view?
+**Answer:** CSS @media print; hide nav/sidebar; show only content. Or route to /print with minimal layout. window.print(). Use print stylesheet or class toggles.
+
+### 321. What is the difference between ref and state?
+**Answer:** Changing ref (current) does not re-render; changing state does. Use ref for DOM, timer, previous value; use state for UI-driving data. Both persist across re-renders.
+
+### 322. Explain render props pattern.
+**Answer:** Component receives function as prop (e.g. render or children as function); calls it with data. Use for sharing logic (mouse position, data fetch). Replaced often by custom hooks.
+
+### 323. How do you implement feature flags in React?
+**Answer:** Context or config with flags; conditional render or logic. Load flags from API or env. Use for A/B test, gradual rollout. Consider useSyncExternalStore if flags change at runtime.
+
+### 324. What is the purpose of React.cloneElement?
+**Answer:** cloneElement(element, props, ...children) clones element and merges props. Use for adding props to children (e.g. inject onClick). Prefer composition over cloneElement when possible.
+
+### 325. Explain headless component pattern.
+**Answer:** Component handles logic only; no UI (or minimal). Consumer provides UI. Use for reuse (e.g. useCombobox logic, custom UI). Downshift, React Table are examples.
+
+### 326. How do you handle multi-language (i18n)?
+**Answer:** Library (react-i18next, react-intl); translation files per locale; switch language in context or store. Use key-based strings; handle plural and interpolation. Lazy load translations.
+
+### 327. What is the difference between createContext and Redux?
+**Answer:** Context: built-in, good for theme/auth, can cause re-renders when value changes. Redux: global store, middleware, devtools, predictable updates. Use Context for few values; Redux for complex app state.
+
+### 328. Explain React 18 concurrent features summary.
+**Answer:** useTransition, useDeferredValue, Suspense improvements, automatic batching. Goal: keep UI responsive during heavy updates. Opt-in per update (startTransition) or per value (useDeferredValue).
+
+### 329. How do you implement skeleton loading?
+**Answer:** Show placeholder (skeleton) with same layout as content; replace with real content when loaded. Use CSS animation (shimmer). Improves perceived performance. Match skeleton to content shape.
+
+### 330. What is the purpose of React.Children utilities?
+**Answer:** React.Children.map, count, forEach, only to work with children (opaque). Use when children can be single or array. Rare; prefer explicit props or composition.
+
+### 331. Explain slot pattern (multiple named children).
+**Answer:** Pass multiple "slots" as props (e.g. header, footer, children). Component composes them. Flexible layout. Like Vue slots or named children.
+
+### 332. How do you implement real-time updates (WebSocket)?
+**Answer:** useEffect: new WebSocket(url); onmessage setState; cleanup close. Or use library (socket.io-client). Handle reconnect and backoff. Consider stale-while-revalidate for UI.
+
+### 333. What is the difference between hydration and render?
+**Answer:** Hydration: React attaches to existing DOM from server; event listeners, interactivity. Render: React creates DOM. Use hydrateRoot (React 18) for SSR. Mismatch causes hydration error.
+
+### 334. Explain provider pattern and nesting.
+**Answer:** Multiple providers wrap app (theme, auth, router). Inner provider overrides outer for same context. Order matters. Use for layered configuration.
+
+### 335. How do you implement analytics tracking?
+**Answer:** Call analytics (e.g. gtag, segment) in useEffect or event handler; track page view on route change; track events on click/submit. Respect privacy; consider consent. Use wrapper hook.
+
+### 336. What is the purpose of key when conditionally rendering?
+**Answer:** Key on component when switching type (e.g. Login vs Signup) resets state. Use when you want fresh state on switch. Same key keeps state; different key resets.
+
+### 337. Explain controlled vs uncontrolled for custom components.
+**Answer:** Controlled: value + onChange from parent. Uncontrolled: defaultValue + ref. Support both for flexibility (like native input). Document which props are required for each mode.
+
+### 338. How do you implement focus trap (modal)?
+**Answer:** useRef for modal container; useEffect: query focusable elements; on Tab keep focus inside; on Esc close. Use focus-trap-react or similar. Restore focus on close (focus management).
+
+### 339. What is the difference between React and Vue?
+**Answer:** React: library, JSX, unidirectional, hooks. Vue: framework, templates, two-way binding option, composition API. Both component-based and reactive. Choose by team and ecosystem.
+
+### 340. Explain React 18 useTransition and isPending.
+**Answer:** startTransition(update); isPending true while transition is pending. Show spinner or disabled state. Use for non-urgent updates; keep UI responsive.
+
+### 341. How do you implement route guards (auth)?
+**Answer:** Wrapper component or route config; check auth (context or API); redirect to login if not authenticated. Use ProtectedRoute that renders children or Navigate. Load user before deciding.
+
+### 342. What is the purpose of displayName?
+**Answer:** displayName sets component name for DevTools and stack traces. Useful for HOC or anonymous components. Set MyComp.displayName = 'MyComp'.
+
+### 343. Explain state colocation.
+**Answer:** Keep state as close as possible to where it's used. Avoid lifting state too high. Improves performance and clarity. Lift only when multiple components need same state.
+
+### 344. How do you implement Web Vitals reporting?
+**Answer:** web-vitals library; report in useEffect or onCLS/onLCP/onFID callbacks; send to analytics. Use for monitoring real user performance.
+
+### 345. What is the difference between useMemo and useCallback?
+**Answer:** useMemo returns memoized value; useCallback returns memoized function. useCallback(fn, deps) is useMemo(() => fn, deps). Use useMemo for computed value; useCallback for stable function reference.
+
+### 346. Explain React 18 root options (onRecoverableError).
+**Answer:** createRoot(container, { onRecoverableError }) for logging hydration or render errors. Use for monitoring. Optional.
+
+### 347. How do you implement responsive layout (breakpoints)?
+**Answer:** CSS media queries; or hook useMediaQuery(breakpoint); conditional render or class. Use same breakpoints as design. Consider container queries for component-level responsive.
+
+### 348. What is the purpose of React.PureComponent?
+**Answer:** PureComponent does shallow compare of props and state; skips re-render if equal. Like React.memo for classes. Prefer function components with memo.
+
+### 349. Explain render phase vs commit phase.
+**Answer:** Render phase: React calls components, computes tree (can be async in concurrent). Commit phase: apply to DOM, run useLayoutEffect, then useEffect. Don't mutate in render; side effects in commit.
+
+### 350. How do you implement pull-to-refresh?
+**Answer:** Touch events or library; track pull distance; when over threshold trigger refresh (fetch); show loading. Mainly mobile. Use native overscroll or custom gesture.
+
+### 351. What is the difference between SSR and CSR?
+**Answer:** SSR: render on server; send HTML; faster first paint, SEO. CSR: render in browser; single fetch then JS. Use SSR for content pages; CSR for apps. Next.js supports both.
+
+### 352. Explain React 18 useDeferredValue and stale UI.
+**Answer:** useDeferredValue(value) returns value that may lag; show stale content until new value is ready. Use for search: input updates immediately, results defer. Reduces jank.
+
+### 353. How do you implement code splitting by route?
+**Answer:** React.lazy per route component; Suspense at route level. Load route chunk when user navigates. Use with React Router loadable or similar. Reduces initial bundle.
+
+### 354. What is the purpose of getDerivedStateFromError?
+**Answer:** Static lifecycle in Error Boundary; receives error; return state update (e.g. { hasError: true }). Renders fallback. Use with componentDidCatch for logging.
+
+### 355. Explain portal and where it renders.
+**Answer:** createPortal(children, container) renders children into different DOM node (e.g. document.body). Use for modals, tooltips. Events still bubble to React tree. Styling and a11y are your responsibility.
+
+### 356. How do you implement sticky header?
+**Answer:** position: sticky; top: 0; z-index. Or track scroll; add class when scrolled. Use for nav that stays visible. Watch for overflow and stacking context.
+
+### 357. What is the difference between useRef and useState for form?
+**Answer:** useRef: read value on submit; no re-render on type. useState: controlled; re-render each keystroke. Use ref for simple form; state for validation and controlled UX.
+
+### 358. Explain React 18 Suspense and streaming SSR.
+**Answer:** Server can stream HTML; Suspense boundary shows fallback first, then content when ready. Use for faster TTFB. Requires React 18 and server that supports streaming.
+
+### 359. How do you implement keyboard shortcuts?
+**Answer:** useEffect: add keydown listener; check key and modifier; dispatch action. Cleanup on unmount. Use library (react-hotkeys) for declarative. Prevent default when handling.
+
+### 360. What is the purpose of componentDidCatch?
+**Answer:** Lifecycle in Error Boundary; receives error and info; log or report. Use for error reporting. Does not prevent render of fallback (getDerivedStateFromError does that).
+
+### 361. Explain useReducer with context (global state).
+**Answer:** Context holds state and dispatch; Provider value={{ state, dispatch }}; useReducer in Provider. Consumers use useContext. Simple Redux-like pattern without middleware.
+
+### 362. How do you implement copy to clipboard?
+**Answer:** navigator.clipboard.writeText(text); handle async and errors. Fallback: execCommand('copy') with temporary input. Use for share or copy link. Request permission if needed.
+
+### 363. What is the difference between React and Angular?
+**Answer:** React: library, JSX, flexible. Angular: framework, TypeScript, RxJS, full stack. React has larger ecosystem; Angular has more built-in. Choose by team and scale.
+
+### 364. Explain React 18 useId for accessibility.
+**Answer:** useId() gives stable id for aria-describedby, htmlFor. Prevents duplicate id when component used multiple times. Use in form labels and error messages.
+
+### 365. How do you implement tooltip?
+**Answer:** State for visible; on mouse enter/leave set visible; position with getBoundingClientRect or Popper. Use title for simple; custom for rich. Consider floating-ui for placement. A11y: describe content.
+
+### 366. What is the purpose of getSnapshotBeforeUpdate?
+**Answer:** Lifecycle called before DOM update; return value passed to componentDidUpdate. Use for reading scroll position before update (e.g. preserve scroll in list). Rare.
+
+### 367. Explain custom hook for previous value.
+**Answer:** useRef to store current; useEffect to set ref to value after render; return ref.current (or previous state). Use for comparing prev and current (e.g. in useEffect).
+
+### 368. How do you implement date picker?
+**Answer:** input type="date" or library (react-datepicker); state for value; format for display. Consider locale and accessibility. Use native when sufficient; library for UX.
+
+### 369. What is the difference between hydration and client-only render?
+**Answer:** Hydration attaches to server-rendered DOM. Client-only: no server HTML; render from root in browser. Use hydration for SEO and first paint; client-only for app shell.
+
+### 370. Explain React 18 useSyncExternalStore for Redux.
+**Answer:** Redux React bindings use useSyncExternalStore (subscribe, getSnapshot). Ensures correct behavior with concurrent features. Use when integrating external store.
+
+### 371. How do you implement tabs (accessible)?
+**Answer:** role="tablist", tab, tabpanel; aria-selected, aria-controls; keyboard (Arrow, Home, End). State for active index. Use roving tabindex. Or use Radix, Reach.
+
+### 372. What is the purpose of UNSAFE_ prefix in lifecycle?
+**Answer:** UNSAFE_componentWillMount etc. are legacy; may be removed. Avoid in new code. Use equivalent (useEffect, getDerivedStateFromProps replacement). Migration path from class to hooks.
+
+### 373. Explain useLayoutEffect for DOM measurement.
+**Answer:** useLayoutEffect runs after DOM update, before paint. Use for reading layout (getBoundingClientRect) and then updating state (e.g. position tooltip). Prevents flash.
+
+### 374. How do you implement accordion?
+**Answer:** State for open index or Set of open ids; click toggles; aria-expanded, aria-controls. Single or multiple open. Use details/summary for simple; custom for styling.
+
+### 375. What is the difference between React and Svelte?
+**Answer:** React: runtime, virtual DOM. Svelte: compile-time, no virtual DOM, smaller bundle. Both reactive. Svelte is less popular but fast. Choose by preference and ecosystem.
+
+### 376. Explain React 18 createRoot and hydrateRoot.
+**Answer:** createRoot for client-only; hydrateRoot for SSR. Both enable concurrent features. Replace render and hydrate with these for new apps.
+
+### 377. How do you implement dropdown (custom select)?
+**Answer:** State for open; click outside to close; keyboard (Arrow, Enter, Escape); aria-expanded, listbox role. Use floating-ui for position. Or use Radix Select.
+
+### 378. What is the purpose of React.isValidElement?
+**Answer:** isValidElement(object) checks if object is React element. Use when iterating children and handling both elements and other values. Rare.
+
+### 379. Explain useReducer for complex form state.
+**Answer:** One reducer with actions (SET_FIELD, SET_ERROR, SUBMIT); state has fields and errors. Single dispatch; predictable. Use for multi-field form with validation.
+
+### 380. How do you implement modal (accessible)?
+**Answer:** role="dialog"; aria-modal; focus trap; Escape to close; restore focus on close; aria-labelledby. Use portal for DOM placement. Use Radix Dialog or similar.
+
+### 381. What is the difference between context and Redux?
+**Answer:** Context: simple, built-in, re-render when value changes. Redux: predictable, middleware, devtools, time travel. Use Context for theme/auth; Redux for complex global state.
+
+### 382. Explain React 18 useDeferredValue for list filtering.
+**Answer:** Keep input value immediate; deferred value for filter; render list with deferred value. Input stays responsive; list updates when transition completes.
+
+### 383. How do you implement carousel?
+**Answer:** State for index; prev/next buttons; track with overflow hidden; optional autoplay (setInterval). Use CSS scroll-snap or transform. Consider swipe and a11y.
+
+### 384. What is the purpose of ReactDOM.flushSync?
+**Answer:** flushSync(fn) flushes updates synchronously. Use for measuring DOM after update or focus. Avoid in general; can hurt performance. Prefer async updates.
+
+### 385. Explain custom hook for window size.
+**Answer:** useState for width/height; useEffect add resize listener; set state; cleanup. Return { width, height }. Use for responsive layout. Throttle resize for perf. Or use matchMedia for breakpoints.
+
+### 386. How do you implement breadcrumbs?
+**Answer:** Pass path (array of { label, href }); render links; current page without link. Use nav and aria-current="page". SEO and a11y. Generate from route config.
+
+### 387. What is the difference between shallow and deep compare?
+**Answer:** Shallow: compare by reference (object/array) or value (primitive). Deep: recurse into objects. React uses shallow for props/state. Use memo with custom compare for deep if needed (rare).
+
+### 388. Explain React 18 Suspense for lazy.
+**Answer:** React.lazy + Suspense: component loads async; fallback shows until then. Standard for code splitting. Works with transitions (show fallback during transition).
+
+### 389. How do you implement progress indicator?
+**Answer:** State for progress (0-100); update from fetch (xhr progress) or steps. Visual: div with width or SVG. Use for upload/download or multi-step form.
+
+### 390. What is the purpose of findDOMNode?
+**Answer:** findDOMNode(component) returns DOM node. Deprecated; avoid. Use ref instead. Only for legacy. Ref is the correct API.
+
+### 391. Explain useCallback with empty deps.
+**Answer:** useCallback(fn, []) returns same function reference forever. Use for callbacks that don't depend on props/state (e.g. event handler that only calls dispatch). Stable reference.
+
+### 392. How do you implement notification toast?
+**Answer:** Context or global state for toasts; addToast(message); render list in portal; auto-dismiss with setTimeout. Use for success/error feedback. Consider queue and position.
+
+### 393. What is the difference between React and Next.js?
+**Answer:** React is library; Next.js is framework (SSR, routing, API routes). Next.js uses React. Use Next.js for full-stack, SEO, and conventions. Use React for SPA or custom setup.
+
+### 394. Explain React 18 useTransition for heavy list.
+**Answer:** Filter list in startTransition; isPending shows loading. List update doesn't block input. Use for search/filter with large list.
+
+### 395. How do you implement sidebar collapse?
+**Answer:** State for collapsed; toggle button; CSS width or class; persist in localStorage. Use for nav. Consider responsive (drawer on mobile).
+
+### 396. What is the purpose of React.version?
+**Answer:** React.version is string (e.g. "18.2.0"). Use for debugging or conditional logic for version. Rare.
+
+### 397. Explain custom hook for document title.
+**Answer:** useEffect(() => { document.title = title; return () => { document.title = previous; }; }, [title]). Use for page title per route or dynamic title.
+
+### 398. How do you implement sortable list?
+**Answer:** Library (dnd-kit, react-beautiful-dnd); drag and drop; reorder state. Or keyboard (Arrow + Alt). Use for reorderable list. A11y: announce order change.
+
+### 399. What is the difference between element type and component?
+**Answer:** Element type can be string ('div') or component (function/class). React treats string as DOM element; function/class as component. Same as "element" vs "component" conceptually.
+
+### 400. Explain React 18 useId and SSR.
+**Answer:** useId() generates same id on server and client when tree order matches. Avoids hydration mismatch. Use for form fields and labels in SSR app.
+
+### 401. How do you implement search with debounce?
+**Answer:** useState for query; useCallback with debounce (or useDebouncedCallback); call API when debounced query changes; show results. Use for search-as-you-type. Cancel previous request.
+
+### 402. What is the purpose of ReactDOM.createPortal?
+**Answer:** createPortal(children, container) renders children into container (e.g. body). Use for modals, tooltips. Same as "portal". Events bubble to React tree.
+
+### 403. Explain useMemo for derived state.
+**Answer:** useMemo(() => compute(props), [props]) avoids recompute when props unchanged. Use when computation is expensive. Don't use for trivial computation; cost of useMemo itself.
+
+### 404. How do you implement wizard (multi-step form)?
+**Answer:** State for step; next/prev; validate per step; submit on last step. Use URL or state for step. Progress indicator. Save draft optional.
+
+### 405. What is the difference between class and function component lifecycle?
+**Answer:** Class: componentDidMount, Update, Unmount, etc. Function: useEffect with deps. useEffect(() => {}, []) = mount; effect with deps = update; cleanup = unmount. One mental model for both.
+
+### 406. Explain React 18 concurrent rendering and interruptibility.
+**Answer:** React can interrupt render to handle urgent update (e.g. input). Low-priority update (e.g. list) can be interrupted. startTransition marks low priority. Improves responsiveness.
+
+### 407. How do you implement table with sorting and pagination?
+**Answer:** State for sort key and order, page; compute sorted slice; render table; headers click to sort; pagination controls. Or use react-table. Server-side: pass params to API.
+
+### 408. What is the purpose of contextType (class)?
+**Answer:** contextType = MyContext lets class component use this.context. One context per class. Prefer useContext in function components.
+
+### 409. Explain custom hook for localStorage.
+**Answer:** useState(initial); read from localStorage in initializer or useEffect; useEffect to write when state changes. Sync across tabs via storage event. Use for persist state.
+
+### 410. How do you implement tree view?
+**Answer:** Recursive component; data with children; state for expanded nodes; render indent and toggle. Use for file tree, category tree. A11y: arrow keys, aria-expanded.
+
+### 411. What is the difference between React and Preact?
+**Answer:** Preact is smaller React alternative; same API mostly. Use Preact for bundle size; React for ecosystem. Preact/compat for React compatibility.
+
+### 412. Explain React 18 useDeferredValue and transition.
+**Answer:** useDeferredValue defers value; startTransition defers update. Both keep UI responsive. Use deferred value for derived data; transition for explicit update scope.
+
+### 413. How do you implement rich text editor?
+**Answer:** contentEditable or library (Slate, TipTap); state for content (e.g. JSON); toolbar for format. Complex; use library. Consider accessibility and paste handling.
+
+### 414. What is the purpose of ReactDOM.unmountComponentAtNode?
+**Answer:** Legacy API; unmounts component tree at node. With createRoot use root.unmount(). Prefer React 18 root.unmount().
+
+### 415. Explain useReducer with immer.
+**Answer:** Use immer in reducer: produce(state, draft => { draft.field = value }); simpler updates. Or use useImmer hook. Use for nested state without spread hell.
+
+### 416. How do you implement stepper (progress steps)?
+**Answer:** Data for steps; state for current; render steps with completed/active; optional validation per step. Use for checkout or onboarding.
+
+### 417. What is the difference between defaultProps and default parameters?
+**Answer:** defaultProps on component; default params in function. Both set default. Prefer default params for function components. defaultProps still used with TypeScript or legacy.
+
+### 418. Explain React 18 useTransition and useDeferredValue together.
+**Answer:** startTransition for update; useDeferredValue for value used in heavy component. Both defer non-urgent work. Use for search: input immediate, results deferred.
+
+### 419. How do you implement avatar with fallback?
+**Answer:** img with onError set fallback (initials or placeholder); or two elements and hide one. Use for user avatar. Consider lazy load image.
+
+### 420. What is the purpose of React.current?
+**Answer:** No React.current. You might mean ref.current (useRef) or React version. Clarify question.
+
+### 421. Explain custom hook for online status.
+**Answer:** useState(navigator.onLine); useEffect add online/offline listeners; set state. Return isOnline. Use for offline indicator or disable actions when offline.
+
+### 422. How do you implement badge (notification count)?
+**Answer:** Small overlay on icon; count or dot. Position absolute. Use for cart count, notifications. A11y: aria-label with count.
+
+### 423. What is the difference between createRoot and hydrateRoot?
+**Answer:** createRoot for client-only render. hydrateRoot for attaching to server-rendered DOM. Both return root with render and unmount. Use hydrateRoot for SSR.
+
+### 424. Explain React 18 useSyncExternalStore getServerSnapshot.
+**Answer:** getServerSnapshot for SSR; must return same value as getSnapshot on first client render to avoid hydration mismatch. Use when store has server value.
+
+### 425. How do you implement pagination (client-side)?
+**Answer:** State for page; slice array for current page; render page size items; prev/next or page numbers. Use for small list. Server-side for large data.
+
+### 426. What is the purpose of React.Children.only?
+**Answer:** React.Children.only(children) returns single child or throws. Use when component expects exactly one child. Rare.
+
+### 427. Explain useLayoutEffect cleanup.
+**Answer:** useLayoutEffect can return cleanup; runs synchronously before next layout effect or unmount. Use for removing listener or restoring DOM. Same timing as effect but before paint.
+
+### 428. How do you implement tag input (multiple values)?
+**Answer:** State for array of tags; input for new tag; Enter or comma to add; backspace to remove; render as chips. Use for keywords, recipients. Validate and limit.
+
+### 429. What is the difference between React 17 and 18 events?
+**Answer:** React 17: events on document. React 18: events on root. Delegation change. Usually no code change. New in 18: automatic batching, concurrent features, createRoot.
+
+### 430. Explain custom hook for media query.
+**Answer:** useState for match; useEffect with matchMedia(query).addListener; set state; cleanup. Return boolean. Use for responsive render. Or use library (usehooks-ts).
+
+### 431. How do you implement rating (stars)?
+**Answer:** State or controlled value (1-5); render stars; click sets value; hover for preview optional. Use aria-label and role for a11y. Half stars optional.
+
+### 432. What is the purpose of StrictMode double invoke?
+**Answer:** In dev StrictMode double-invokes render and effects to surface side effects and impure code. Ensures cleanup and re-setup work. No double invoke in production.
+

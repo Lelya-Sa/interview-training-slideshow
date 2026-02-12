@@ -332,3 +332,357 @@
 ### 110. Explain the difference between HTTP/2 and HTTP/3.
 **Answer:** HTTP/3 uses QUIC (over UDP) instead of TCP; reduces head-of-line blocking, faster connection setup. HTTP/2 uses TCP. HTTP/3 is newer; adoption growing. Both support multiplexing.
 
+### 111. What is the purpose of the Accept-Language header?
+**Answer:** Client sends preferred languages (e.g. en-US, fr). Server uses for content negotiation. Use for i18n. Quality values optional. Same as Accept for language.
+
+### 112. Explain the difference between 301 and 308.
+**Answer:** 301 Moved Permanently: may change method (GET). 308 Permanent Redirect: preserves method and body. Use 308 for permanent redirect with same method.
+
+### 113. What is the purpose of the Content-Disposition header?
+**Answer:** Inline (display) or attachment (download); optional filename. Use for file download. Set by server. Client may use for save dialog.
+
+### 114. What is the difference between Connection: keep-alive and close?
+**Answer:** keep-alive: reuse connection for multiple requests. close: close after response. Use keep-alive for performance. Default in HTTP/1.1 is keep-alive.
+
+### 115. What is the purpose of the X-Forwarded-For header?
+**Answer:** Proxies add client IP; chain of IPs (client, proxy1, ...). Use for logging and geo. Don't trust for auth; can be spoofed. Validate in trusted proxy.
+
+### 116. Explain the difference between 302 and 307.
+**Answer:** 302 Found: temporary; may change method (GET). 307 Temporary Redirect: preserves method and body. Use 307 for temporary redirect with same method.
+
+### 117. What is the purpose of the TE header?
+**Answer:** Client advertises transfer encodings (e.g. trailers). Rare. Use for chunked with trailers. Optional. Most clients don't use.
+
+### 118. What is the difference between HTTP and WebSocket?
+**Answer:** HTTP is request-response. WebSocket is full-duplex over single connection; upgrade from HTTP. Use HTTP for API; WebSocket for real-time.
+
+### 119. What is the purpose of the Trailer header?
+**Answer:** Lists headers sent in trailer (after chunked body). Use with chunked encoding. Rare. Use for checksum or metadata after body.
+
+### 120. Explain the difference between 400 and 422.
+**Answer:** 400 Bad Request: malformed (syntax). 422 Unprocessable Entity: valid syntax but semantic error (validation). Use 422 for validation errors.
+
+### 121. What is the purpose of the Upgrade header?
+**Answer:** Client or server requests protocol upgrade (e.g. HTTP/1.1 to WebSocket). Use for WebSocket handshake. Server responds 101 Switching Protocols.
+
+### 122. What is the difference between Cache-Control: no-cache and no-store?
+**Answer:** no-cache: revalidate with server before use. no-store: don't store at all. Use no-store for sensitive; no-cache for always fresh.
+
+### 123. What is the purpose of the Via header?
+**Answer:** Proxies add themselves to chain (protocol, version). Use for debugging and tracing. Don't remove; append. Optional.
+
+### 124. Explain the difference between 401 and 403.
+**Answer:** 401 Unauthorized: not authenticated (no or invalid credentials). 403 Forbidden: authenticated but not allowed. Use 401 for login; 403 for permission.
+
+### 125. What is the purpose of the X-Request-Id header?
+**Answer:** Client or server sets unique request id. Use for logging and tracing. Propagate to response and downstream. UUID recommended.
+
+### 126. What is the difference between HTTP/1.0 and HTTP/1.1?
+**Answer:** HTTP/1.1: persistent connection, chunked encoding, Host required, more methods. HTTP/1.0: one request per connection. Use HTTP/1.1 for modern.
+
+### 127. What is the purpose of the Accept-Encoding header?
+**Answer:** Client sends supported encodings (gzip, br, etc.). Server may compress response. Use for bandwidth. Set Content-Encoding in response.
+
+### 128. Explain the difference between 500 and 503.
+**Answer:** 500 Internal Server Error: unexpected error. 503 Service Unavailable: overloaded or maintenance. Use 503 for retry; 500 for bug.
+
+### 129. What is the purpose of the X-Content-Type-Options header?
+**Answer:** nosniff: prevent MIME sniffing. Use for security. Set on response. Prevents browser from interpreting as different type. Recommended.
+
+### 130. What is the difference between GET and HEAD?
+**Answer:** GET returns body; HEAD returns headers only (same as GET). Use HEAD for checking existence or metadata. Same semantics; no body.
+
+### 131. What is the purpose of the X-Frame-Options header?
+**Answer:** DENY or SAMEORIGIN: prevent clickjacking. Use for security. Set on response. SAMEORIGIN allows same-origin iframe. Recommended.
+
+### 132. Explain the difference between 200 and 204.
+**Answer:** 200 OK: response has body. 204 No Content: success, no body. Use 204 for DELETE or PUT/PATCH when no representation returned.
+
+### 133. What is the purpose of the Strict-Transport-Security header?
+**Answer:** HSTS: force HTTPS for duration (max-age). Use for security. Set on HTTPS response. Preload list for first visit. Recommended.
+
+### 134. What is the difference between relative and absolute URL?
+**Answer:** Relative: path only (e.g. /api/users). Absolute: scheme, host, path (e.g. https://example.com/api). Use relative for same origin; absolute for redirect.
+
+### 135. What is the purpose of the X-XSS-Protection header?
+**Answer:** Legacy XSS filter (1; mode=block). Deprecated; use Content-Security-Policy. Optional. Modern browsers prefer CSP.
+
+### 136. Explain the difference between 404 and 410.
+**Answer:** 404 Not Found: resource doesn't exist or no permission. 410 Gone: existed but permanently removed. Use 410 for deprecated or deleted.
+
+### 137. What is the purpose of the Content-Security-Policy header?
+**Answer:** CSP: control sources for script, style, etc. Use for XSS prevention. Set on response. Report-URI optional. Recommended for security.
+
+### 138. What is the difference between request and response headers?
+**Answer:** Request: sent by client (Accept, Authorization). Response: sent by server (Content-Type, Set-Cookie). Some can be both (Cache-Control).
+
+### 139. What is the purpose of the Referrer-Policy header?
+**Answer:** Control Referer (referrer) sent (no-referrer, same-origin, etc.). Use for privacy. Set on response. Don't leak URL to third party.
+
+### 140. Explain the difference between 301 and 302.
+**Answer:** 301 permanent; 302 temporary. Search engines treat differently. Use 301 for permanent move; 302 for temporary. Both may change method to GET.
+
+### 141. What is the purpose of the Retry-After header?
+**Answer:** Sent with 503 or 429; seconds or date. Client should wait before retry. Use for rate limit and maintenance. Optional; client may use backoff.
+
+### 142. What is the difference between HTTP and HTTPS handshake?
+**Answer:** HTTP: TCP then request. HTTPS: TCP, TLS handshake (certificate, keys), then encrypted HTTP. Use HTTPS for security. TLS adds latency once.
+
+### 143. What is the purpose of the If-None-Match header?
+**Answer:** Client sends with GET; value is ETag. Server returns 304 if ETag matches. Use for conditional GET and cache revalidation. Reduces bandwidth.
+
+### 144. Explain the difference between 201 and 200.
+**Answer:** 201 Created: resource created; Location header with URL. 200 OK: success, may be create or update. Use 201 for POST that creates resource.
+
+### 145. What is the purpose of the Vary header?
+**Answer:** Lists headers that affect response (e.g. Accept-Encoding). Caches use for cache key. Use for correct caching when response varies by header.
+
+### 146. What is the difference between idempotent and safe methods?
+**Answer:** Safe: no side effect (GET, HEAD, OPTIONS). Idempotent: same effect if repeated (GET, HEAD, PUT, DELETE, OPTIONS). POST is neither. PATCH may be idempotent.
+
+### 147. What is the purpose of the Allow header?
+**Answer:** Lists methods allowed on resource (GET, POST, ...). Sent with 405. Use for discovery. Optional. Client can use for OPTIONS response.
+
+### 148. Explain the difference between 303 and 307.
+**Answer:** 303 See Other: redirect to GET (after POST). 307 preserves method. Use 303 for PRG (POST redirect GET); 307 for same method. Both temporary.
+
+### 149. What is the purpose of the Location header?
+**Answer:** Sent with 201 (URL of new resource), 3xx (redirect URL). Use for redirect and create. Required for 201 and 3xx. Client follows redirect.
+
+### 150. What is the difference between HTTP and gRPC?
+**Answer:** HTTP is text/JSON or binary; REST-style. gRPC is HTTP/2, binary, codegen, streaming. Use HTTP for broad compatibility; gRPC for performance and types.
+
+### 151. What is the purpose of the Last-Modified header?
+**Answer:** Server sends with GET; date of last change. Client uses If-Modified-Since next time. Use for conditional GET and 304. Less precise than ETag.
+
+### 152. Explain the difference between 408 and 504.
+**Answer:** 408 Request Timeout: client didn't send in time. 504 Gateway Timeout: upstream didn't respond. Use 408 for client; 504 for proxy/upstream.
+
+### 153. What is the purpose of the ETag header?
+**Answer:** Opaque identifier of resource version. Use for conditional GET (If-None-Match) and 304; optimistic concurrency (If-Match). Strong or weak ETag.
+
+### 154. What is the difference between Content-Type and Accept?
+**Answer:** Content-Type: type of body (request or response). Accept: preferred response type. Use Content-Type for body; Accept for negotiation.
+
+### 155. What is the purpose of the If-Match header?
+**Answer:** Client sends with PUT/PATCH/DELETE; value is ETag. Server returns 412 if ETag doesn't match. Use for optimistic concurrency. Prevents lost update.
+
+### 156. Explain the difference between 413 and 429.
+**Answer:** 413 Payload Too Large: body too big. 429 Too Many Requests: rate limit. Use 413 for size limit; 429 for rate limit. Both are client limits.
+
+### 157. What is the purpose of the Range header?
+**Answer:** Client requests range of resource (bytes=0-499). Server returns 206 with Content-Range. Use for resume and partial content. Support optional.
+
+### 158. What is the difference between HTTP and HTTP/2 multiplexing?
+**Answer:** HTTP/1.1: one request per connection (or pipelining limited). HTTP/2: multiple streams over one connection; no head-of-line blocking per stream.
+
+### 159. What is the purpose of the Content-Range header?
+**Answer:** Sent with 206 Partial Content; indicates range (e.g. bytes 0-499/1000). Use for range requests. Client requests Range; server responds with Content-Range.
+
+### 160. Explain the difference between 100 and 200.
+**Answer:** 100 Continue: client may send body (after Expect: 100-continue). 200 OK: success. Use 100 for large upload confirmation. Server may skip 100.
+
+### 161. What is the purpose of the Expect header?
+**Answer:** Client sends Expect: 100-continue for large body; waits for 100 before sending. Server responds 100 or 417. Use for upload optimization. Optional.
+
+### 162. What is the difference between cookie and session?
+**Answer:** Cookie: stored in browser; sent with each request. Session: server stores data; session id in cookie. Use cookie for id; session for server state.
+
+### 163. What is the purpose of the Transfer-Encoding header?
+**Answer:** chunked: body sent in chunks; last chunk size 0. Use for streaming when length unknown. Don't use with Content-Length. Common for dynamic content.
+
+### 164. Explain the difference between 307 and 308.
+**Answer:** 307 Temporary Redirect: preserves method. 308 Permanent Redirect: preserves method. Both preserve body. Use 307 for temporary; 308 for permanent.
+
+### 165. What is the purpose of the X-Forwarded-Proto header?
+**Answer:** Proxies set original scheme (http or https). Use when behind TLS terminator. Server uses for redirect and links. Don't trust without validation.
+
+### 166. What is the difference between HTTP and CoAP?
+**Answer:** HTTP: TCP, web. CoAP: UDP, constrained devices (IoT). Use HTTP for web; CoAP for sensors. Different layers and use cases.
+
+### 167. What is the purpose of the Prefer header?
+**Answer:** Client requests preference (e.g. return=representation, wait=30). Server may honor. Use for conditional response. Optional; document support.
+
+### 168. Explain the difference between 502 and 503.
+**Answer:** 502 Bad Gateway: invalid response from upstream. 503 Service Unavailable: overloaded or maintenance. Use 502 for upstream error; 503 for capacity.
+
+### 169. What is the purpose of the Link header?
+**Answer:** Contains URLs for related resources (next, prev, canonical). Use for pagination and discovery. Format: &lt;url&gt;; rel="next". Use for API and HTML.
+
+### 170. What is the difference between GET and POST body?
+**Answer:** GET has no body (semantic); use query for params. POST has body (e.g. JSON). Don't send body in GET; not guaranteed to be sent. Use POST for data.
+
+### 171. What is the purpose of the WWW-Authenticate header?
+**Answer:** Sent with 401; indicates auth scheme (Bearer, Basic) and params (realm). Client uses to get credentials. Use for challenge. Required for 401 when auth possible.
+
+### 172. Explain the difference between 304 and 200.
+**Answer:** 304 Not Modified: use cached copy; no body. 200 OK: full response. Use 304 for conditional GET when ETag or date matches. Reduces bandwidth.
+
+### 173. What is the purpose of the X-RateLimit-* headers?
+**Answer:** X-RateLimit-Limit, Remaining, Reset (and Retry-After on 429). Use for rate limit feedback. Client can throttle. Optional but helpful. Various names.
+
+### 174. What is the difference between HTTP and MQTT?
+**Answer:** HTTP is request-response over TCP. MQTT is pub/sub over TCP (lightweight). Use HTTP for APIs; MQTT for device messaging and IoT.
+
+### 175. What is the purpose of the Cache-Control: max-age?
+**Answer:** max-age=seconds: response fresh for that time. Use for caching. After max-age revalidate or use stale. Use for static and cacheable API.
+
+### 176. Explain the difference between 411 and 413.
+**Answer:** 411 Length Required: Content-Length required but missing. 413 Payload Too Large: body too big. Use 411 for required header; 413 for size. Both request body.
+
+### 177. What is the purpose of the Content-Length header?
+**Answer:** Length of body in bytes. Required for body when not chunked. Use for framing. Don't send if Transfer-Encoding chunked. Client may use for progress.
+
+### 178. What is the difference between HTTP/2 server push and preload?
+**Answer:** Server push: server sends resource before requested. Preload: Link rel=preload; browser fetches early. Push is deprecated in favor of preload. Use preload for critical.
+
+### 179. What is the purpose of the If-Modified-Since header?
+**Answer:** Client sends with GET; value is date. Server returns 304 if not modified since. Use for conditional GET. Use with Last-Modified. Simpler than ETag for date-based.
+
+### 180. Explain the difference between 400 and 401.
+**Answer:** 400 Bad Request: malformed request. 401 Unauthorized: not authenticated. Use 400 for syntax/validation; 401 for missing or invalid credentials.
+
+### 181. What is the purpose of the Access-Control-* headers?
+**Answer:** CORS: Allow-Origin, Allow-Methods, Allow-Headers, Allow-Credentials, Expose-Headers, Max-Age. Use for cross-origin requests. Set on response and preflight.
+
+### 182. What is the difference between HTTP and Server-Sent Events?
+**Answer:** HTTP is request-response. SSE: single GET, server streams events. Use HTTP for API; SSE for server-to-client stream. SSE is one-way.
+
+### 183. What is the purpose of the If-Unmodified-Since header?
+**Answer:** Client sends with PUT/DELETE; server returns 412 if modified since. Use for optimistic concurrency. Use with Last-Modified. Less common than If-Match.
+
+### 184. Explain the difference between 403 and 404.
+**Answer:** 403 Forbidden: authenticated but not allowed. 404 Not Found: resource doesn't exist (or no permission to know). Don't leak existence with 403; use 404 when appropriate.
+
+### 185. What is the purpose of the Origin header?
+**Answer:** Sent by browser with cross-origin request; value is scheme+host+port. Server uses for CORS. Don't trust for auth; use for Allow-Origin check. Required for CORS.
+
+### 186. What is the difference between HTTP and QUIC?
+**Answer:** HTTP/3 uses QUIC (UDP); HTTP/1 and /2 use TCP. QUIC reduces head-of-line blocking, faster setup. Use HTTP/3 for best performance. QUIC is transport.
+
+### 187. What is the purpose of the Sec-Fetch-* headers?
+**Answer:** Browser sends Sec-Fetch-Mode, Site, Dest, etc. Use for CSRF and security. Server may check. Don't rely alone; use with other checks. Modern browsers.
+
+### 188. Explain the difference between 200 and 201.
+**Answer:** 200 OK: success (get, update, or create). 201 Created: resource created; include Location. Use 201 for POST that creates; 200 for GET or update.
+
+### 189. What is the purpose of the Set-Cookie header?
+**Answer:** Server sets cookie (name=value; options). Options: Path, Domain, Max-Age, HttpOnly, Secure, SameSite. Use for session and preference. Set options for security.
+
+### 190. What is the difference between request line and status line?
+**Answer:** Request line: METHOD URI HTTP/VERSION. Status line: HTTP/VERSION STATUS REASON. First line of request vs response. Both have version and line end.
+
+### 191. What is the purpose of the Proxy-Authorization header?
+**Answer:** Client sends credentials to proxy (Basic or Bearer). Use when proxy requires auth. Rare. Don't use for origin auth; use Authorization.
+
+### 192. Explain the difference between 502 and 504.
+**Answer:** 502 Bad Gateway: upstream returned invalid response. 504 Gateway Timeout: upstream didn't respond in time. Use 502 for error; 504 for timeout. Both from proxy.
+
+### 193. What is the purpose of the Age header?
+**Answer:** Caches set; seconds since response was generated. Use for cache freshness. Client can compute stale. Optional. Set by cache not origin.
+
+### 194. What is the difference between HTTP and FTP?
+**Answer:** HTTP: request-response, stateless, web. FTP: separate control and data, stateful. Use HTTP for web; FTP for file transfer. Different protocols.
+
+### 195. What is the purpose of the Date header?
+**Answer:** Server sets; date/time of response (HTTP-date format). Use for caching and logging. Optional but recommended. Client may use for clock skew.
+
+### 196. Explain the difference between 301 and 303.
+**Answer:** 301 permanent; 303 temporary, change to GET. Use 301 for permanent move; 303 for POST redirect GET (PRG). Both redirect. 303 is "see other" after POST.
+
+### 197. What is the purpose of the Server header?
+**Answer:** Server advertises software (e.g. nginx). Use for debugging. Optional; some hide for security. Don't expose version in production. Optional.
+
+### 198. What is the difference between HTTP and SMTP?
+**Answer:** HTTP: request-response, web. SMTP: email transfer, store-and-forward. Use HTTP for web; SMTP for email. Different layers and use cases.
+
+### 199. What is the purpose of the X-Forwarded-Host header?
+**Answer:** Proxies set original Host. Use when behind reverse proxy. Server uses for redirect and links. Don't trust without validation. Same as Host behind proxy.
+
+### 200. Explain the difference between 405 and 501.
+**Answer:** 405 Method Not Allowed: method not supported for resource. 501 Not Implemented: method not implemented by server. Use 405 for resource; 501 for server. Both method-related.
+
+### 201. What is the purpose of the Connection header?
+**Answer:** keep-alive or close; controls connection lifetime. Use keep-alive for reuse. In HTTP/1.1 default is keep-alive. Proxies may use for hop-by-hop.
+
+### 202. What is the difference between HTTP and TCP?
+**Answer:** TCP is transport (reliable, ordered). HTTP is application (request-response). HTTP runs over TCP. Use TCP for connection; HTTP for message. Different layers.
+
+### 203. What is the purpose of the Authorization header?
+**Answer:** Carries credentials: Bearer &lt;token&gt;, Basic &lt;base64&gt;, etc. Use for auth. Validate on server. Document scheme. Standard header for API auth.
+
+### 204. Explain the difference between 409 and 412.
+**Answer:** 409 Conflict: state conflict (e.g. duplicate). 412 Precondition Failed: If-Match or If-Unmodified-Since failed. Use 409 for business conflict; 412 for concurrency.
+
+### 205. What is the purpose of the Cookie header?
+**Answer:** Client sends cookies (name=value; name2=value2). Use for session and preference. Same-origin only by default. Don't put sensitive without HttpOnly.
+
+### 206. What is the difference between HTTP and WebSocket upgrade?
+**Answer:** Client sends Upgrade: websocket; server responds 101. Same connection becomes WebSocket. Use for real-time. HTTP is handshake; then different protocol.
+
+### 207. What is the purpose of the Accept header?
+**Answer:** Client sends preferred response type (application/json, text/html). Server uses for content negotiation. Use for API format. Default; document supported types.
+
+### 208. Explain the difference between 416 and 417.
+**Answer:** 416 Range Not Satisfiable: range invalid for resource. 417 Expectation Failed: Expect: 100-continue not met. Use 416 for range; 417 for expect. Both client request.
+
+### 209. What is the purpose of the Content-Encoding header?
+**Answer:** Encoding of body (gzip, br, etc.). Use when body is compressed. Client decodes. Use for bandwidth. Set when Accept-Encoding was sent. Match request.
+
+### 210. What is the difference between HTTP/1.1 pipelining and HTTP/2?
+**Answer:** Pipelining: send requests without waiting; limited support, head-of-line blocking. HTTP/2: multiplexing, no blocking per stream. Use HTTP/2 for performance.
+
+### 211. What is the purpose of the Deprecation header?
+**Answer:** RFC 8594; indicates deprecated (true) or Sunset date. Use for versioning. Document migration. Optional. Client may warn. New standard.
+
+### 212. Explain the difference between 500 and 502.
+**Answer:** 500 Internal Server Error: server error. 502 Bad Gateway: proxy received invalid response from upstream. Use 500 for app; 502 for proxy/upstream. Both server-side.
+
+### 213. What is the purpose of the Host header?
+**Answer:** Required in HTTP/1.1; domain of request. Use for virtual hosting. Server uses for routing. Required for request. One host per request.
+
+### 214. What is the difference between HTTP and RPC over HTTP?
+**Answer:** HTTP: resource-oriented (REST). RPC: action-oriented (procedure call). Both use HTTP; different semantics. Use HTTP for REST; RPC for procedure style.
+
+### 215. What is the purpose of the If-Range header?
+**Answer:** Client sends with Range; value is ETag or date. If match, server returns 206; else 200 full. Use for resume; avoid re-download if unchanged. Optional.
+
+### 216. Explain the difference between 429 and 503.
+**Answer:** 429 Too Many Requests: rate limit; client should retry with backoff. 503 Service Unavailable: overloaded; retry later. Use 429 for limit; 503 for capacity. Both retry.
+
+### 217. What is the purpose of the Proxy-Authenticate header?
+**Answer:** Proxy sends with 407; indicates auth scheme for proxy. Client responds with Proxy-Authorization. Use when proxy requires auth. Rare. Same as WWW-Authenticate for proxy.
+
+### 218. What is the difference between HTTP and HTTP/2 prioritization?
+**Answer:** HTTP/2 allows stream priority (weight, dependency). Client can prioritize. Use for critical resources first. HTTP/1.1 has no priority. Improves perceived performance.
+
+### 219. What is the purpose of the Sunset header?
+**Answer:** RFC 8594; date when resource will be removed. Use for deprecation. Document migration. Optional. Client may warn. Use with Deprecation.
+
+### 220. Explain the difference between 100 and 417.
+**Answer:** 100 Continue: send body. 417 Expectation Failed: server doesn't support Expect. Use 100 for upload; 417 when server rejects Expect. Both relate to Expect header.
+
+### 221. What is the purpose of the Transfer-Encoding: chunked?
+**Answer:** Body in chunks; each chunk: size (hex), CRLF, data. Last chunk size 0. Use when length unknown. Don't use with Content-Length. Common for dynamic.
+
+### 222. What is the difference between HTTP and HTTP/2 header compression?
+**Answer:** HTTP/1.1: headers plain text. HTTP/2: HPACK compresses headers. Reduces size. Use HTTP/2 for less overhead. Same semantics; different encoding.
+
+### 223. What is the purpose of the X-Forwarded-Port header?
+**Answer:** Proxies set original port. Use when behind reverse proxy. Server uses for redirect. Don't trust without validation. Optional. Same as port behind proxy.
+
+### 224. Explain the difference between 406 and 415.
+**Answer:** 406 Not Acceptable: no representation matching Accept. 415 Unsupported Media Type: Content-Type not supported. Use 406 for response type; 415 for request body type.
+
+### 225. What is the purpose of the Keep-Alive header?
+**Answer:** Parameters for keep-alive (timeout, max). Use in HTTP/1.0 for persistent connection. HTTP/1.1 uses Connection: keep-alive. Optional. Rare in modern.
+
+### 226. What is the difference between HTTP and HTTP/2 binary framing?
+**Answer:** HTTP/1.1: text. HTTP/2: binary frames (headers, data). Use HTTP/2 for efficiency. Same semantics; different wire format. Parsing is faster.
+
+### 227. What is the purpose of the Alt-Svc header?
+**Answer:** Server advertises alternative service (e.g. h3=":443"). Use for HTTP/3 discovery. Client may switch. Optional. Use for protocol upgrade. Modern.
+
+### 228. Explain the difference between 303 and 302.
+**Answer:** 302 Found: temporary; may change to GET. 303 See Other: temporary; change to GET (for POST). Use 303 for PRG; 302 for generic temporary. Both temporary.
+

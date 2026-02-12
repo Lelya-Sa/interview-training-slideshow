@@ -653,3 +653,294 @@
 ### 215. What is the difference between REST and MQTT for messaging?
 **Answer:** REST is HTTP request-response. MQTT is pub/sub over TCP (lightweight). Use REST for APIs; MQTT for device messaging and IoT. Different layers and use cases.
 
+### 216. How do you design REST for "export" (bulk download)?
+**Answer:** GET /resources/export?format=csv&amp;ids=1,2,3 or POST /exports with body. Return 202 with job id or stream response. Use for reports; consider async for large exports. Rate limit.
+
+### 217. What is the purpose of the Accept-Patch header?
+**Answer:** Server advertises supported patch formats (e.g. application/json-patch+json). Client uses in PATCH. Use for content negotiation on PATCH. Optional; document in API docs.
+
+### 218. How do you implement REST API versioning with URL path?
+**Answer:** /v1/resources, /v2/resources. Router per version; or prefix middleware. Use for breaking changes. Document deprecation and sunset. Prefer path over header for clarity.
+
+### 219. What is the difference between 401 and 403?
+**Answer:** 401 Unauthorized: not authenticated (no or invalid credentials). 403 Forbidden: authenticated but not allowed. Use 401 for login; 403 for permission denied. Don't leak existence with 403.
+
+### 220. How do you design REST for "invite" or "share"?
+**Answer:** POST /resources/1/invites or /shares with { email, role }. Return 201 with invite link or token. GET to list; DELETE to revoke. Use for collaboration. Optional expiry.
+
+### 221. Explain idempotency in REST.
+**Answer:** Same request multiple times = same effect as once. GET, PUT, DELETE are idempotent; POST is not. Use Idempotency-Key for POST to make safe. Use for payments and duplicate prevention.
+
+### 222. How do you implement REST API with OAuth2 client credentials?
+**Answer:** Client gets token from token endpoint (client_id, client_secret); use Bearer token in requests. Use for server-to-server. No user context. Secure secret storage.
+
+### 223. What is the purpose of the Retry-After header?
+**Answer:** Server sends with 503 or 429; value is seconds or date. Client should wait before retry. Use for rate limit and maintenance. Optional; client may use backoff anyway.
+
+### 224. How do you design REST for "duplicate" or "clone"?
+**Answer:** POST /resources/1/duplicate or POST /resources with sourceId. Return 201 with new resource. Use for copy. Optional query for deep vs shallow. Idempotency-Key if needed.
+
+### 225. What is the difference between REST and GraphQL subscription?
+**Answer:** REST has no built-in subscription; use polling or WebSocket separately. GraphQL has subscription over WebSocket. Use REST for request-response; GraphQL for real-time when needed.
+
+### 226. How do you implement REST API documentation with OpenAPI 3?
+**Answer:** Write YAML/JSON spec (paths, schemas, security); serve with Swagger UI or ReDoc. Use for interactive docs and client generation. Keep spec in sync with code.
+
+### 227. What is the purpose of the Vary header?
+**Answer:** Vary lists headers that affect response (e.g. Accept-Encoding). Caches use for cache key. Use for correct caching when response varies by header. Important for CDN.
+
+### 228. How do you design REST for "archive" or "soft delete"?
+**Answer:** PATCH /resources/1 with { archived: true } or DELETE with soft delete. Filter archived in list (query param ?includeArchived). Use for recoverable delete. Document behavior.
+
+### 229. Explain HATEOAS in practice.
+**Answer:** Responses include links to related actions (self, edit, delete, next page). Client discovers API from links. Use for flexibility; often skipped for simplicity. Document links in API docs.
+
+### 230. How do you implement REST API with JWT in cookie?
+**Answer:** Set httpOnly, secure cookie with token; send automatically. Validate cookie in middleware. Use for XSS-safe auth. SameSite for CSRF. Prefer cookie over header for browser.
+
+### 231. What is the purpose of the Content-Range header?
+**Answer:** Sent with 206 Partial Content; indicates range of response (e.g. bytes 0-499/1000). Use for range requests and pagination of large response. Client requests Range; server responds with Content-Range.
+
+### 232. How do you design REST for "merge" (e.g. merge users)?
+**Answer:** POST /resources/merge with { sourceIds, targetId }. Return 200 or 202. Use for consolidating records. Define merge rules (which fields win). Idempotency-Key recommended.
+
+### 233. What is the difference between PUT and PATCH?
+**Answer:** PUT replaces resource (full update). PATCH partial update (only sent fields). Use PUT when client sends full resource; PATCH for partial. PATCH is safer for large resources.
+
+### 234. How do you implement REST API rate limiting response?
+**Answer:** Return 429 with Retry-After; headers X-RateLimit-Limit, Remaining, Reset. Use for fair usage. Document limits. Client should respect Retry-After and backoff.
+
+### 235. What is the purpose of the Allow header?
+**Answer:** Allow lists methods allowed on resource (GET, POST, ...). Sent with 405. Use for discovery. Optional; document in API docs. Client can use for OPTIONS response.
+
+### 236. How do you design REST for "restore" (from archive)?
+**Answer:** PATCH /resources/1 with { archived: false } or POST /resources/1/restore. Return 200. Use after soft delete. Document; consider audit log.
+
+### 237. Explain content negotiation in REST.
+**Answer:** Client sends Accept; server returns representation (JSON, XML, etc.). Use Accept and Content-Type. Use for multiple formats. JSON is default for APIs; document others.
+
+### 238. How do you implement REST API with API gateway?
+**Answer:** Gateway routes, auth, rate limit, transform. Backend services behind gateway. Use for central auth and cross-cutting. Kong, AWS API Gateway, etc. Document gateway config.
+
+### 239. What is the purpose of the Location header?
+**Answer:** Sent with 201 Created; URL of new resource. Client can GET resource. Use for POST response. Required for 201 in REST. Optional for other statuses.
+
+### 240. How do you design REST for "bulk" operations?
+**Answer:** POST /resources/bulk with array; return 207 Multi-Status or 200 with results per item. Use for batch create/update. Limit batch size; document. Consider partial success.
+
+### 241. What is the difference between REST and SOAP?
+**Answer:** REST uses HTTP, JSON/XML, simple. SOAP is XML, WSDL, strict. REST is lighter and common for web APIs; SOAP for enterprise. Choose REST for most new APIs.
+
+### 242. How do you implement REST API error response format?
+**Answer:** Consistent body: { error: { code, message }, details? }. Use for 4xx/5xx. Document codes. Include request id for support. Don't expose stack in production.
+
+### 243. What is the purpose of the ETag header?
+**Answer:** ETag is opaque identifier of resource version. Use for conditional GET (If-None-Match) and 304. Use for caching and optimistic concurrency (If-Match for PUT). Strong or weak ETag.
+
+### 244. How do you design REST for "preview" or "draft"?
+**Answer:** POST /resources with draft: true or PATCH to set status. GET returns draft; publish via PATCH or POST /publish. Use for content workflow. Filter drafts in list.
+
+### 245. Explain statelessness in REST.
+**Answer:** Server doesn't store client state; each request has all needed info (auth, params). Use token or session cookie for auth. Enables scaling and simplicity. Don't rely on server-side session for API.
+
+### 246. How do you implement REST API with CORS?
+**Answer:** Set Access-Control-Allow-Origin (or dynamic); Allow-Methods, Allow-Headers; credentials if needed. Use for browser clients. Validate origin; never * with credentials.
+
+### 247. What is the purpose of the If-Match header?
+**Answer:** Client sends with PUT/PATCH; value is ETag. Server returns 412 if ETag doesn't match. Use for optimistic concurrency. Prevents lost update. Use ETag from GET.
+
+### 248. How do you design REST for "approval" workflow?
+**Answer:** PATCH /resources/1 with { status: 'approved' } or POST /resources/1/approve. Use roles; return 403 if not allowed. Use for workflow. Optional: GET /pending-approvals.
+
+### 249. What is the difference between 200 and 204?
+**Answer:** 200 OK: response has body. 204 No Content: success, no body. Use 204 for DELETE or PUT/PATCH when no representation returned. Use 200 when returning updated resource.
+
+### 250. How do you implement REST API pagination with cursor?
+**Answer:** GET /resources?cursor=abc&amp;limit=20. Return next cursor in response or Link header. Use for large lists; stable under insert/delete. Prefer over offset for consistency.
+
+### 251. What is the purpose of the Prefer header?
+**Answer:** Client requests preference (e.g. return=representation, wait=30). Server may honor. Use for conditional response (return body on create). Optional; document support.
+
+### 252. How do you design REST for "revert" or "undo"?
+**Answer:** POST /resources/1/revert or PATCH with previous version. Store history or version; revert to version. Use for audit and undo. Document scope (last change vs version).
+
+### 253. Explain resource naming in REST.
+**Answer:** Use nouns (not verbs); plural for collections (/users). Use hierarchy when it's ownership (/users/1/orders). Keep URLs short and consistent. Use kebab-case or camelCase consistently.
+
+### 254. How do you implement REST API with request validation?
+**Answer:** Validate body, params, query (schema); return 400 with details on error. Use Zod, Joi, or OpenAPI. Document schema. Validate early; consistent error format.
+
+### 255. What is the purpose of the Link header?
+**Answer:** Link contains URLs for related resources (next, prev, canonical). Use for pagination and discovery. Format: &lt;url&gt;; rel="next". Use for API discovery and clients.
+
+### 256. How do you design REST for "notification" preferences?
+**Answer:** GET/PATCH /users/me/notification-preferences or nested under /users/1/settings. Use for opt-in/out. Document keys. Use PATCH for partial update.
+
+### 257. What is the difference between 404 and 410?
+**Answer:** 404 Not Found: resource doesn't exist or no permission. 410 Gone: existed but permanently removed. Use 410 for deprecated or deleted. Client may remove from cache.
+
+### 258. How do you implement REST API versioning with header?
+**Answer:** Accept-Version: 1 or X-API-Version: 1. Middleware reads and routes. Same URL, different handler. Use for version negotiation. Document header. Less visible than path.
+
+### 259. What is the purpose of the Cache-Control header?
+**Answer:** Controls caching (max-age, no-cache, no-store, private, public). Use for performance and freshness. Set on response. Use for static and cacheable API. Document TTL.
+
+### 260. How do you design REST for "favorite" or "bookmark"?
+**Answer:** POST /resources/1/favorites or PUT /users/me/favorites/1. DELETE to remove. GET /users/me/favorites for list. Use for user-specific lists. Consider collection resource.
+
+### 261. Explain safe methods in REST.
+**Answer:** GET, HEAD, OPTIONS are safe (no side effect). PUT, POST, PATCH, DELETE are not. Use safe for read; don't change state. Idempotent: GET, HEAD, PUT, DELETE (same effect if repeated).
+
+### 262. How do you implement REST API with compression?
+**Answer:** Support Accept-Encoding: gzip; respond with Content-Encoding: gzip when accepted. Use for large responses. Set Vary: Accept-Encoding. Optional for JSON; useful for large payloads.
+
+### 263. What is the purpose of the If-None-Match header?
+**Answer:** Client sends with GET; value is ETag. Server returns 304 if ETag matches. Use for conditional GET and cache revalidation. Reduces bandwidth. Use ETag from previous response.
+
+### 264. How do you design REST for "template" (create from template)?
+**Answer:** POST /resources with templateId or POST /templates/1/instantiate. Return 201 with new resource. Use for cloning config. Document templates. Idempotency-Key optional.
+
+### 265. What is the difference between REST and RPC-style HTTP?
+**Answer:** REST is resource-oriented (nouns, HTTP methods). RPC is action-oriented (verbs in URL or body). Use REST for CRUD; RPC for procedures. REST is more cacheable and standard.
+
+### 266. How do you implement REST API health check?
+**Answer:** GET /health returns 200 and { status: 'ok' }. Optional: check DB, cache. Use for load balancer and k8s. Keep fast; no auth. Use /ready for dependencies.
+
+### 267. What is the purpose of the WWW-Authenticate header?
+**Answer:** Sent with 401; indicates auth scheme (Bearer, Basic) and params (realm). Client uses to get credentials. Use for challenge. Required for 401 when auth is possible.
+
+### 268. How do you design REST for "schedule" or "recurrence"?
+**Answer:** Resource with schedule (cron or RRULE); PATCH to update. Or sub-resource /resources/1/schedule. Use for recurring events. Document format. Consider timezone.
+
+### 269. Explain HTTP methods in REST.
+**Answer:** GET read; POST create; PUT replace; PATCH partial update; DELETE remove; HEAD like GET no body; OPTIONS allowed methods. Use correctly for semantics and caching.
+
+### 270. How do you implement REST API with OpenAPI code generation?
+**Answer:** Write OpenAPI spec; generate client/server with openapi-generator or similar. Use for type-safe client. Keep spec in sync. Use for SDK and consistency.
+
+### 271. What is the purpose of the Content-Location header?
+**Answer:** Indicates URL of representation (e.g. for 201 or 303). Use when response URL differs from request. Optional. Use for redirect to canonical URL. Rare.
+
+### 272. How do you design REST for "comment" or "review"?
+**Answer:** POST /resources/1/comments with body; GET to list; PATCH/DELETE for own. Use nested or /comments?resourceId=1. Paginate. Consider moderation. Use for feedback.
+
+### 273. What is the difference between 400 and 422?
+**Answer:** 400 Bad Request: malformed (syntax, invalid JSON). 422 Unprocessable Entity: valid syntax but semantic error (validation). Use 422 for validation errors. Both are client error.
+
+### 274. How do you implement REST API idempotency?
+**Answer:** Client sends Idempotency-Key (header or body); server stores result by key; return same response on replay. Use for POST/PATCH. TTL for keys. Document key format.
+
+### 275. What is the purpose of the Range header?
+**Answer:** Client requests range of resource (bytes=0-499). Server returns 206 with Content-Range. Use for large file download and resume. Use for partial content. Support optional.
+
+### 276. How do you design REST for "tag" or "label"?
+**Answer:** GET/PATCH /resources/1/tags or /resources?tag=x. Use array or relation. PATCH to set; GET to filter. Use for categorization. Consider tag namespace and limit.
+
+### 277. Explain idempotency key in REST.
+**Answer:** Client sends unique key (UUID) with POST; server deduplicates; return same response if key seen. Use for payments and retries. Store key with TTL. Document in API docs.
+
+### 278. How do you implement REST API with request ID?
+**Answer:** Generate or read X-Request-Id; set on request and response; log everywhere. Use for tracing and support. Propagate to downstream. UUID or similar. Document header.
+
+### 279. What is the purpose of the If-Modified-Since header?
+**Answer:** Client sends with GET; value is date. Server returns 304 if not modified since. Use for conditional GET. Use with Last-Modified. Simpler than ETag for date-based resources.
+
+### 280. How do you design REST for "version" or "revision"?
+**Answer:** GET /resources/1/versions or /resources/1?version=2. Use for history and rollback. Optional: POST to restore version. Use for audit. Consider retention.
+
+### 281. What is the difference between REST and WebSocket?
+**Answer:** REST is request-response over HTTP. WebSocket is full-duplex over single connection. Use REST for API; WebSocket for real-time. Different protocols; use both when needed.
+
+### 282. How do you implement REST API with correlation ID?
+**Answer:** Same as request ID; propagate X-Correlation-Id to services; log in each. Use for distributed tracing. Same as request id for many APIs. Document header.
+
+### 283. What is the purpose of the Last-Modified header?
+**Answer:** Server sends with GET; date of last change. Client uses If-Modified-Since next time. Use for conditional GET and 304. Less precise than ETag; use for date-based resources.
+
+### 284. How do you design REST for "subscription" (recurring)?
+**Answer:** POST /subscriptions with plan, billing; GET/PATCH/DELETE. Use for SaaS billing. Webhook for renewal. Consider trial and cancel. Use for recurring revenue.
+
+### 285. Explain REST and HTTP status code categories.
+**Answer:** 2xx success; 3xx redirect; 4xx client error; 5xx server error. Use correct code for semantics. 200/201/204 for success; 400/401/403/404/422 for client; 500/503 for server.
+
+### 286. How do you implement REST API with API key in query (legacy)?
+**Answer:** ?api_key=xxx. Not recommended (logs, referrer). Use header instead. Support for legacy clients only. Document deprecation. Prefer Authorization or X-API-Key header.
+
+### 287. What is the purpose of the Accept header?
+**Answer:** Client sends preferred response type (application/json, etc.). Server uses for content negotiation. Use for API format. Default JSON; document others. Use for version optional.
+
+### 288. How do you design REST for "analytics" or "stats"?
+**Answer:** GET /resources/stats or /analytics?from=&amp;to=&amp;metric=. Return aggregated data. Use for dashboards. Consider caching and range limit. Document metrics. Optional real-time.
+
+### 289. What is the difference between 500 and 503?
+**Answer:** 500 Internal Server Error: unexpected error. 503 Service Unavailable: overloaded or maintenance. Use 503 for retry; 500 for bug. Client may retry 503 with backoff.
+
+### 290. How do you implement REST API with deprecation header?
+**Answer:** Set Deprecation: true or Sunset: date on deprecated endpoints. Use for warning clients. Document migration. RFC 8594. Use for version sunset. Optional Retry-After.
+
+### 291. What is the purpose of the Content-Type header?
+**Answer:** Request: type of body (application/json). Response: type of body. Use for parsing. Required for body. Use application/json for API. Document charset if needed.
+
+### 292. How do you design REST for "webhook" delivery?
+**Answer:** Client registers URL; server POSTs events. Use retry and signature. Document events and payload. Use for async notification. Consider idempotency and timeout.
+
+### 293. Explain REST resource hierarchy.
+**Answer:** Use nested URLs for ownership: /users/1/orders. Don't nest too deep (3 levels max). Use flat with query when equal: /orders?userId=1. Balance clarity and length.
+
+### 294. How do you implement REST API with response schema?
+**Answer:** Document response in OpenAPI; validate in dev optional. Use for contract. Consistent shape. Use for client generation. Optional runtime validation. Document in spec.
+
+### 295. What is the purpose of the X-Request-Id header?
+**Answer:** Client or server sets unique request id. Use for logging and support. Propagate to response and downstream. Use for tracing. Document as optional or required. UUID recommended.
+
+### 296. How do you design REST for "permission" or "role"?
+**Answer:** GET/PATCH /users/1/permissions or /roles. Use for RBAC. Nested or separate resource. Document roles. Use for authorization. Consider scope (global vs resource).
+
+### 297. What is the difference between REST and gRPC?
+**Answer:** REST is HTTP/JSON; human-readable; wide support. gRPC is HTTP/2, binary, codegen. Use REST for public API; gRPC for internal and performance. Different tradeoffs.
+
+### 298. How do you implement REST API with CORS preflight?
+**Answer:** Respond to OPTIONS with Allow-Origin, Allow-Methods, Allow-Headers; 204. Set Max-Age for cache. Use for browser. Handle OPTIONS on all routes or middleware. Same as CORS.
+
+### 299. What is the purpose of the Authorization header?
+**Answer:** Carries credentials: Bearer &lt;token&gt;, Basic &lt;base64&gt;, etc. Use for auth. Validate in middleware. Document scheme. Use for API auth. Standard header.
+
+### 300. How do you design REST for "import" (bulk create)?
+**Answer:** POST /resources/import with file or body array; return 202 with job id or 200 with results. Use for bulk create. Limit size; document format. Consider async for large.
+
+### 301. Explain REST and security (auth, HTTPS, CORS).
+**Answer:** Use HTTPS; validate CORS; auth (Bearer, API key); rate limit; validate input; don't expose internals. Use for production. Document security. Consider OWASP.
+
+### 302. How do you implement REST API with versioning and deprecation?
+**Answer:** Support multiple versions (path or header); set Deprecation/Sunset on old; document migration. Use for breaking changes. Communicate timeline. Remove after sunset.
+
+### 303. What is the purpose of the X-RateLimit-* headers?
+**Answer:** X-RateLimit-Limit, Remaining, Reset (and Retry-After on 429). Use for rate limit feedback. Client can throttle. Document in API docs. Optional but helpful. Various names (GitHub, etc.).
+
+### 304. How do you design REST for "dependency" (e.g. task depends on task)?
+**Answer:** POST /tasks/1/dependencies with { taskId: 2 }; GET to list; DELETE to remove. Use for graph. Validate no cycle. Use for project/task management. Document semantics.
+
+### 305. What is the difference between REST and GraphQL?
+**Answer:** REST: fixed endpoints, over/under fetch. GraphQL: single endpoint, client queries shape. Use REST for simple CRUD; GraphQL for flexible query. Different paradigms; choose by need.
+
+### 306. How do you implement REST API with request logging?
+**Answer:** Log method, path, status, duration, request id; redact auth and body in prod. Use for debugging and audit. Structured JSON. Don't log PII without policy. Use middleware.
+
+### 307. What is the purpose of the If-Unmodified-Since header?
+**Answer:** Client sends with PUT/DELETE; server returns 412 if modified since. Use for optimistic concurrency. Use with Last-Modified. Less common than If-Match/ETag. Use for simple concurrency.
+
+### 308. How do you design REST for "link" (relation between resources)?
+**Answer:** POST /resources/1/links with { targetId, type }; GET to list; DELETE to remove. Use for many-to-many or graph. Document relation types. Use for associations. Consider bidirectional.
+
+### 309. Explain REST and caching (Cache-Control, ETag).
+**Answer:** Set Cache-Control (max-age, etc.); use ETag for validation. Use for performance. 304 on If-None-Match. Document cacheable endpoints. Use for GET. Don't cache with auth sensitive data without care.
+
+### 310. How do you implement REST API with health and readiness?
+**Answer:** GET /health for liveness (200 = up). GET /ready for readiness (DB, etc.). Use for k8s. Return 503 when not ready. Keep fast. Document. Use for orchestration.
+
+### 311. What is the purpose of the OPTIONS method?
+**Answer:** Returns allowed methods and CORS headers. Use for preflight. Server responds with Allow and CORS headers. Use for discovery. Optional; many APIs support for CORS only. Document.
+
+### 312. How do you design REST for "audit" (who changed what)?
+**Answer:** Store audit log (resource, action, actor, timestamp); GET /resources/1/audit or /audit?resourceId=1. Use for compliance. Paginate. Consider retention. Use for accountability.
+

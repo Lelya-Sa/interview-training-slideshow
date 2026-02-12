@@ -1120,3 +1120,549 @@ function maxProfit(prices) {
 ### 250. How do you implement a simple compose with async functions?
 **Answer:** Compose that returns async function: each fn returns Promise; use await in reduce/reduceRight. Or use promise chain: fns.reduce((p, fn) => p.then(fn), Promise.resolve(x)). Use for async middleware or pipelines.
 
+### 251. What is the difference between `Array.prototype.toSorted()` and `sort()` with compare?
+**Answer:** toSorted(compareFn) returns new sorted array (non-mutating). sort(compareFn) mutates. Same compare contract. Use toSorted when you must not mutate original.
+
+### 252. Explain `Array.prototype.findLast()` and `findLastIndex()`.
+**Answer:** ES2023: findLast(cb) returns last element matching predicate; findLastIndex(cb) returns its index. Use when you need last match instead of first.
+
+### 253. What is the difference between `Object.hasOwn()` and `in` operator?
+**Answer:** Object.hasOwn(obj, key) checks own property only; safe when obj has no prototype. in checks own or inherited. Use hasOwn for own property; in when inherited is OK.
+
+### 254. How do you implement a simple throttle with leading and trailing?
+**Answer:** Throttle that can fire on leading edge (first call) and/or trailing (after wait). Track lastRun and timeout; on invoke either run now (leading) or schedule (trailing). Use for scroll/resize.
+
+### 255. What is the difference between `String.prototype.match()` and `matchAll()`?
+**Answer:** match() returns first match or all (with g) as strings. matchAll() returns iterator of match objects with groups. Use matchAll for capturing groups in loop.
+
+### 256. Explain `Array.prototype.toSpliced()` and `with()`.
+**Answer:** ES2023: toSpliced(start, deleteCount, ...items) returns new array with splice applied. with(index, value) returns new array with one element replaced. Non-mutating.
+
+### 257. What is the difference between `Promise.finally()` and cleanup in useEffect?
+**Answer:** Promise.finally runs when promise settles (fulfilled or rejected). useEffect cleanup runs on unmount or before re-run. Use finally for promise cleanup; useEffect return for React cleanup.
+
+### 258. How do you convert an async iterable to array?
+**Answer:** for await...of and push to array, or Array.fromAsync (ES2024). No built-in in older JS; use loop or library.
+
+### 259. What is the difference between ESM and CommonJS in Node?
+**Answer:** ESM uses import/export; "type": "module" or .mjs. CommonJS uses require/module.exports. ESM is async loading; CommonJS is sync. Use ESM for new Node code when possible.
+
+### 260. Explain `Symbol.iterator` and making an object iterable.
+**Answer:** Add method [Symbol.iterator]() that returns { next() { return { value, done } } }. Then for...of, spread, Array.from work. Use for custom collections.
+
+### 261. What is the difference between `flat()` and `flatMap()`?
+**Answer:** flat(depth) flattens nested arrays. flatMap(fn) maps then flattens by one level. flatMap is map + flat(1); use when you want map and flatten in one pass.
+
+### 262. How do you detect a thenable (Promise-like)?
+**Answer:** typeof value.then === 'function'. Thenable has then method; Promise is thenable. Use for duck typing across Promise implementations.
+
+### 263. What is the difference between `Error.cause` and custom property?
+**Answer:** ES2022 Error.cause is standard for chaining; accessible as error.cause. Custom property (e.g. error.originalError) works but not standard. Use cause for portability.
+
+### 264. Explain `Object.fromEntries()` use cases.
+**Answer:** Convert Map to object; rebuild object from entries; transform key-value pairs. Use after Object.entries or Map.entries for object reconstruction.
+
+### 265. What is the difference between `String.repeat()` and `padStart`?
+**Answer:** repeat(n) returns string repeated n times. padStart(len, str) pads to length. Use repeat for patterns; padStart for alignment.
+
+### 266. How do you implement event emitter with off (removeListener)?
+**Answer:** Store listeners in array or Set; on adds; off removes (by reference or id); emit calls all. Use same reference for off. Return unsubscribe function from on.
+
+### 267. What is the difference between `ArrayBuffer` and `SharedArrayBuffer`?
+**Answer:** ArrayBuffer is not shared across workers. SharedArrayBuffer is shared (for Atomics, worker communication). Use SharedArrayBuffer for multi-threaded; ArrayBuffer for single thread.
+
+### 268. Explain `queueMicrotask()` vs `Promise.then()`.
+**Answer:** Both schedule microtask; same queue. queueMicrotask is explicit; Promise.then is indirect. Same timing; use queueMicrotask when you don't have a promise.
+
+### 269. What is the difference between `Reflect.get` and direct property access?
+**Answer:** Reflect.get(obj, key) is same as obj[key] but as function; returns value. Use in Proxy to forward or for consistent apply-style. Reflect methods return success/failure.
+
+### 270. How do you merge objects deeply without mutating?
+**Answer:** Recursive merge: for each key, if both objects have it and both values are objects, merge recursively; else take source value. Use library (lodash merge) or implement; handle arrays (replace or merge).
+
+### 271. What is the difference between `copyWithin()` and `slice()`?
+**Answer:** copyWithin copies within same array (mutates). slice returns new array. Use copyWithin for in-place shift; slice for copying.
+
+### 272. Explain `Proxy` for logging or debugging.
+**Answer:** Proxy with get/set handlers that log and forward to target. Use for debugging property access. Don't use in production for perf; use for dev or tests.
+
+### 273. What is the difference between async generator and generator?
+**Answer:** Async generator (async function*) yields Promises; use for await...of. Generator (function*) yields values; use for...of. Use async generator for async sequence.
+
+### 274. How do you implement memoize with size limit?
+**Answer:** Store in Map; when over limit remove oldest (Map preserves insertion order, so first key is oldest). Or use LRU cache. Evict on set when at capacity.
+
+### 275. What is the difference between `trim()` and `trimStart()`/`trimEnd()`?
+**Answer:** trim() removes whitespace from both ends. trimStart()/trimEnd() remove from one end. Use when you need one-sided trim.
+
+### 276. Explain `Array.prototype.reduceRight()` use cases.
+**Answer:** Same as reduce but right-to-left. Use for function composition (right to left), or when order of combination matters. Or for building right-associated structures.
+
+### 277. What is the difference between `Object.getOwnPropertySymbols()` and `Reflect.ownKeys()`?
+**Answer:** getOwnPropertySymbols returns only symbol keys. Reflect.ownKeys returns all own keys (strings and symbols). Use Reflect.ownKeys for full list.
+
+### 278. How do you handle circular references in custom serializer?
+**Answer:** Track seen objects in WeakSet; when object already seen, emit placeholder or path. Use for custom JSON-like serialization. JSON.stringify throws on circular.
+
+### 279. What is the difference between `Map` and object for numeric keys?
+**Answer:** Map preserves key type (number stays number); object converts to string. Map has size, iteration order. Use Map for numeric or arbitrary keys; object for string keys.
+
+### 280. Explain `Function.prototype.length` and rest params.
+**Answer:** length is number of parameters before first rest param. Rest param is not counted. Use for introspection (e.g. curry that checks length).
+
+### 281. What is the difference between sync throw and async reject?
+**Answer:** Sync throw propagates up stack. Async reject becomes rejected promise; unhandled rejection if not caught. Always catch in async or use global handler.
+
+### 282. How do you implement lazy (on-demand) value?
+**Answer:** Return getter or function that computes on first access; cache result. Or use Proxy. Use for expensive computation that may not be needed.
+
+### 283. What is the difference between `includes()` and `indexOf()` for objects?
+**Answer:** Both use SameValueZero; for objects compare by reference. includes is clearer; indexOf returns index (-1 if not found). Use includes for boolean check.
+
+### 284. Explain `Object.defineProperty()` for configurable and enumerable.
+**Answer:** configurable: can delete or redefine. enumerable: shows in for...in and Object.keys. Use defineProperty for precise control; default is false for both when defining new property.
+
+### 285. What is the difference between `split()` and `join()`?
+**Answer:** split(sep) splits string into array. join(sep) joins array into string. Inverse operations. Use split for parsing; join for building string.
+
+### 286. How do you implement retry with jitter?
+**Answer:** Retry with delay = baseDelay * 2^attempt + random jitter. Jitter prevents thundering herd when many clients retry. Use for transient failures.
+
+### 287. What is the difference between `globalThis` and `self`?
+**Answer:** globalThis is standard (ES2020). self is window in browser, global in worker. Use globalThis for portable code; self in workers.
+
+### 288. Explain `some()` and `every()` return value.
+**Answer:** some() returns true if any element passes; else false. every() returns true if all pass; else false. Both short-circuit. Use for existence or universal check.
+
+### 289. What is the difference between `Object.create(null)` and `Object.create(Object.prototype)`?
+**Answer:** create(null) has no prototype (no toString, etc.). create(Object.prototype) has Object.prototype. Use null for pure key-value map; Object.prototype for normal object.
+
+### 290. How do you implement Promise timeout with AbortController?
+**Answer:** AbortController; setTimeout to abort after ms; pass signal to fetch. fetch throws on abort. Use for fetch timeout. For generic Promise, race with timeout promise.
+
+### 291. What is the difference between `RegExp.exec()` and `String.matchAll()`?
+**Answer:** exec() returns one match at a time; call in loop for all. matchAll() returns iterator of all matches with groups. Use matchAll for cleaner loop over matches.
+
+### 292. Explain `Symbol.asyncIterator` and async iterable.
+**Answer:** Object with [Symbol.asyncIterator]() returning iterator whose next() returns Promise of { value, done }. Use for await...of. Use for streaming async data.
+
+### 293. What is the difference between `parseFloat()` and `Number()` for parsing?
+**Answer:** parseFloat parses until first invalid character. Number() is stricter (empty string → NaN). Use parseFloat for leading number in string; Number for strict conversion.
+
+### 294. How do you implement pub/sub with wildcard topics?
+**Answer:** Store subscribers per pattern (e.g. user.*); on publish match topic to patterns; notify matching subscribers. Use for flexible routing (e.g. user.1.orders).
+
+### 295. What is the difference between `fill()` and array init with map?
+**Answer:** fill(value) fills existing array. Array(n).fill(0).map(...) or Array.from({ length: n }, fn) for computed init. Use fill for constant; map/from for computed.
+
+### 296. Explain custom `Error` subclass with name and message.
+**Answer:** class MyError extends Error { constructor(message) { super(message); this.name = 'MyError'; } }. Use for typed errors; check with instanceof. Set name for stack display.
+
+### 297. What is the difference between `WeakRef` and strong reference?
+**Answer:** WeakRef doesn't prevent GC; object can be collected. Strong reference keeps object alive. Use WeakRef for cache that shouldn't prevent GC; check deref() for null.
+
+### 298. How do you implement concurrency limit (N tasks at a time)?
+**Answer:** Queue of tasks; run up to N; when one completes start next. Use Promise pool or library (p-limit). Return when all done. Same as worker pool.
+
+### 299. What is the difference between `Object.is()` and `===`?
+**Answer:** Object.is(a, b) is like === but Object.is(NaN, NaN) is true and Object.is(0, -0) is false. Use Object.is when NaN or -0 matters.
+
+### 300. Explain `Object.groupBy()` (ES2024) or reduce for grouping.
+**Answer:** Object.groupBy(items, keyFn) returns object with keys and arrays. Or use reduce to build { key: [items] }. Use for grouping by category. Check support for groupBy.
+
+### 301. What is the difference between `setTimeout` and `requestAnimationFrame`?
+**Answer:** setTimeout runs after delay (ms). requestAnimationFrame runs before next repaint (for animations). Use rAF for visual updates; setTimeout for non-visual delay.
+
+### 302. How do you implement rate limiter (token bucket)?
+**Answer:** Track tokens (refill per interval); each request consumes one; if no tokens wait or reject. Use for API rate limit. Alternative: sliding window.
+
+### 303. What is the difference between `Object.assign()` and spread?
+**Answer:** assign mutates first argument (if not empty object). Spread creates new object. Prefer spread for immutability: { ...a, ...b }.
+
+### 304. Explain `String.prototype.localeCompare()` for sort.
+**Answer:** localeCompare(b) returns negative, zero, or positive for sort order. Use for locale-aware sort: arr.sort((a, b) => a.localeCompare(b)). Handles accents and language.
+
+### 305. What is the difference between `flat(Infinity)` and recursive flatten?
+**Answer:** flat(Infinity) flattens to any depth (ES2019). Recursive flatten is equivalent. Use flat when supported; otherwise recursive with stack or recursion.
+
+### 306. How do you implement simple state machine?
+**Answer:** State and transition table (state + event → new state). On event look up transition; update state; run side effect. Use for UI or workflow. Object or Map for table.
+
+### 307. What is the difference between `JSON.parse()` and `eval()`?
+**Answer:** Never use eval() for data; executes code (security risk). JSON.parse() parses JSON only; safe. Use JSON.parse for JSON strings.
+
+### 308. Explain `Intl.Collator` for locale sort.
+**Answer:** Intl.Collator(locale) provides compare(a, b) for sort. Use arr.sort(collator.compare). Handles locale-specific order. Use for correct alphabetical sort.
+
+### 309. What is the difference between `splice()` and `toSpliced()`?
+**Answer:** splice mutates; toSpliced (ES2023) returns new array. Use toSpliced when you need immutability.
+
+### 310. How do you implement exponential backoff?
+**Answer:** delay = base * 2^attempt; optional jitter. Retry until success or max attempts. Use for transient failures (network). Cap max delay.
+
+### 311. What is the difference between `Symbol.toStringTag` and typeof?
+**Answer:** Symbol.toStringTag customizes Object.prototype.toString result (e.g. [object MyClass]). typeof is language primitive. Use toStringTag for custom type tag; typeof for primitive check.
+
+### 312. Explain `Array.prototype.with()` for immutable update.
+**Answer:** ES2023: arr.with(index, value) returns new array with element at index replaced. Non-mutating. Use for immutable updates without full copy.
+
+### 313. What is the difference between `fetch` and `axios`?
+**Answer:** fetch is built-in; returns Response; no throw on 4xx/5xx. Axios throws on error status; interceptors; request/response transform. Use fetch with wrapper or axios for convenience.
+
+### 314. How do you implement pipe (left-to-right compose)?
+**Answer:** pipe(...fns) returns x => fns.reduce((acc, fn) => fn(acc), x). First function receives input; each result passed to next. Use for readable data flow.
+
+### 315. What is the difference between `getOwnPropertyDescriptor` and `in`?
+**Answer:** getOwnPropertyDescriptor returns descriptor (value, writable, etc.) or undefined. in returns boolean. Use descriptor when you need attributes; in for existence.
+
+### 316. Explain `String.prototype.normalize()`.
+**Answer:** Unicode normalization (NFC, NFD, etc.). Different sequences can represent same character. Use for comparison and storage. Important for i18n.
+
+### 317. What is the difference between `at()` and bracket notation?
+**Answer:** at(index) accepts negative index (-1 is last). Bracket notation does not. Use at() for from-end indexing.
+
+### 318. How do you implement compose (right-to-left)?
+**Answer:** compose(...fns) returns x => fns.reduceRight((acc, fn) => fn(acc), x). Last function receives input; result flows right to left. Use for function composition.
+
+### 319. What is the difference between RegExp flag `y` and `g`?
+**Answer:** g finds all matches. y (sticky) matches only at lastIndex (contiguous). Use y for parsing when matches must be adjacent.
+
+### 320. Explain `Object.entries()` and iteration.
+**Answer:** Object.entries(obj) returns [key, value] pairs. Use with for...of, destructuring, or Map. Use when you need both key and value in loop.
+
+### 321. What is the difference between `filter()` and `flatMap()` for filtering?
+**Answer:** filter(cb) keeps elements where cb true. flatMap can map and filter (return [] to exclude, [x] to include). flatMap can filter and transform in one pass.
+
+### 322. How do you implement curry (partial application)?
+**Answer:** Return function that collects args; when args.length >= fn.length call fn; else return curried with more args. Use for partial application.
+
+### 323. What is the difference between `replace()` with function and string?
+**Answer:** replace with string: $&, $1 for match and groups. replace with function: (match, ...groups) => replacement; full control. Use function for dynamic replacement.
+
+### 324. Explain `reduce()` for building object from array.
+**Answer:** reduce((acc, item) => { acc[key] = value; return acc; }, {}). Use for grouping, indexing by id, or building lookup. Return accumulator each time.
+
+### 325. What is the difference between `Promise.all()` and `Promise.allSettled()`?
+**Answer:** all() rejects on first rejection. allSettled() waits for all; returns { status, value/reason } per promise. Use allSettled when you need outcome of all.
+
+### 326. How do you implement simple observable (reactive value)?
+**Answer:** Store value and subscribers; set(value) updates and notifies; subscribe(cb) adds callback. Return { get, set, subscribe }. Use for simple reactive state.
+
+### 327. What is the difference between `Number.isFinite()` and `isFinite()`?
+**Answer:** Number.isFinite(x) does not coerce; only true for numbers. isFinite(x) coerces (isFinite("1") true). Use Number.isFinite for strict check.
+
+### 328. Explain `reduceRight()` for composition.
+**Answer:** reduceRight applies functions right to left. [f, g, h].reduceRight((acc, fn) => fn(acc), x) gives h(g(f(x))). Use for right-to-left composition.
+
+### 329. What is the difference between `Object.keys()` and `Reflect.ownKeys()`?
+**Answer:** Object.keys returns enumerable own string keys. Reflect.ownKeys returns all own keys (string + symbol), including non-enumerable. Use Reflect.ownKeys for full list.
+
+### 330. How do you implement promise pool (limit concurrency)?
+**Answer:** Queue tasks; run up to N; when one completes start next. Track in-flight count; when < N dequeue and run. Return when queue empty and all done.
+
+### 331. What is the difference between `search()` and `indexOf()`?
+**Answer:** search(regex) returns index of first match or -1. indexOf(substr) takes string. Use search for regex; indexOf for literal string.
+
+### 332. Explain `copyWithin()` use cases.
+**Answer:** Copies slice within same array (mutates). Use for ring buffer, in-place shift, or duplicating range. Rare; slice + splice more readable for most cases.
+
+### 333. What is the difference between async function and async generator?
+**Answer:** Async function returns one Promise. Async generator yields multiple values over time; use for await...of. Use async function for single result; async generator for sequence.
+
+### 334. How do you implement deep equal (with cycles)?
+**Answer:** Compare primitives; for objects compare keys and recurse; use Set to track seen objects and detect cycles. Return false if cycle with different structure. Or use library.
+
+### 335. What is the difference between `reverse()` and `toReversed()`?
+**Answer:** reverse() mutates. toReversed() (ES2023) returns new array. Use toReversed for immutability.
+
+### 336. Explain `Intl.NumberFormat` for currency.
+**Answer:** Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(n). Use for display of money. Handles locale and symbol.
+
+### 337. What is the difference between `seal()` and `freeze()`?
+**Answer:** seal() prevents add/remove; values can change. freeze() also prevents value change. Use seal for shape fixed; freeze for full immutability.
+
+### 338. How do you implement LRU cache?
+**Answer:** Map for insertion order; on get move to end (delete + set); on set if over capacity delete first. Evict least recently used. Use for cache with size limit.
+
+### 339. What is the difference between `indexOf()` and `findIndex()`?
+**Answer:** indexOf(value) finds by value (strict equality). findIndex(cb) finds by predicate. Use findIndex for find by id or condition; indexOf for value match.
+
+### 340. Explain `replaceAll()`.
+**Answer:** ES2021: replaces all occurrences. Takes string or regex (must have g). Use for replace every occurrence. Same as replace with g but clearer.
+
+### 341. What is the difference between `WeakSet` and `Set`?
+**Answer:** WeakSet: weak refs, objects only, no iteration. Set: strong refs, any value, iterable. Use WeakSet for tracking without preventing GC.
+
+### 342. How do you implement debounce with leading option?
+**Answer:** If leading: call immediately on first invoke; then ignore until wait. Track last run; on invoke either run now (leading) or schedule. Use for "instant first, then debounce."
+
+### 343. What is the difference between `JSON.stringify` replacer and space?
+**Answer:** Replacer: function or array to filter/transform. Space: indent for pretty print. Use replacer to exclude or transform; space for readable output.
+
+### 344. Explain `toSorted()` with compare function.
+**Answer:** ES2023: toSorted(compareFn) returns new sorted array. Same compare as sort. Use when you need sorted copy without mutating.
+
+### 345. What is the difference between `createElement` and `innerHTML`?
+**Answer:** createElement is safe (no script execution). innerHTML parses HTML and can run scripts (XSS). Use createElement for user content; sanitize if using innerHTML.
+
+### 346. How do you implement throttle with trailing?
+**Answer:** Throttle that runs at end of period if there was a call during period. Track lastRun and pending timeout; on invoke either run now or schedule trailing. Use for scroll/resize.
+
+### 347. What is the difference between `forEach()` and `for...of`?
+**Answer:** forEach cannot break; takes callback. for...of can break/continue; iterates values. Use for...of when you might break; forEach for side effects.
+
+### 348. Explain `Object.fromEntries()` with Map.
+**Answer:** Object.fromEntries(map) converts Map to plain object. Use when API expects object or for Map serialization. Keys become strings (unless already string).
+
+### 349. What is the difference between `AbortController` and cancel token?
+**Answer:** AbortController is standard (signal passed to fetch). Cancel token was axios pattern (deprecated). Use AbortController for cancellation.
+
+### 350. How do you implement async compose?
+**Answer:** Compose that returns async function; each fn returns Promise; use await in reduce. Or p.then(fn) chain. Use for async middleware or pipelines.
+
+### 351. What is the difference between `Array.prototype.toSorted()` and `sort()`?
+**Answer:** toSorted returns new sorted array (non-mutating). sort mutates. Same compare contract. Use toSorted when you must not mutate original.
+
+### 352. Explain `Array.prototype.findLast()` and `findLastIndex()`.
+**Answer:** ES2023: findLast(cb) returns last element matching predicate; findLastIndex(cb) returns its index. Use when you need last match instead of first.
+
+### 353. What is the difference between `Object.hasOwn()` and `in`?
+**Answer:** Object.hasOwn(obj, key) checks own property only; safe when obj has no prototype. in checks own or inherited. Use hasOwn for own property.
+
+### 354. How do you implement a simple throttle with leading and trailing?
+**Answer:** Throttle that can fire on leading edge (first call) and/or trailing (after wait). Track lastRun and timeout; on invoke either run now or schedule. Use for scroll/resize.
+
+### 355. What is the difference between `String.prototype.match()` and `matchAll()`?
+**Answer:** match() returns first match or all (with g) as strings. matchAll() returns iterator of match objects with groups. Use matchAll for capturing groups in loop.
+
+### 356. Explain `Array.prototype.toSpliced()` and `with()`.
+**Answer:** ES2023: toSpliced(start, deleteCount, ...items) returns new array with splice applied. with(index, value) returns new array with one element replaced. Non-mutating.
+
+### 357. What is the difference between `Promise.finally()` and cleanup in useEffect?
+**Answer:** Promise.finally runs when promise settles (fulfilled or rejected). useEffect cleanup runs on unmount or before re-run. Use finally for promise cleanup; useEffect return for React cleanup.
+
+### 358. How do you convert an async iterable to array?
+**Answer:** for await...of and push to array, or Array.fromAsync (ES2024). No built-in in older JS; use loop or library.
+
+### 359. What is the difference between ESM and CommonJS in Node?
+**Answer:** ESM uses import/export; "type": "module" or .mjs. CommonJS uses require/module.exports. ESM is async loading; CommonJS is sync. Use ESM for new Node code when possible.
+
+### 360. Explain `Symbol.iterator` and making an object iterable.
+**Answer:** Add method [Symbol.iterator]() that returns { next() { return { value, done } } }. Then for...of, spread, Array.from work. Use for custom collections.
+
+### 361. What is the difference between `flat()` and `flatMap()`?
+**Answer:** flat(depth) flattens nested arrays. flatMap(fn) maps then flattens by one level. flatMap is map + flat(1); use when you want map and flatten in one pass.
+
+### 362. How do you detect a thenable (Promise-like)?
+**Answer:** typeof value.then === 'function'. Thenable has then method; Promise is thenable. Use for duck typing across Promise implementations.
+
+### 363. What is the difference between `Error.cause` and custom property?
+**Answer:** ES2022 Error.cause is standard for chaining; accessible as error.cause. Custom property (e.g. error.originalError) works but not standard. Use cause for portability.
+
+### 364. Explain `Object.fromEntries()` use cases.
+**Answer:** Convert Map to object; rebuild object from entries; transform key-value pairs. Use after Object.entries or Map.entries for object reconstruction.
+
+### 365. What is the difference between `String.repeat()` and `padStart`?
+**Answer:** repeat(n) returns string repeated n times. padStart(len, str) pads to length. Use repeat for patterns; padStart for alignment.
+
+### 366. How do you implement event emitter with off (removeListener)?
+**Answer:** Store listeners in array or Set; on adds; off removes (by reference or id); emit calls all. Use same reference for off. Return unsubscribe function from on.
+
+### 367. What is the difference between `ArrayBuffer` and `SharedArrayBuffer`?
+**Answer:** ArrayBuffer is not shared across workers. SharedArrayBuffer is shared (for Atomics, worker communication). Use SharedArrayBuffer for multi-threaded; ArrayBuffer for single thread.
+
+### 368. Explain `queueMicrotask()` vs `Promise.then()`.
+**Answer:** Both schedule microtask; same queue. queueMicrotask is explicit; Promise.then is indirect. Same timing; use queueMicrotask when you don't have a promise.
+
+### 369. What is the difference between `Reflect.get` and direct property access?
+**Answer:** Reflect.get(obj, key) is same as obj[key] but as function; returns value. Use in Proxy to forward or for consistent apply-style. Reflect methods return success/failure.
+
+### 370. How do you merge objects deeply without mutating?
+**Answer:** Recursive merge: for each key, if both objects have it and both values are objects, merge recursively; else take source value. Use library (lodash merge) or implement; handle arrays (replace or merge).
+
+### 371. What is the difference between `copyWithin()` and `slice()`?
+**Answer:** copyWithin copies within same array (mutates). slice returns new array. Use copyWithin for in-place shift; slice for copying.
+
+### 372. Explain `Proxy` for logging or debugging.
+**Answer:** Proxy with get/set handlers that log and forward to target. Use for debugging property access. Don't use in production for perf; use for dev or tests.
+
+### 373. What is the difference between async generator and generator?
+**Answer:** Async generator (async function*) yields Promises; use for await...of. Generator (function*) yields values; use for...of. Use async generator for async sequence.
+
+### 374. How do you implement memoize with size limit?
+**Answer:** Store in Map; when over limit remove oldest (Map preserves insertion order, so first key is oldest). Or use LRU cache. Evict on set when at capacity.
+
+### 375. What is the difference between `trim()` and `trimStart()`/`trimEnd()`?
+**Answer:** trim() removes whitespace from both ends. trimStart()/trimEnd() remove from one end. Use when you need one-sided trim.
+
+### 376. Explain `Array.prototype.reduceRight()` use cases.
+**Answer:** Same as reduce but right-to-left. Use for function composition (right to left), or when order of combination matters. Or for building right-associated structures.
+
+### 377. What is the difference between `Object.getOwnPropertySymbols()` and `Reflect.ownKeys()`?
+**Answer:** getOwnPropertySymbols returns only symbol keys. Reflect.ownKeys returns all own keys (strings and symbols). Use Reflect.ownKeys for full list.
+
+### 378. How do you handle circular references in custom serializer?
+**Answer:** Track seen objects in WeakSet; when object already seen, emit placeholder or path. Use for custom JSON-like serialization. JSON.stringify throws on circular.
+
+### 379. What is the difference between `Map` and object for numeric keys?
+**Answer:** Map preserves key type (number stays number); object converts to string. Map has size, iteration order. Use Map for numeric or arbitrary keys; object for string keys.
+
+### 380. Explain `Function.prototype.length` and rest params.
+**Answer:** length is number of parameters before first rest param. Rest param is not counted. Use for introspection (e.g. curry that checks length).
+
+### 381. What is the difference between sync throw and async reject?
+**Answer:** Sync throw propagates up stack. Async reject becomes rejected promise; unhandled rejection if not caught. Always catch in async or use global handler.
+
+### 382. How do you implement lazy (on-demand) value?
+**Answer:** Return getter or function that computes on first access; cache result. Or use Proxy. Use for expensive computation that may not be needed.
+
+### 383. What is the difference between `includes()` and `indexOf()` for objects?
+**Answer:** Both use SameValueZero; for objects compare by reference. includes is clearer; indexOf returns index (-1 if not found). Use includes for boolean check.
+
+### 384. Explain `Object.defineProperty()` for configurable and enumerable.
+**Answer:** configurable: can delete or redefine. enumerable: shows in for...in and Object.keys. Use defineProperty for precise control; default is false for both when defining new property.
+
+### 385. What is the difference between `split()` and `join()`?
+**Answer:** split(sep) splits string into array. join(sep) joins array into string. Inverse operations. Use split for parsing; join for building string.
+
+### 386. How do you implement retry with jitter?
+**Answer:** Retry with delay = baseDelay * 2^attempt + random jitter. Jitter prevents thundering herd when many clients retry. Use for transient failures.
+
+### 387. What is the difference between `globalThis` and `self`?
+**Answer:** globalThis is standard (ES2020). self is window in browser, global in worker. Use globalThis for portable code; self in workers.
+
+### 388. Explain `some()` and `every()` return value.
+**Answer:** some() returns true if any element passes; else false. every() returns true if all pass; else false. Both short-circuit. Use for existence or universal check.
+
+### 389. What is the difference between `Object.create(null)` and `Object.create(Object.prototype)`?
+**Answer:** create(null) has no prototype (no toString, etc.). create(Object.prototype) has Object.prototype. Use null for pure key-value map; Object.prototype for normal object.
+
+### 390. How do you implement Promise timeout with AbortController?
+**Answer:** AbortController; setTimeout to abort after ms; pass signal to fetch. fetch throws on abort. Use for fetch timeout. For generic Promise, race with timeout promise.
+
+### 391. What is the difference between `RegExp.exec()` and `String.matchAll()`?
+**Answer:** exec() returns one match at a time; call in loop for all. matchAll() returns iterator of all matches with groups. Use matchAll for cleaner loop over matches.
+
+### 392. Explain `Symbol.asyncIterator` and async iterable.
+**Answer:** Object with [Symbol.asyncIterator]() returning iterator whose next() returns Promise of { value, done }. Use for await...of. Use for streaming async data.
+
+### 393. What is the difference between `parseFloat()` and `Number()` for parsing?
+**Answer:** parseFloat parses until first invalid character. Number() is stricter (empty string → NaN). Use parseFloat for leading number in string; Number for strict conversion.
+
+### 394. How do you implement pub/sub with wildcard topics?
+**Answer:** Store subscribers per pattern (e.g. user.*); on publish match topic to patterns; notify matching subscribers. Use for flexible routing (e.g. user.1.orders).
+
+### 395. What is the difference between `fill()` and array init with map?
+**Answer:** fill(value) fills existing array. Array(n).fill(0).map(...) or Array.from({ length: n }, fn) for computed init. Use fill for constant; map/from for computed.
+
+### 396. Explain custom `Error` subclass with name and message.
+**Answer:** class MyError extends Error { constructor(message) { super(message); this.name = 'MyError'; } }. Use for typed errors; check with instanceof. Set name for stack display.
+
+### 397. What is the difference between `WeakRef` and strong reference?
+**Answer:** WeakRef doesn't prevent GC; object can be collected. Strong reference keeps object alive. Use WeakRef for cache that shouldn't prevent GC; check deref() for null.
+
+### 398. How do you implement concurrency limit (N tasks at a time)?
+**Answer:** Queue of tasks; run up to N; when one completes start next. Use Promise pool or library (p-limit). Return when all done. Same as worker pool.
+
+### 399. What is the difference between `Object.is()` and `===`?
+**Answer:** Object.is(a, b) is like === but Object.is(NaN, NaN) is true and Object.is(0, -0) is false. Use Object.is when NaN or -0 matters.
+
+### 400. Explain `Object.groupBy()` (ES2024) or reduce for grouping.
+**Answer:** Object.groupBy(items, keyFn) returns object with keys and arrays. Or use reduce to build { key: [items] }. Use for grouping by category. Check support for groupBy.
+
+### 401. What is the difference between `setTimeout` and `requestAnimationFrame`?
+**Answer:** setTimeout runs after delay (ms). requestAnimationFrame runs before next repaint (for animations). Use rAF for visual updates; setTimeout for non-visual delay.
+
+### 402. How do you implement rate limiter (token bucket)?
+**Answer:** Track tokens (refill per interval); each request consumes one; if no tokens wait or reject. Use for API rate limit. Alternative: sliding window.
+
+### 403. What is the difference between `Object.assign()` and spread?
+**Answer:** assign mutates first argument (if not empty object). Spread creates new object. Prefer spread for immutability: { ...a, ...b }.
+
+### 404. Explain `String.prototype.localeCompare()` for sort.
+**Answer:** localeCompare(b) returns negative, zero, or positive for sort order. Use for locale-aware sort: arr.sort((a, b) => a.localeCompare(b)). Handles accents and language.
+
+### 405. What is the difference between `flat(Infinity)` and recursive flatten?
+**Answer:** flat(Infinity) flattens to any depth (ES2019). Recursive flatten is equivalent. Use flat when supported; otherwise recursive with stack or recursion.
+
+### 406. How do you implement simple state machine?
+**Answer:** State and transition table (state + event → new state). On event look up transition; update state; run side effect. Use for UI or workflow. Object or Map for table.
+
+### 407. What is the difference between `JSON.parse()` and `eval()`?
+**Answer:** Never use eval() for data; executes code (security risk). JSON.parse() parses JSON only; safe. Use JSON.parse for JSON strings.
+
+### 408. Explain `Intl.Collator` for locale sort.
+**Answer:** Intl.Collator(locale) provides compare(a, b) for sort. Use arr.sort(collator.compare). Handles locale-specific order. Use for correct alphabetical sort.
+
+### 409. What is the difference between `splice()` and `toSpliced()`?
+**Answer:** splice mutates; toSpliced (ES2023) returns new array. Use toSpliced when you need immutability.
+
+### 410. How do you implement exponential backoff?
+**Answer:** delay = base * 2^attempt; optional jitter. Retry until success or max attempts. Use for transient failures (network). Cap max delay.
+
+### 411. What is the difference between `Symbol.toStringTag` and typeof?
+**Answer:** Symbol.toStringTag customizes Object.prototype.toString result (e.g. [object MyClass]). typeof is language primitive. Use toStringTag for custom type tag; typeof for primitive check.
+
+### 412. Explain `Array.prototype.with()` for immutable update.
+**Answer:** ES2023: arr.with(index, value) returns new array with element at index replaced. Non-mutating. Use for immutable updates without full copy.
+
+### 413. What is the difference between `fetch` and `axios`?
+**Answer:** fetch is built-in; returns Response; no throw on 4xx/5xx. Axios throws on error status; interceptors; request/response transform. Use fetch with wrapper or axios for convenience.
+
+### 414. How do you implement pipe (left-to-right compose)?
+**Answer:** pipe(...fns) returns x => fns.reduce((acc, fn) => fn(acc), x). First function receives input; each result passed to next. Use for readable data flow.
+
+### 415. What is the difference between `getOwnPropertyDescriptor` and `in`?
+**Answer:** getOwnPropertyDescriptor returns descriptor (value, writable, etc.) or undefined. in returns boolean. Use descriptor when you need attributes; in for existence.
+
+### 416. Explain `String.prototype.normalize()`.
+**Answer:** Unicode normalization (NFC, NFD, etc.). Different sequences can represent same character. Use for comparison and storage. Important for i18n.
+
+### 417. What is the difference between `at()` and bracket notation?
+**Answer:** at(index) accepts negative index (-1 is last). Bracket notation does not. Use at() for from-end indexing.
+
+### 418. How do you implement compose (right-to-left)?
+**Answer:** compose(...fns) returns x => fns.reduceRight((acc, fn) => fn(acc), x). Last function receives input; result flows right to left. Use for function composition.
+
+### 419. What is the difference between RegExp flag `y` and `g`?
+**Answer:** g finds all matches. y (sticky) matches only at lastIndex (contiguous). Use y for parsing when matches must be adjacent.
+
+### 420. Explain `Object.entries()` and iteration.
+**Answer:** Object.entries(obj) returns [key, value] pairs. Use with for...of, destructuring, or Map. Use when you need both key and value in loop.
+
+### 421. What is the difference between `filter()` and `flatMap()` for filtering?
+**Answer:** filter(cb) keeps elements where cb true. flatMap can map and filter (return [] to exclude, [x] to include). flatMap can filter and transform in one pass.
+
+### 422. How do you implement curry (partial application)?
+**Answer:** Return function that collects args; when args.length >= fn.length call fn; else return curried with more args. Use for partial application.
+
+### 423. What is the difference between `replace()` with function and string?
+**Answer:** replace with string: $&, $1 for match and groups. replace with function: (match, ...groups) => replacement; full control. Use function for dynamic replacement.
+
+### 424. Explain `reduce()` for building object from array.
+**Answer:** reduce((acc, item) => { acc[key] = value; return acc; }, {}). Use for grouping, indexing by id, or building lookup. Return accumulator each time.
+
+### 425. What is the difference between `Promise.all()` and `Promise.allSettled()`?
+**Answer:** all() rejects on first rejection. allSettled() waits for all; returns { status, value/reason } per promise. Use allSettled when you need outcome of all.
+
+### 426. How do you implement simple observable (reactive value)?
+**Answer:** Store value and subscribers; set(value) updates and notifies; subscribe(cb) adds callback. Return { get, set, subscribe }. Use for simple reactive state.
+
+### 427. What is the difference between `Number.isFinite()` and `isFinite()`?
+**Answer:** Number.isFinite(x) does not coerce; only true for numbers. isFinite(x) coerces (isFinite("1") true). Use Number.isFinite for strict check.
+
+### 428. Explain `reduceRight()` for composition.
+**Answer:** reduceRight applies functions right to left. [f, g, h].reduceRight((acc, fn) => fn(acc), x) gives h(g(f(x))). Use for right-to-left composition.
+
+### 429. What is the difference between `Object.keys()` and `Reflect.ownKeys()`?
+**Answer:** Object.keys returns enumerable own string keys. Reflect.ownKeys returns all own keys (string + symbol), including non-enumerable. Use Reflect.ownKeys for full list.
+
+### 430. How do you implement promise pool (limit concurrency)?
+**Answer:** Queue tasks; run up to N; when one completes start next. Track in-flight count; when < N dequeue and run. Return when queue empty and all done.
+
+### 431. What is the difference between `search()` and `indexOf()`?
+**Answer:** search(regex) returns index of first match or -1. indexOf(substr) takes string. Use search for regex; indexOf for literal string.
+
+### 432. Explain `Intl.NumberFormat` for currency.
+**Answer:** Intl.NumberFormat(locale, { style: 'currency', currency: 'USD' }).format(n). Use for display of money. Handles locale and symbol.
+
