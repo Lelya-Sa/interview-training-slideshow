@@ -138,6 +138,8 @@ function App() {
   // View state: 'slideshow' or 'roadmap' or 'day'
   const [currentView, setCurrentView] = useState('roadmap');
   const [selectedDay, setSelectedDay] = useState(null);
+  // Nav sidebar: show view-switch buttons on demand only
+  const [showNavSidebar, setShowNavSidebar] = useState(false);
 
   // ============================================
   // STEP 4: FETCH DATA WITH useEffect
@@ -396,7 +398,19 @@ function App() {
   };
 
   const handleViewSlideshow = () => {
+    setShowNavSidebar(false);
     setCurrentView('slideshow');
+  };
+
+  const handleBackToRoadmapClose = () => {
+    setShowNavSidebar(false);
+    handleBackToRoadmap();
+  };
+
+  const handleGoToRoadmap = () => {
+    setShowNavSidebar(false);
+    setSelectedDay(null);
+    setCurrentView('roadmap');
   };
 
   // ============================================
@@ -505,15 +519,62 @@ function App() {
   // Render different views based on currentView state
   // Interview: "Conditional rendering allows switching between different UI states"
   
+  // Nav sidebar + toggle (same for all views)
+  const navSidebar = (
+    <>
+      <button
+        type="button"
+        className="nav-menu-toggle"
+        onClick={() => setShowNavSidebar(true)}
+        title="Open menu"
+        aria-label="Open navigation menu"
+      >
+        ☰ Menu
+      </button>
+      {showNavSidebar && (
+        <>
+          <div
+            className="nav-sidebar-backdrop"
+            onClick={() => setShowNavSidebar(false)}
+            aria-hidden="true"
+          />
+          <div className="nav-sidebar" role="dialog" aria-label="Navigation">
+            <button
+              type="button"
+              className="nav-sidebar-close"
+              onClick={() => setShowNavSidebar(false)}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+            <div className="nav-sidebar-buttons">
+              {currentView === 'slideshow' && (
+                <button onClick={handleGoToRoadmap} className="view-button">
+                  📋 Training Roadmap
+                </button>
+              )}
+              {currentView === 'day' && (
+                <button onClick={handleBackToRoadmapClose} className="view-button">
+                  📋 Back to Roadmap
+                </button>
+              )}
+              {(currentView === 'roadmap' || currentView === 'day') && (
+                <button onClick={handleViewSlideshow} className="view-button">
+                  📚 View Interview Questions
+                </button>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </>
+  );
+
   // Render Roadmap View
   if (currentView === 'roadmap') {
     return (
       <div className="app">
-        <div className="view-switcher">
-          <button onClick={handleViewSlideshow} className="view-button">
-            📚 View Interview Questions
-          </button>
-        </div>
+        {navSidebar}
         <RoadmapView onSelectDay={handleSelectDay} />
       </div>
     );
@@ -523,14 +584,7 @@ function App() {
   if (currentView === 'day') {
     return (
       <div className="app">
-        <div className="view-switcher">
-          <button onClick={handleBackToRoadmap} className="view-button">
-            📋 Back to Roadmap
-          </button>
-          <button onClick={handleViewSlideshow} className="view-button">
-            📚 View Interview Questions
-          </button>
-        </div>
+        {navSidebar}
         <DayView dayNumber={selectedDay} onBack={handleBackToRoadmap} />
       </div>
     );
@@ -544,14 +598,8 @@ function App() {
   
   // Render Slideshow View (original)
   return (
-    // <div>: HTML div element
-    // className: React's prop for CSS class (not 'class' - that's reserved)
     <div className="app">
-      <div className="view-switcher">
-        <button onClick={() => setCurrentView('roadmap')} className="view-button">
-          📋 Training Roadmap
-        </button>
-      </div>
+      {navSidebar}
       <div className="app-container">
         {/* Sidebar Component */}
         {/* Props: Data passed from parent to child */}
