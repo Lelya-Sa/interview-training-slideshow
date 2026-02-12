@@ -338,3 +338,357 @@
 ### 110. What is the difference between MVC and Clean MVC?
 **Answer:** Clean MVC: stricter separation; Controller only coordinates; no logic. Model is domain-only; use cases in service layer. Same idea as Thin Controller + Service Layer. Emphasizes cleanliness.
 
+### 111. Where does validation go in MVC?
+**Answer:** Validation in Model (domain rules) or Controller (input validation). Prefer Model for business rules; Controller for format and required fields. Use validators or schema.
+
+### 112. What is the difference between MVC and MVI (Model-View-Intent)?
+**Answer:** MVI: unidirectional; View sends Intent; Model produces State; View renders State. Similar to Redux. More predictable than classic MVC. Used in Android and reactive UIs.
+
+### 113. How does MVC handle file upload?
+**Answer:** Controller receives multipart request; validates type/size; passes to Model or service for storage; returns View with result. Same as other request handling; use middleware for parsing.
+
+### 114. What is the purpose of ViewModel in MVC?
+**Answer:** ViewModel (or DTO) shapes data for View; may combine multiple Models or add display logic. Keeps View dumb. Optional; use when View needs different shape than Model.
+
+### 115. Where does authentication go in MVC?
+**Answer:** Middleware or filter before Controller; sets user on request. Controller checks user for authorization. Model doesn't know about auth. Same as other cross-cutting.
+
+### 116. Explain MVC and dependency injection.
+**Answer:** Controller receives Model/service via constructor or property. Enables testing (mock) and loose coupling. Use DI container or manual injection. Common in modern MVC.
+
+### 117. What is the difference between MVC and Flux?
+**Answer:** Flux: unidirectional; Action → Dispatcher → Store → View. No Controller; Store is like Model. Used in React. More explicit flow than classic MVC.
+
+### 118. How does MVC handle redirect?
+**Answer:** Controller returns redirect (302/303) to URL; framework sets Location header. Use after POST (PRG pattern) or for auth. View not rendered; client follows redirect.
+
+### 119. Where does logging go in MVC?
+**Answer:** Middleware or filter logs request/response; Controller or Model logs business events. Don't log in View. Use structured logging; correlate with request id.
+
+### 120. What is the purpose of Controller base class?
+**Answer:** Base class provides common behavior (auth, helpers, error handling). Reduces duplication. Use for shared logic; prefer composition over inheritance when possible.
+
+### 121. How does MVC handle partial views?
+**Answer:** View includes partial (fragment); Controller may pass data for partial. Same Model or child Model. Use for headers, footers, reusable components. Framework renders partial.
+
+### 122. What is the difference between MVC and Redux?
+**Answer:** Redux: single store; actions; reducers (pure); View subscribes. No Controller; reducer is like Model update. Unidirectional. Used in React. More explicit than MVC.
+
+### 123. Where does caching go in MVC?
+**Answer:** Cache in Model/service (data cache) or View (output cache). Controller may set cache headers. Use for performance; invalidate on update. Infrastructure or service layer.
+
+### 124. How does MVC handle WebSocket?
+**Answer:** Separate endpoint or middleware; WebSocket handler may use same Model/service. Not classic request-response; Controller pattern may not fit. Use service layer for logic.
+
+### 125. What is the purpose of Model binding?
+**Answer:** Framework binds request (body, query, route) to Model or DTO. Controller receives typed object. Reduces boilerplate; validate after binding. Common in web MVC.
+
+### 126. Explain MVC and API (JSON) in same app.
+**Answer:** Same Controller can return View (HTML) or JSON by Accept header or route. Same Model; different representation. Use content negotiation or separate API controllers.
+
+### 127. Where does error handling go in MVC?
+**Answer:** Global exception handler or filter; catches errors; returns error View or JSON. Controller may throw; handler formats response. Don't swallow in View. Centralize.
+
+### 128. What is the difference between MVC and Clean Architecture?
+**Answer:** Clean Architecture: layers (entities, use cases, adapters); MVC can be in presentation layer. Use cases replace fat Controller; Model is entity. Stricter boundaries.
+
+### 129. How does MVC handle CORS?
+**Answer:** Middleware sets CORS headers before Controller. Controller doesn't know about CORS. Same as other cross-cutting. Configure allowed origins and methods.
+
+### 130. What is the purpose of View Resolver?
+**Answer:** Resolver maps logical view name to template (HTML, JSON). Controller returns view name; resolver picks file or serializer. Use for multiple view technologies. Framework component.
+
+### 131. Where does rate limiting go in MVC?
+**Answer:** Middleware or filter before Controller; rejects or delays when over limit. Controller unchanged. Infrastructure concern. Same as auth and logging.
+
+### 132. How does MVC handle session?
+**Answer:** Middleware loads session; Controller reads/writes session; View may read for display. Store session id in cookie; store data server-side or in cookie. Don't put large data in session.
+
+### 133. What is the difference between MVC and Hexagonal?
+**Answer:** Hexagonal: ports and adapters; core has no framework. MVC can be adapter (HTTP → Controller). Same idea: separate core from delivery. Hexagonal is more explicit.
+
+### 134. Explain MVC and multi-tenant.
+**Answer:** Middleware resolves tenant (subdomain, header); Controller uses tenant in Model/service. Model may scope queries by tenant. Use for SaaS. Isolate data per tenant.
+
+### 135. Where does CSRF protection go in MVC?
+**Answer:** Middleware validates CSRF token on state-changing requests. Controller receives valid request. View includes token in form. Same as other security. Use for forms.
+
+### 136. What is the purpose of Action Result?
+**Answer:** Controller returns ActionResult (ViewResult, RedirectResult, JsonResult). Encapsulates response; framework executes. Use for testability and consistency. Common in ASP.NET.
+
+### 137. How does MVC handle file download?
+**Answer:** Controller returns file stream or path; framework sets Content-Disposition attachment. Use Model/service for file access. Same as other response types. Validate path.
+
+### 138. What is the difference between MVC and Server Components?
+**Answer:** Server Components (React): render on server; no client JS for that part. Controller-like on server; View is streamed. Hybrid; different from classic MVC. Use for performance.
+
+### 139. Where does request ID go in MVC?
+**Answer:** Middleware generates or reads X-Request-Id; sets on request; adds to response and logs. Controller doesn't need to know. Use for tracing. Same as logging.
+
+### 140. How does MVC handle pagination?
+**Answer:** Controller receives page/size (query); Model/service returns page of data; View renders list and pagination UI. Use offset or cursor; limit max size. Common pattern.
+
+### 141. What is the purpose of TempData?
+**Answer:** TempData holds data for one request (e.g. after redirect). Controller sets; next View reads; then cleared. Use for flash messages. Framework-specific (e.g. ASP.NET, Rails).
+
+### 142. Explain MVC and event sourcing.
+**Answer:** Model may append events instead of state; Controller sends command; Model appends; View reads from read model. MVC fits in command/query side. Event sourcing is Model implementation.
+
+### 143. Where does health check go in MVC?
+**Answer:** Separate endpoint or middleware; doesn't use main Controller. May check Model/DB. Use for load balancer. Keep fast; no auth. Infrastructure.
+
+### 144. What is the difference between MVC and BFF?
+**Answer:** BFF (Backend for Frontend): API tailored per client. BFF can use MVC internally; Controller aggregates backends. MVC is pattern; BFF is architecture. Use BFF for multiple clients.
+
+### 145. How does MVC handle OPTIONS (CORS preflight)?
+**Answer:** Middleware responds to OPTIONS with CORS headers; may not reach Controller. Or Controller returns 204 with headers. Same as CORS. Use for browser requests.
+
+### 146. What is the purpose of Layout in MVC?
+**Answer:** Layout is wrapper template (header, footer); View is content. Controller returns View; framework merges View into Layout. Use for consistent shell. Common in server-rendered.
+
+### 147. Where does API versioning go in MVC?
+**Answer:** Middleware or route prefix (e.g. /v1/); Controller is versioned. Same Model; different Controller or logic. Use for breaking changes. Document and deprecate.
+
+### 148. How does MVC handle streaming response?
+**Answer:** Controller returns stream or async iterator; framework streams to client. Use for large response or SSE. Model may stream data. Same as other response types. Handle backpressure.
+
+### 149. What is the difference between MVC and MVP (Passive View)?
+**Answer:** Passive View: View is dumb; Presenter updates View directly. No View logic. Controller in MVC is like Presenter but View may observe Model. MVP is stricter for View.
+
+### 150. What is the purpose of Data Annotations in MVC?
+**Answer:** Annotations on Model (required, range, etc.) for validation and display. Framework validates before Controller; View can use for labels. Use for declarative validation. Common in ASP.NET.
+
+### 151. Where does WebSocket handler go in MVC?
+**Answer:** Separate route or middleware; handler uses Model/service. Not classic Controller; may have Controller-like class. Use for real-time. Same service layer as HTTP.
+
+### 152. How does MVC handle form resubmission (PRG)?
+**Answer:** POST redirects to GET (RedirectResult); user sees GET; refresh doesn't resubmit. Controller returns redirect after POST. Use for all state-changing forms. Standard pattern.
+
+### 153. What is the purpose of Tag Helpers (or equivalent)?
+**Answer:** Server-side helpers that generate HTML (e.g. form, input with validation). View uses tags; framework renders with Model binding. Use for consistency and less boilerplate. ASP.NET term.
+
+### 154. Explain MVC and CQRS.
+**Answer:** Command side: Controller sends command; Model (write) updates. Query side: Controller reads from read model; View. Same MVC; Model split into write/read. Use for scale and clarity.
+
+### 155. Where does compression go in MVC?
+**Answer:** Middleware compresses response after Controller. Controller unchanged. Use for bandwidth. Same as other pipeline. Set Vary: Accept-Encoding.
+
+### 156. What is the difference between MVC and Thin Controller?
+**Answer:** Thin Controller: Controller only delegates to service; no logic. Same as Clean MVC. Emphasizes Controller as coordinator. Use service layer for logic.
+
+### 157. How does MVC handle conditional GET (304)?
+**Answer:** Controller or middleware checks If-None-Match/If-Modified-Since; if not modified returns 304. Model may provide ETag or date. Use for caching. Same as HTTP caching.
+
+### 158. What is the purpose of Area in MVC?
+**Answer:** Area groups Controllers and Views by feature (e.g. Admin, Shop). Route prefix per area. Use for large apps. Same pattern in many frameworks. Modular structure.
+
+### 159. Where does request validation go in MVC?
+**Answer:** After model binding; before Controller action or in filter. Validate type, required, format; return 400 if invalid. Use schema or annotations. Don't put validation logic in View.
+
+### 160. How does MVC handle static files?
+**Answer:** Middleware serves static files; doesn't reach Controller. Or Controller delegates to file handler. Use for assets. Configure path and caching. Same as other frameworks.
+
+### 161. What is the difference between MVC and HMVC?
+**Answer:** HMVC: hierarchical MVC; modules have own M-V-C; can call other modules. Use for modular apps. Same pattern at each level. Request can be internal (module to module).
+
+### 162. What is the purpose of View Component?
+**Answer:** Reusable UI unit with own logic (mini Controller + View). Controller or View invokes; receives data. Use for widgets. Same as partial with logic. ASP.NET Core term.
+
+### 163. Where does correlation ID go in MVC?
+**Answer:** Same as request ID; middleware sets; propagates to logs and downstream. Controller doesn't change. Use for distributed tracing. Same as request id.
+
+### 164. How does MVC handle multipart form?
+**Answer:** Framework binds multipart to Model or files; Controller receives. Validate and process; use Model/service for storage. Same as body binding. Use for upload forms.
+
+### 165. What is the purpose of Filters pipeline?
+**Answer:** Filters run before/after Controller (and action). Order: auth, logging, validation, action, result. Use for cross-cutting. Same as middleware but Controller-scoped. Configurable order.
+
+### 166. Explain MVC and repository pattern.
+**Answer:** Controller uses repository (interface); repository wraps Model/data access. Testable; swap implementation. Model may include repository or separate. Use for data abstraction.
+
+### 167. Where does retry logic go in MVC?
+**Answer:** In Model/service (e.g. DB retry); not in Controller. Controller may catch and return 503. Use for resilience. Same as other layers. Don't retry in View.
+
+### 168. How does MVC handle 404?
+**Answer:** Framework route not matched → 404; or Controller returns NotFound(). Use custom 404 View. Don't leak info. Same as other status codes. Centralize 404 page.
+
+### 169. What is the difference between MVC and ADR?
+**Answer:** ADR (Action-Domain-Responder): Action (Controller), Domain (Model), Responder (View). One action per class. Similar to MVC; more explicit. Use for clarity. Slim framework style.
+
+### 170. What is the purpose of Route constraints?
+**Answer:** Constraints limit route match (e.g. id must be int). Framework validates before Controller. Use for type-safe routes. Document constraints. Same in many frameworks.
+
+### 171. Where does feature flag go in MVC?
+**Answer:** Middleware or Controller checks flag; branches logic or View. Use for rollout. Don't put in Model for UI flags. Config or service. Same as other apps.
+
+### 172. How does MVC handle cookie?
+**Answer:** Controller sets cookie in response; reads from request. Use for session id or preference. HttpOnly, Secure in production. Same as HTTP. Don't put sensitive in cookie.
+
+### 173. What is the purpose of Child Action?
+**Answer:** Controller action invoked from View (e.g. render menu). Returns partial. Use for dynamic partials. Can be removed in favor of View Component. Framework-specific.
+
+### 174. Explain MVC and saga (distributed).
+**Answer:** Saga coordinates multi-step transaction across services. Controller may start saga; Model/service has saga logic. MVC fits; saga is Model layer. Use for distributed transactions.
+
+### 175. Where does audit logging go in MVC?
+**Answer:** Filter or Model/service logs who did what. Controller doesn't log audit; service does after update. Use for compliance. Same as other logging. Include user and resource.
+
+### 176. How does MVC handle Range request?
+**Answer:** Controller or middleware reads Range header; returns 206 with partial content. Use for large file download. Model may stream range. Same as HTTP. Support optional.
+
+### 177. What is the difference between MVC and PAC?
+**Answer:** PAC (Presentation-Abstraction-Control): hierarchy of PAC triads; each has presentation, abstraction, control. More complex than MVC. Rare. Use for very modular UI.
+
+### 178. What is the purpose of Anti-Forgery token?
+**Answer:** Token in form and cookie/session; validated on POST. Prevents CSRF. Controller receives valid request. View includes token. Same as CSRF protection. Use for state-changing forms.
+
+### 179. Where does circuit breaker go in MVC?
+**Answer:** In Model/service when calling external service; not in Controller. Controller catches failure and returns 503. Use for resilience. Same as retry. Don't put in View.
+
+### 180. How does MVC handle ETag?
+**Answer:** Controller or middleware computes ETag; sets header; on If-None-Match returns 304. Model may provide ETag. Use for caching. Same as conditional GET. Optional.
+
+### 181. What is the purpose of Display/Editor templates?
+**Answer:** Templates for how to render Model property (e.g. date, email). View uses template by type. Use for consistency. Framework-specific. Same as component per type.
+
+### 182. Explain MVC and eventual consistency.
+**Answer:** Model may be eventually consistent (read model lags). Controller reads; may get stale data. Use for scale. Same MVC; Model implementation detail. Document consistency.
+
+### 183. Where does request timeout go in MVC?
+**Answer:** Server or middleware sets timeout; Controller should finish quickly. Don't implement timeout in Controller. Use async and cancellation token. Infrastructure.
+
+### 184. How does MVC handle API key auth?
+**Answer:** Middleware validates API key (header); sets user or rejects 401. Controller unchanged. Use for server-to-server. Same as other auth. Store key securely.
+
+### 185. What is the difference between MVC and RMR?
+**Answer:** RMR (Resource-Method-Representation): REST-style; resource and method; representation is View. Similar to MVC for API. More REST-centric. Use for HTTP APIs.
+
+### 186. What is the purpose of Output Cache?
+**Answer:** Cache rendered View (or action result) by key (route, params). Subsequent requests serve cache. Use for static or semi-static pages. Invalidate on update. Framework feature.
+
+### 187. Where does JWT validation go in MVC?
+**Answer:** Middleware validates JWT; sets user on request. Controller uses user. Same as auth. Use for stateless auth. Validate signature and expiry. Don't put in View.
+
+### 188. How does MVC handle content negotiation?
+**Answer:** Controller or middleware checks Accept; returns HTML or JSON. Same Model; different View/serializer. Use Accept header. Document supported types. Same as API in same app.
+
+### 189. What is the purpose of Model State?
+**Answer:** Holds validation errors and model values after POST. View can show errors and repopulate form. Controller checks IsValid; returns View with model if invalid. Framework concept.
+
+### 190. Explain MVC and DDD.
+**Answer:** DDD: domain model, aggregates, repositories. MVC Model can be domain; Controller uses application service. Same layering. Use DDD for complex domain; MVC for delivery.
+
+### 191. Where does rate limit response (429) go in MVC?
+**Answer:** Middleware returns 429 when over limit; Controller not reached. Set Retry-After. Use for fair usage. Same as rate limiting. Document limits.
+
+### 192. How does MVC handle HEAD request?
+**Answer:** Same as GET but no body; Controller may return same; framework strips body. Use for checking existence or headers. Same as GET. Support optional.
+
+### 193. What is the difference between MVC and Vertical Slice?
+**Answer:** Vertical Slice: organize by feature (one slice = request to response). MVC can be inside slice. Slice includes Controller, Model, View for one feature. Use for features.
+
+### 194. What is the purpose of Route attribute?
+**Answer:** Attribute on Controller/action defines route (e.g. [Route("api/[controller]")]). Framework uses for routing. Use for explicit routes. Same in many frameworks. Declarative.
+
+### 195. Where does health check dependency go in MVC?
+**Answer:** Health endpoint calls Model/DB or service; returns 503 if down. Don't use main Controller. Use for readiness. Keep fast. Same as health check.
+
+### 196. How does MVC handle async?
+**Answer:** Controller action async; awaits Model/service. Same flow; non-blocking. Use for I/O. Don't block in Controller. Framework supports async actions. Common pattern.
+
+### 197. What is the purpose of ViewBag/ViewData?
+**Answer:** Dynamic bag for passing data from Controller to View (beside Model). Use for one-off data. Prefer Model or ViewModel. Framework-specific. Avoid overuse.
+
+### 198. Explain MVC and microservices.
+**Answer:** Each service can use MVC internally; Controller is API; Model is service logic. Services communicate via HTTP/gRPC. MVC is per-service. Use for bounded context.
+
+### 199. Where does CORS preflight go in MVC?
+**Answer:** Middleware responds to OPTIONS with CORS headers. Controller may not be hit. Same as CORS. Use for browser. Set Allow-Origin, Methods, Headers. Document.
+
+### 200. How does MVC handle DELETE?
+**Answer:** Controller action for DELETE method; calls Model to delete; returns 204 or 200 with body. Same as GET/POST. Use for REST. Idempotent. Validate and authorize.
+
+### 201. What is the difference between MVC and Flux (alternate)?
+**Answer:** Flux has Store (Model), View, Dispatcher (no Controller). Unidirectional. MVC has Controller; may have two-way binding. Flux is more constrained. Use for predictable state.
+
+### 202. What is the purpose of Action Name?
+**Answer:** Name of action method; maps to URL. Framework uses for routing. Use for clear URLs. Same as route. Can override with attribute. Document action names.
+
+### 203. Where does idempotency go in MVC?
+**Answer:** Controller or middleware checks Idempotency-Key; stores result; returns same on replay. Use for POST. Model may be unchanged on replay. Same as API idempotency. Document.
+
+### 204. How does MVC handle PATCH?
+**Answer:** Controller receives partial body; updates Model; returns 200 with updated resource. Same as PUT but partial. Validate and merge. Use for REST. Same as other methods.
+
+### 205. What is the purpose of Default Model Binder?
+**Answer:** Framework component that binds request to Model. Conventions (e.g. query to property). Customize for complex types. Use for less code. Same in many frameworks. Extensible.
+
+### 206. Explain MVC and event-driven.
+**Answer:** Controller may publish event; Model or other services subscribe. Decouples. Same MVC; async communication. Use for side effects. Don't block Controller on subscribers.
+
+### 207. Where does request size limit go in MVC?
+**Answer:** Middleware or server config rejects large body; returns 413. Controller not reached. Use for DoS protection. Same as other limits. Document limit.
+
+### 208. How does MVC handle OPTIONS?
+**Answer:** Middleware or Controller returns 204 with Allow and CORS headers. Use for preflight. Same as CORS. May not hit Controller. Document allowed methods.
+
+### 209. What is the purpose of Result Filter?
+**Answer:** Runs after action, before/after result execution. Use for logging result, modifying response. Same as filter pipeline. Framework concept. Use for cross-cutting on result.
+
+### 210. What is the difference between MVC and Server-Sent Events?
+**Answer:** SSE: Controller streams events; View (client) listens. One-way. MVC Controller can be SSE endpoint. Same pattern; different response type. Use for real-time updates.
+
+### 211. Where does API documentation go in MVC?
+**Answer:** OpenAPI/Swagger from routes and annotations; separate from Controller code or generated. Use for docs and client gen. Same as other APIs. Document version and deprecation.
+
+### 212. How does MVC handle 500?
+**Answer:** Global handler catches unhandled exception; returns 500 and error View or JSON. Don't expose stack in production. Log error. Same as error handling. Centralize.
+
+### 213. What is the purpose of Authorization Filter?
+**Answer:** Runs before action; checks permission; returns 403 or redirect if denied. Use for authz. Same as auth middleware but Controller-scoped. Run after auth. Framework concept.
+
+### 214. Explain MVC and read replica.
+**Answer:** Model may read from replica; write to primary. Controller unchanged. Use for scale. Same MVC; data access detail. Handle replication lag. Document consistency.
+
+### 215. Where does request validation error format go in MVC?
+**Answer:** Controller returns 400 with body (e.g. { errors: [...] }); format consistent. Use from validator. Same as API validation. Document error shape. Don't put in View.
+
+### 216. How does MVC handle conditional request?
+**Answer:** Controller checks If-Match/If-None-Match or If-Modified-Since; returns 304 or 412. Model may provide ETag. Use for caching and concurrency. Same as HTTP. Optional.
+
+### 217. What is the purpose of Exception Filter?
+**Answer:** Catches exception from action; returns error response or redirect. Use for central error handling. Same as global handler but filter. Log and format. Framework concept.
+
+### 218. What is the difference between MVC and GraphQL?
+**Answer:** GraphQL: single endpoint; client queries shape. MVC: multiple endpoints; fixed response. Both can have Model layer. Use GraphQL for flexible query; MVC for simple CRUD.
+
+### 219. Where does correlation ID propagation go in MVC?
+**Answer:** Middleware reads or generates; adds to request; passes to downstream (header). Use for tracing. Same as request id. Don't put in Model. Log in each layer.
+
+### 220. How does MVC handle Webhook?
+**Answer:** Controller receives POST; validates signature; delegates to Model/service; returns 200 quickly. Use async for processing. Same as other POST. Idempotency-Key optional.
+
+### 221. What is the purpose of Resource Filter?
+**Answer:** Runs before model binding; can short-circuit. Use for auth before binding. Same as filter pipeline. Framework-specific. Less common than action filter.
+
+### 222. Explain MVC and CQRS (read model).
+**Answer:** Read model is optimized for queries; Controller reads from it; View. Write model for commands. Same MVC; Model split. Use for scale and different shapes. Eventually consistent.
+
+### 223. Where does deprecation header go in MVC?
+**Answer:** Middleware or Controller sets Deprecation/Sunset on deprecated route. Use for versioning. Document migration. Same as API deprecation. Optional.
+
+### 224. How does MVC handle TRACE?
+**Answer:** Usually disabled for security. If enabled, middleware or Controller echoes request. Rare. Same as HTTP. Don't enable in production without need.
+
+### 225. What is the purpose of Model Metadata?
+**Answer:** Metadata about Model (display name, format, validation). Used by View and binding. Use for consistency. Framework concept. Same as data annotations. Extensible.
+
+### 226. What is the difference between MVC and Onion Architecture?
+**Answer:** Onion: core has entities; outer layers depend on inner. MVC can be in outer (UI). Controller depends on use case; use case on entity. Same idea: dependency inward.
+
+### 227. Where does request logging go in MVC?
+**Answer:** Middleware or filter logs request (method, path, maybe body in dev); after response log status and duration. Use for access log. Same as logging. Don't log PII in prod.
+
+### 228. How does MVC handle versioning in URL?
+**Answer:** Route prefix (e.g. /v1/controllers); Controller or set per version. Same Model; different Controller or logic. Use for breaking changes. Document and deprecate.
+

@@ -31,14 +31,14 @@ These are especially important for junior fullstack interviews. Make sure they h
 
 | Topic | Path | Days in schedule | Min questions | Current | Status | Gap |
 |-------|------|------------------|---------------|---------|--------|-----|
-| **React** | `frontend/react/questions.md` | 36 | 432 | 275 | ❌ LOW | 157 |
-| **Javascript** | `frontend/javascript/questions.md` | 36 | 432 | 250 | ❌ LOW | 182 |
-| **Nodejs** | `backend/nodejs/questions.md` | 49 | 588 | 275 | ❌ LOW | 313 |
+| **React** | `frontend/react/questions.md` | 36 | 432 | 432 | ✅ OK | 0 |
+| **Javascript** | `frontend/javascript/questions.md` | 36 | 432 | 432 | ✅ OK | 0 |
+| **Nodejs** | `backend/nodejs/questions.md` | 49 | 588 | 588 | ✅ OK | 0 |
 | **Data Structures** | `algorithms/data-structures/questions.md` | 75 | 375 | 375 | ✅ OK | 0 |
 | **Logic Questions** | `algorithms/logic-questions/questions.md` | 75 | 225 | 229 | ✅ OK | 0 |
-| **Leetcode** | `algorithms/leetcode/questions.md` | 75 | 150 | 29 | ❌ LOW | 121 |
-| **Rest** | `apis/rest/questions.md` | 26 | 312 | 215 | ❌ LOW | 97 |
-| **System Design** | `architecture/system-design/questions.md` | 65 | 780 | 230 | ❌ LOW | 550 |
+| **Leetcode** | `algorithms/leetcode/questions.md` | 75 | 150 | 150 | ✅ OK | 0 |
+| **Rest** | `apis/rest/questions.md` | 26 | 312 | 312 | ✅ OK | 0 |
+| **System Design** | `architecture/system-design/questions.md` | 65 | 780 | 780 | ✅ OK | 0 |
 
 **React** is in the schedule on 36 days (e.g. Days 1–28, 32, 36, 40, 44, 48, 52, 56, 60). Prioritize filling React (and JavaScript, Node.js) questions so the schedule is fully usable.
 
@@ -61,8 +61,8 @@ These are especially important for junior fullstack interviews. Make sure they h
 
 | Status | Count |
 |--------|--------|
-| ✅ OK (enough questions) | 2 |
-| ❌ Need more questions | 64 |
+| ✅ OK (enough questions) | 12 |
+| ❌ Need more questions | 54 |
 | **Total topics** | **66** |
 
 ---
@@ -75,8 +75,8 @@ These are especially important for junior fullstack interviews. Make sure they h
 |-------|------|------|---------|---------------|---------|--------|-----|
 | Binary Trees | `algorithms/binary-trees/questions.md` | 10 | 12 | 120 | 15 | ❌ LOW | 105 |
 | Data Structures | `algorithms/data-structures/questions.md` | 75 | 5 | 375 | 375 | ✅ OK | 0 |
-| Hash Tables | `algorithms/hash-tables/questions.md` | 10 | 12 | 120 | 15 | ❌ LOW | 105 |
-| Leetcode | `algorithms/leetcode/questions.md` | 75 | 2 | 150 | 29 | ❌ LOW | 121 |
+| Hash Tables | `algorithms/hash-tables/questions.md` | 10 | 12 | 120 | 120 | ✅ OK | 0 |
+| Leetcode | `algorithms/leetcode/questions.md` | 75 | 2 | 150 | 150 | ✅ OK | 0 |
 | Logic Questions | `algorithms/logic-questions/questions.md` | 75 | 3 | 225 | 229 | ✅ OK | 0 |
 | Time Complexity | `algorithms/time-complexity/questions.md` | 15 | 12 | 180 | 15 | ❌ LOW | 165 |
 
@@ -85,10 +85,10 @@ These are especially important for junior fullstack interviews. Make sure they h
 | Topic | Path | Days | Per day | Min required | Current | Status | Gap |
 |-------|------|------|---------|---------------|---------|--------|-----|
 | Css | `frontend/css/questions.md` | 8 | 12 | 96 | 2 | ❌ LOW | 94 |
-| Es6 | `frontend/es6/questions.md` | 9 | 12 | 108 | 15 | ❌ LOW | 93 |
+| Es6 | `frontend/es6/questions.md` | 9 | 12 | 108 | 108 | ✅ OK | 0 |
 | Html | `frontend/html/questions.md` | 8 | 12 | 96 | 2 | ❌ LOW | 94 |
-| Javascript | `frontend/javascript/questions.md` | 36 | 12 | 432 | 250 | ❌ LOW | 182 |
-| React | `frontend/react/questions.md` | 36 | 12 | 432 | 275 | ❌ LOW | 157 |
+| Javascript | `frontend/javascript/questions.md` | 36 | 12 | 432 | 432 | ✅ OK | 0 |
+| React | `frontend/react/questions.md` | 36 | 12 | 432 | 432 | ✅ OK | 0 |
 | Spa Ssr Ssg | `frontend/spa-ssr-ssg/questions.md` | 3 | 12 | 36 | 10 | ❌ LOW | 26 |
 | Tailwind | `frontend/tailwind/questions.md` | 2 | 12 | 24 | 10 | ❌ LOW | 14 |
 
@@ -97,7 +97,7 @@ These are especially important for junior fullstack interviews. Make sure they h
 | Topic | Path | Days | Per day | Min required | Current | Status | Gap |
 |-------|------|------|---------|---------------|---------|--------|-----|
 | Integrations | `backend/integrations/questions.md` | 5 | 12 | 60 | 10 | ❌ LOW | 50 |
-| Nodejs | `backend/nodejs/questions.md` | 49 | 12 | 588 | 275 | ❌ LOW | 313 |
+| Nodejs | `backend/nodejs/questions.md` | 49 | 12 | 588 | 588 | ✅ OK | 0 |
 | Queues | `backend/queues/questions.md` | 6 | 12 | 72 | 10 | ❌ LOW | 62 |
 | Backend Services | `backend/services/questions.md` | 6 | 12 | 72 | 10 | ❌ LOW | 62 |
 | Storage | `backend/storage/questions.md` | 6 | 12 | 72 | 10 | ❌ LOW | 62 |
@@ -112,9 +112,9 @@ These are especially important for junior fullstack interviews. Make sure they h
 | Graphql | `apis/graphql-vs-rest/questions.md` | 6 | 12 | 72 | 15 | ❌ LOW | 57 |
 | Grpc | `apis/grpc/questions.md` | 3 | 12 | 36 | 10 | ❌ LOW | 26 |
 | Headers | `apis/headers/questions.md` | 4 | 12 | 48 | 10 | ❌ LOW | 38 |
-| Http | `apis/http/questions.md` | 19 | 12 | 228 | 110 | ❌ LOW | 118 |
+| Http | `apis/http/questions.md` | 19 | 12 | 228 | 228 | ✅ OK | 0 |
 | Https | `apis/https/questions.md` | 6 | 12 | 72 | 10 | ❌ LOW | 62 |
-| Rest | `apis/rest/questions.md` | 26 | 12 | 312 | 215 | ❌ LOW | 97 |
+| Rest | `apis/rest/questions.md` | 26 | 12 | 312 | 312 | ✅ OK | 0 |
 | Webhooks | `apis/webhooks/questions.md` | 3 | 12 | 36 | 10 | ❌ LOW | 26 |
 
 ### Architecture
@@ -124,11 +124,11 @@ These are especially important for junior fullstack interviews. Make sure they h
 | Application Layers | `architecture/application-layers/questions.md` | 6 | 12 | 72 | 10 | ❌ LOW | 62 |
 | Clean Architecture | `architecture/clean-architecture/questions.md` | 7 | 12 | 84 | 10 | ❌ LOW | 74 |
 | Design Patterns | `architecture/design-patterns/questions.md` | 15 | 12 | 180 | 15 | ❌ LOW | 165 |
-| Mvc | `architecture/mvc/questions.md` | 19 | 12 | 228 | 110 | ❌ LOW | 118 |
+| Mvc | `architecture/mvc/questions.md` | 19 | 12 | 228 | 228 | ✅ OK | 0 |
 | Onion Architecture | `architecture/onion-architecture/questions.md` | 5 | 12 | 60 | 10 | ❌ LOW | 50 |
 | Project Architecture | `architecture/project-architecture/questions.md` | 5 | 12 | 60 | 10 | ❌ LOW | 50 |
 | System Architecture | `architecture/system-architecture/questions.md` | 8 | 12 | 96 | 10 | ❌ LOW | 86 |
-| System Design | `architecture/system-design/questions.md` | 65 | 12 | 780 | 230 | ❌ LOW | 550 |
+| System Design | `architecture/system-design/questions.md` | 65 | 12 | 780 | 780 | ✅ OK | 0 |
 
 ### Databases
 
@@ -208,70 +208,60 @@ Use this order to fill questions topic-by-topic (biggest gaps first).
 
 | # | Topic | Path | Gap | Min | Current | Days |
 |---|-------|------|-----|-----|---------|------|
-| 1 | System Design | `architecture/system-design/questions.md` | 550 | 780 | 230 | 65 |
-| 2 | Nodejs | `backend/nodejs/questions.md` | 313 | 588 | 275 | 49 |
-| 3 | Javascript | `frontend/javascript/questions.md` | 182 | 432 | 250 | 36 |
-| 4 | Time Complexity | `algorithms/time-complexity/questions.md` | 165 | 180 | 15 | 15 |
-| 5 | Design Patterns | `architecture/design-patterns/questions.md` | 165 | 180 | 15 | 15 |
-| 6 | React | `frontend/react/questions.md` | 157 | 432 | 275 | 36 |
-| 7 | Postgresql | `databases/postgresql/questions.md` | 142 | 144 | 2 | 12 |
-| 8 | Sql Vs Nosql | `databases/sql-vs-nosql/questions.md` | 141 | 156 | 15 | 13 |
-| 9 | Design Patterns Overview | `design-patterns/questions.md` | 136 | 276 | 140 | 23 |
-| 10 | Leetcode | `algorithms/leetcode/questions.md` | 121 | 150 | 29 | 75 |
-| 11 | Http | `apis/http/questions.md` | 118 | 228 | 110 | 19 |
-| 12 | Mvc | `architecture/mvc/questions.md` | 118 | 228 | 110 | 19 |
-| 13 | Mongodb | `databases/mongodb/questions.md` | 118 | 120 | 2 | 10 |
-| 14 | Binary Trees | `algorithms/binary-trees/questions.md` | 105 | 120 | 15 | 10 |
-| 15 | Hash Tables | `algorithms/hash-tables/questions.md` | 105 | 120 | 15 | 10 |
-| 16 | Redis | `databases/redis/questions.md` | 98 | 108 | 10 | 9 |
-| 17 | Rest | `apis/rest/questions.md` | 97 | 312 | 215 | 26 |
-| 18 | Css | `frontend/css/questions.md` | 94 | 96 | 2 | 8 |
-| 19 | Html | `frontend/html/questions.md` | 94 | 96 | 2 | 8 |
-| 20 | Es6 | `frontend/es6/questions.md` | 93 | 108 | 15 | 9 |
-| 21 | System Architecture | `architecture/system-architecture/questions.md` | 86 | 96 | 10 | 8 |
-| 22 | Oop | `oop/questions.md` | 86 | 96 | 10 | 8 |
-| 23 | Api | `apis/api/questions.md` | 74 | 84 | 10 | 7 |
-| 24 | Clean Architecture | `architecture/clean-architecture/questions.md` | 74 | 84 | 10 | 7 |
-| 25 | Data Model | `databases/data-model/questions.md` | 74 | 84 | 10 | 7 |
-| 26 | Authentication Authorization | `security/authentication-authorization/questions.md` | 70 | 72 | 2 | 6 |
-| 27 | Https | `apis/https/questions.md` | 62 | 72 | 10 | 6 |
-| 28 | Application Layers | `architecture/application-layers/questions.md` | 62 | 72 | 10 | 6 |
-| 29 | Queues | `backend/queues/questions.md` | 62 | 72 | 10 | 6 |
-| 30 | Backend Services | `backend/services/questions.md` | 62 | 72 | 10 | 6 |
-| 31 | Storage | `backend/storage/questions.md` | 62 | 72 | 10 | 6 |
-| 32 | Observer | `design-patterns/behavioral/observer/questions.md` | 59 | 84 | 25 | 7 |
-| 33 | Strategy | `design-patterns/behavioral/strategy/questions.md` | 59 | 84 | 25 | 7 |
-| 34 | Factory | `design-patterns/creational/factory/questions.md` | 59 | 84 | 25 | 7 |
-| 35 | Singleton | `design-patterns/creational/singleton/questions.md` | 59 | 84 | 25 | 7 |
-| 36 | Graphql | `apis/graphql-vs-rest/questions.md` | 57 | 72 | 15 | 6 |
-| 37 | Sharding Replication Caching | `databases/sharding-replication-caching/questions.md` | 57 | 72 | 15 | 6 |
-| 38 | Jwt | `security/jwt/questions.md` | 57 | 72 | 15 | 6 |
-| 39 | Cqrs | `advanced-patterns/cqrs/questions.md` | 50 | 60 | 10 | 5 |
-| 40 | Event Sourcing | `advanced-patterns/event-sourcing/questions.md` | 50 | 60 | 10 | 5 |
-| 41 | Onion Architecture | `architecture/onion-architecture/questions.md` | 50 | 60 | 10 | 5 |
-| 42 | Project Architecture | `architecture/project-architecture/questions.md` | 50 | 60 | 10 | 5 |
-| 43 | Integrations | `backend/integrations/questions.md` | 50 | 60 | 10 | 5 |
-| 44 | Failover Load Balancing | `devops/failover-load-balancing/questions.md` | 50 | 60 | 10 | 5 |
-| 45 | Observability | `devops/observability/questions.md` | 50 | 60 | 10 | 5 |
-| 46 | Scaling | `devops/scaling/questions.md` | 50 | 60 | 10 | 5 |
-| 47 | Qa | `qa/questions.md` | 50 | 60 | 10 | 5 |
-| 48 | Oauth | `security/oauth/questions.md` | 50 | 60 | 10 | 5 |
-| 49 | Openid | `security/openid/questions.md` | 50 | 60 | 10 | 5 |
-| 50 | Adapter | `design-patterns/structural/adapter/questions.md` | 47 | 72 | 25 | 6 |
-| 51 | Cicd | `devops/cicd/questions.md` | 45 | 60 | 15 | 5 |
-| 52 | Docker | `devops/docker/questions.md` | 45 | 60 | 15 | 5 |
-| 53 | Kubernetes | `devops/kubernetes/questions.md` | 45 | 60 | 15 | 5 |
-| 54 | Ajax | `apis/ajax/questions.md` | 38 | 48 | 10 | 4 |
-| 55 | Headers | `apis/headers/questions.md` | 38 | 48 | 10 | 4 |
-| 56 | Secure By Design | `security/secure-by-design/questions.md` | 38 | 48 | 10 | 4 |
-| 57 | Security Keys | `security/security-keys/questions.md` | 38 | 48 | 10 | 4 |
-| 58 | Bff | `apis/bff/questions.md` | 26 | 36 | 10 | 3 |
-| 59 | Grpc | `apis/grpc/questions.md` | 26 | 36 | 10 | 3 |
-| 60 | Webhooks | `apis/webhooks/questions.md` | 26 | 36 | 10 | 3 |
-| 61 | Adrs | `documentation/adrs/questions.md` | 26 | 36 | 10 | 3 |
-| 62 | C4 Model | `documentation/c4-model/questions.md` | 26 | 36 | 10 | 3 |
-| 63 | Spa Ssr Ssg | `frontend/spa-ssr-ssg/questions.md` | 26 | 36 | 10 | 3 |
-| 64 | Tailwind | `frontend/tailwind/questions.md` | 14 | 24 | 10 | 2 |
+| 1 | Time Complexity | `algorithms/time-complexity/questions.md` | 165 | 180 | 15 | 15 |
+| 2 | Design Patterns | `architecture/design-patterns/questions.md` | 165 | 180 | 15 | 15 |
+| 3 | Postgresql | `databases/postgresql/questions.md` | 142 | 144 | 2 | 12 |
+| 4 | Sql Vs Nosql | `databases/sql-vs-nosql/questions.md` | 141 | 156 | 15 | 13 |
+| 5 | Design Patterns Overview | `design-patterns/questions.md` | 136 | 276 | 140 | 23 |
+| 6 | Mongodb | `databases/mongodb/questions.md` | 118 | 120 | 2 | 10 |
+| 7 | Binary Trees | `algorithms/binary-trees/questions.md` | 105 | 120 | 15 | 10 |
+| 8 | Redis | `databases/redis/questions.md` | 98 | 108 | 10 | 9 |
+| 9 | Css | `frontend/css/questions.md` | 94 | 96 | 2 | 8 |
+| 10 | Html | `frontend/html/questions.md` | 94 | 96 | 2 | 8 |
+| 11 | System Architecture | `architecture/system-architecture/questions.md` | 86 | 96 | 10 | 8 |
+| 12 | Oop | `oop/questions.md` | 86 | 96 | 10 | 8 |
+| 13 | Api | `apis/api/questions.md` | 74 | 84 | 10 | 7 |
+| 14 | Clean Architecture | `architecture/clean-architecture/questions.md` | 74 | 84 | 10 | 7 |
+| 15 | Data Model | `databases/data-model/questions.md` | 74 | 84 | 10 | 7 |
+| 16 | Authentication Authorization | `security/authentication-authorization/questions.md` | 70 | 72 | 2 | 6 |
+| 17 | Https | `apis/https/questions.md` | 62 | 72 | 10 | 6 |
+| 18 | Application Layers | `architecture/application-layers/questions.md` | 62 | 72 | 10 | 6 |
+| 19 | Queues | `backend/queues/questions.md` | 62 | 72 | 10 | 6 |
+| 20 | Backend Services | `backend/services/questions.md` | 62 | 72 | 10 | 6 |
+| 21 | Storage | `backend/storage/questions.md` | 62 | 72 | 10 | 6 |
+| 22 | Observer | `design-patterns/behavioral/observer/questions.md` | 59 | 84 | 25 | 7 |
+| 23 | Strategy | `design-patterns/behavioral/strategy/questions.md` | 59 | 84 | 25 | 7 |
+| 24 | Factory | `design-patterns/creational/factory/questions.md` | 59 | 84 | 25 | 7 |
+| 25 | Singleton | `design-patterns/creational/singleton/questions.md` | 59 | 84 | 25 | 7 |
+| 26 | Graphql | `apis/graphql-vs-rest/questions.md` | 57 | 72 | 15 | 6 |
+| 27 | Sharding Replication Caching | `databases/sharding-replication-caching/questions.md` | 57 | 72 | 15 | 6 |
+| 28 | Jwt | `security/jwt/questions.md` | 57 | 72 | 15 | 6 |
+| 29 | Cqrs | `advanced-patterns/cqrs/questions.md` | 50 | 60 | 10 | 5 |
+| 30 | Event Sourcing | `advanced-patterns/event-sourcing/questions.md` | 50 | 60 | 10 | 5 |
+| 31 | Onion Architecture | `architecture/onion-architecture/questions.md` | 50 | 60 | 10 | 5 |
+| 32 | Project Architecture | `architecture/project-architecture/questions.md` | 50 | 60 | 10 | 5 |
+| 33 | Integrations | `backend/integrations/questions.md` | 50 | 60 | 10 | 5 |
+| 34 | Failover Load Balancing | `devops/failover-load-balancing/questions.md` | 50 | 60 | 10 | 5 |
+| 35 | Observability | `devops/observability/questions.md` | 50 | 60 | 10 | 5 |
+| 36 | Scaling | `devops/scaling/questions.md` | 50 | 60 | 10 | 5 |
+| 37 | Qa | `qa/questions.md` | 50 | 60 | 10 | 5 |
+| 38 | Oauth | `security/oauth/questions.md` | 50 | 60 | 10 | 5 |
+| 39 | Openid | `security/openid/questions.md` | 50 | 60 | 10 | 5 |
+| 40 | Adapter | `design-patterns/structural/adapter/questions.md` | 47 | 72 | 25 | 6 |
+| 41 | Cicd | `devops/cicd/questions.md` | 45 | 60 | 15 | 5 |
+| 42 | Docker | `devops/docker/questions.md` | 45 | 60 | 15 | 5 |
+| 43 | Kubernetes | `devops/kubernetes/questions.md` | 45 | 60 | 15 | 5 |
+| 44 | Ajax | `apis/ajax/questions.md` | 38 | 48 | 10 | 4 |
+| 45 | Headers | `apis/headers/questions.md` | 38 | 48 | 10 | 4 |
+| 46 | Secure By Design | `security/secure-by-design/questions.md` | 38 | 48 | 10 | 4 |
+| 47 | Security Keys | `security/security-keys/questions.md` | 38 | 48 | 10 | 4 |
+| 48 | Bff | `apis/bff/questions.md` | 26 | 36 | 10 | 3 |
+| 49 | Grpc | `apis/grpc/questions.md` | 26 | 36 | 10 | 3 |
+| 50 | Webhooks | `apis/webhooks/questions.md` | 26 | 36 | 10 | 3 |
+| 51 | Adrs | `documentation/adrs/questions.md` | 26 | 36 | 10 | 3 |
+| 52 | C4 Model | `documentation/c4-model/questions.md` | 26 | 36 | 10 | 3 |
+| 53 | Spa Ssr Ssg | `frontend/spa-ssr-ssg/questions.md` | 26 | 36 | 10 | 3 |
+| 54 | Tailwind | `frontend/tailwind/questions.md` | 14 | 24 | 10 | 2 |
 
 
 ---
