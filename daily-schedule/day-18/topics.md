@@ -8,6 +8,12 @@
 - **Category**: CORE
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 
+### Logic Building 101
+- **Path**: `../../logic-building-101/questions.md`
+- **Priority**: HIGH
+- **Category**: CORE
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
 ### Leetcode
 - **Path**: `../../algorithms/leetcode/questions.md`
 - **Priority**: CRITICAL

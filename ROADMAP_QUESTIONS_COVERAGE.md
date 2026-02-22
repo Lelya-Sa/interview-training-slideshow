@@ -35,7 +35,8 @@ These are especially important for junior fullstack interviews. Make sure they h
 | **Javascript** | `frontend/javascript/questions.md` | 36 | 432 | 432 | ✅ OK | 0 |
 | **Nodejs** | `backend/nodejs/questions.md` | 49 | 588 | 588 | ✅ OK | 0 |
 | **Data Structures** | `algorithms/data-structures/questions.md` | 75 | 375 | 375 | ✅ OK | 0 |
-| **Logic Questions** | `algorithms/logic-questions/questions.md` | 75 | 225 | 229 | ✅ OK | 0 |
+| **Logic Questions** | `algorithms/logic-questions/questions.md` | 75 | 225 | 225 | ✅ OK | 0 |
+| **Logic Building 101** | `logic-building-101/questions.md` | 34 | 102 | 102 | ✅ OK | 0 *(from [LogicBuilding101](https://github.com/Upendhar10/LogicBuilding101) by Upendhar10)* |
 | **Leetcode** | `algorithms/leetcode/questions.md` | 75 | 150 | 150 | ✅ OK | 0 |
 | **Rest** | `apis/rest/questions.md` | 26 | 312 | 312 | ✅ OK | 0 |
 | **System Design** | `architecture/system-design/questions.md` | 65 | 780 | 780 | ✅ OK | 0 |
@@ -77,7 +78,7 @@ These are especially important for junior fullstack interviews. Make sure they h
 | Data Structures | `algorithms/data-structures/questions.md` | 75 | 5 | 375 | 375 | ✅ OK | 0 |
 | Hash Tables | `algorithms/hash-tables/questions.md` | 10 | 12 | 120 | 120 | ✅ OK | 0 |
 | Leetcode | `algorithms/leetcode/questions.md` | 75 | 2 | 150 | 150 | ✅ OK | 0 |
-| Logic Questions | `algorithms/logic-questions/questions.md` | 75 | 3 | 225 | 229 | ✅ OK | 0 |
+| Logic Questions | `algorithms/logic-questions/questions.md` | 75 | 3 | 225 | 225 | ✅ OK | 0 |
 | Time Complexity | `algorithms/time-complexity/questions.md` | 15 | 12 | 180 | 15 | ❌ LOW | 165 |
 
 ### Frontend
