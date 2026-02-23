@@ -3,7 +3,7 @@
   "private": true,
   "description": "Root for Vercel – install and build run from slideshow-app",
   "scripts": {
-    "install-all": "cd slideshow-app && npm run install-all",
-    "build": "cd slideshow-app && npm run build && cd .. && node -e \"require('fs').cpSync('slideshow-app/api','api',{recursive:true})\""
+    "install-all": "cd slideshow-app && npm install && cd server && npm install && cd ../client && npm install",
+    "build": "cd slideshow-app && node build-direct.js && cd .. && node -e \"require('fs').cpSync('slideshow-app/api','api',{recursive:true})\""
   }
 }
