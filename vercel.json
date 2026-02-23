@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm run install-all",
+  "outputDirectory": "slideshow-app/build",
+  "rewrites": [
+    { "source": "/api/roadmap/days/:dayNumber", "destination": "/api/roadmap/days?dayNumber=:dayNumber" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
+  ]
+}

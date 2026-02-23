@@ -1,0 +1,9 @@
+{
+  "name": "interview-training-root",
+  "private": true,
+  "description": "Root for Vercel – install and build run from slideshow-app",
+  "scripts": {
+    "install-all": "cd slideshow-app && npm run install-all",
+    "build": "cd slideshow-app && npm run build && cd .. && node -e \"require('fs').cpSync('slideshow-app/api','api',{recursive:true})\""
+  }
+}
