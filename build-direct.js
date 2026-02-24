@@ -11,8 +11,10 @@ const clientDir = path.join(projectRoot, 'client');
 const buildDir = path.join(projectRoot, 'build');
 const clientBuildDir = path.join(clientDir, 'build');
 
-// Parent directory (intreview_training) where markdown files are located
-const parentDir = path.join(projectRoot, '..');
+// Content (daily-schedule, logic-building-101, etc.): same dir as app when repo root is app (Vercel), else parent (local slideshow-app)
+const parentDir = fs.existsSync(path.join(projectRoot, 'daily-schedule'))
+  ? projectRoot
+  : path.join(projectRoot, '..');
 
 console.log('🔨 Starting build process...');
 console.log('Project root:', projectRoot);
