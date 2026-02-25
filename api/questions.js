@@ -1,8 +1,11 @@
 // Vercel serverless: GET /api/questions?path=...&dayNumber=...&topicName=...&count=...
-// Reads markdown from project root (path like logic-building-101/questions.md) so it works on Vercel
+// Tries filesystem (api/<path>) first, then fetches from GitHub raw so it works when bundle has no markdown.
 
 const fs = require('fs');
 const path = require('path');
+const https = require('https');
+
+const GITHUB_RAW = 'https://raw.githubusercontent.com/Lelya-Sa/interview-training-slideshow/main/';
 
 function parseQuestionsMd(content) {
   const questions = [];
@@ -29,7 +32,22 @@ function getQuestionCountForTopic(topicName, dayNumber) {
   return 12;
 }
 
-module.exports = function handler(req, res) {
+function fetchUrl(url) {
+  return new Promise((resolve, reject) => {
+    https.get(url, (res) => {
+      if (res.statusCode !== 200) {
+        reject(new Error(`HTTP ${res.statusCode}`));
+        return;
+      }
+      const chunks = [];
+      res.on('data', (chunk) => chunks.push(chunk));
+      res.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+      res.on('error', reject);
+    }).on('error', reject);
+  });
+}
+
+module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     return res.status(405).json({ success: false, error: 'Method not allowed' });
@@ -44,23 +62,38 @@ module.exports = function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Missing path' });
   }
 
-  // Path is relative to api/ (e.g. logic-building-101/questions.md). Read from api/ so deployed content is used.
   const safePath = pathParam.replace(/\.\./g, '').replace(/^\/+/, '').trim();
-  const apiDir = path.resolve(path.join(__dirname));
-  const filePath = path.resolve(apiDir, safePath);
-
-  if (!filePath.startsWith(apiDir) || safePath.includes('..')) {
+  if (safePath.includes('..')) {
     return res.status(400).json({ success: false, error: 'Invalid path' });
   }
-  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-    return res.status(404).json({ success: false, error: 'File not found', path: safePath });
+
+  let content = null;
+
+  // 1) Try filesystem (api/<path>)
+  try {
+    const apiDir = path.resolve(path.join(__dirname));
+    const filePath = path.resolve(apiDir, safePath);
+    if (filePath.startsWith(apiDir) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      content = fs.readFileSync(filePath, 'utf8');
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  // 2) Fallback: fetch from GitHub raw
+  if (!content) {
+    try {
+      const url = GITHUB_RAW + safePath.split('/').map(encodeURIComponent).join('/');
+      content = await fetchUrl(url);
+    } catch (err) {
+      return res.status(404).json({ success: false, error: 'File not found', path: safePath });
+    }
   }
 
   const count = countParam != null && !isNaN(countParam) ? countParam : getQuestionCountForTopic(topicName, dayNumber);
   const isLogicBuilding101 = (topicName || '').toLowerCase().includes('logic building 101');
 
   try {
-    const content = fs.readFileSync(filePath, 'utf8');
     const all = parseQuestionsMd(content);
     let questions;
     if (isLogicBuilding101 && all.length >= 102) {
