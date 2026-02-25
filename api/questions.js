@@ -44,14 +44,12 @@ module.exports = function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Missing path' });
   }
 
-  // Path is relative to project root (e.g. logic-building-101/questions.md), no ..
+  // Path is relative to api/ (e.g. logic-building-101/questions.md). Read from api/ so deployed content is used.
   const safePath = pathParam.replace(/\.\./g, '').replace(/^\/+/, '').trim();
-  // Resolve project root: api/questions.js -> repo root (one level up from api/)
-  const projectRoot = path.resolve(path.join(__dirname, '..'));
-  const filePath = path.resolve(projectRoot, safePath);
+  const apiDir = path.resolve(path.join(__dirname));
+  const filePath = path.resolve(apiDir, safePath);
 
-  // Must stay under project root (no path traversal)
-  if (!filePath.startsWith(projectRoot) || safePath.includes('..')) {
+  if (!filePath.startsWith(apiDir) || safePath.includes('..')) {
     return res.status(400).json({ success: false, error: 'Invalid path' });
   }
   if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {

@@ -43,8 +43,8 @@ module.exports = function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Invalid dayNumber (1-34)' });
   }
 
-  const projectRoot = path.resolve(path.join(__dirname, '..', '..'));
-  const dayDir = path.join(projectRoot, 'daily-schedule', `day-${pad(dayNumber)}`);
+  const apiDir = path.resolve(path.join(__dirname, '..'));
+  const dayDir = path.join(apiDir, 'daily-schedule', `day-${pad(dayNumber)}`);
   const topicsPath = path.join(dayDir, 'topics.md');
 
   if (!fs.existsSync(topicsPath)) {
