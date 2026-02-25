@@ -1,5 +1,5 @@
 // Vercel serverless: GET /api/questions?path=...&dayNumber=...&topicName=...&count=...
-// Reads api/<path> markdown, parses ### Title and **Answer:** blocks, returns slice by day/count
+// Reads markdown from project root (path like logic-building-101/questions.md) so it works on Vercel
 
 const fs = require('fs');
 const path = require('path');
@@ -44,12 +44,17 @@ module.exports = function handler(req, res) {
     return res.status(400).json({ success: false, error: 'Missing path' });
   }
 
-  // Path must be relative (e.g. logic-building-101/questions.md), no ..
-  const safePath = pathParam.replace(/\.\./g, '').replace(/^\/+/, '');
-  const apiDir = path.join(process.cwd(), 'api');
-  const filePath = path.join(apiDir, safePath);
+  // Path is relative to project root (e.g. logic-building-101/questions.md), no ..
+  const safePath = pathParam.replace(/\.\./g, '').replace(/^\/+/, '').trim();
+  // Resolve project root: api/questions.js -> repo root (one level up from api/)
+  const projectRoot = path.resolve(path.join(__dirname, '..'));
+  const filePath = path.resolve(projectRoot, safePath);
 
-  if (!filePath.startsWith(apiDir) || !fs.existsSync(filePath)) {
+  // Must stay under project root (no path traversal)
+  if (!filePath.startsWith(projectRoot) || safePath.includes('..')) {
+    return res.status(400).json({ success: false, error: 'Invalid path' });
+  }
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
     return res.status(404).json({ success: false, error: 'File not found', path: safePath });
   }
 

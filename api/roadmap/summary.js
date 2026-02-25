@@ -33,8 +33,8 @@ module.exports = function handler(req, res) {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
 
-  const apiDir = path.join(process.cwd(), 'api');
-  const scheduleDir = path.join(apiDir, 'daily-schedule');
+  const projectRoot = path.resolve(path.join(__dirname, '..', '..'));
+  const scheduleDir = path.join(projectRoot, 'daily-schedule');
   const days = [];
 
   for (let d = 1; d <= 34; d++) {
