@@ -30,50 +30,60 @@ function App() {
     <div className="app">
       {selectedDay == null ? (
         <>
-          <h1>Interview Training – 34-Day Roadmap</h1>
-          {loading && <p>Loading roadmap…</p>}
-          {error && <p className="roadmap-error">⚠️ {error}</p>}
-          {roadmap && roadmap.length > 0 && (
-            <p className="roadmap-hint">Choose a day to open daily questions.</p>
+          <header className="app-header">
+            <h1 className="app-title">Interview Training</h1>
+            <p className="app-subtitle">34-day roadmap · Daily questions by topic</p>
+          </header>
+          {loading && (
+            <div className="roadmap-loading" aria-busy="true" aria-live="polite">
+              <div className="roadmap-loading-spinner" aria-hidden="true" />
+              <span>Loading roadmap…</span>
+            </div>
           )}
-          <div className="roadmap-list">
-            {roadmap && roadmap.length > 0
-              ? roadmap.map((day) => (
-                  <div key={day.dayNumber} className="roadmap-day-card">
-                    <div className="roadmap-day-header">
-                      <span className="roadmap-day-title">Day {day.dayNumber}</span>
-                      <button
-                        type="button"
-                        className="day-btn open-questions-btn"
-                        onClick={() => setSelectedDay(day.dayNumber)}
-                      >
-                        Open questions
-                      </button>
+          {error && <p className="roadmap-error">⚠️ {error}</p>}
+          {!loading && roadmap && roadmap.length > 0 && (
+            <p className="roadmap-hint">Choose a day to open its questions.</p>
+          )}
+          {!loading && (
+            <div className="roadmap-list">
+              {roadmap && roadmap.length > 0
+                ? roadmap.map((day) => (
+                    <article key={day.dayNumber} className="roadmap-day-card">
+                      <div className="roadmap-day-header">
+                        <span className="roadmap-day-title">Day {day.dayNumber}</span>
+                        <button
+                          type="button"
+                          className="day-btn open-questions-btn"
+                          onClick={() => setSelectedDay(day.dayNumber)}
+                        >
+                          Open questions
+                        </button>
+                      </div>
+                      {day.topics && day.topics.length > 0 && (
+                        <ul className="roadmap-day-topics">
+                          {day.topics.map((t, i) => (
+                            <li key={i}>{t.name}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </article>
+                  ))
+                : (
+                    <div className="day-grid">
+                      {Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1).map((day) => (
+                        <button
+                          key={day}
+                          type="button"
+                          className="day-btn"
+                          onClick={() => setSelectedDay(day)}
+                        >
+                          Day {day}
+                        </button>
+                      ))}
                     </div>
-                    {day.topics && day.topics.length > 0 && (
-                      <ul className="roadmap-day-topics">
-                        {day.topics.map((t, i) => (
-                          <li key={i}>{t.name}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))
-              : !loading && (
-                  <div className="day-grid">
-                    {Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1).map((day) => (
-                      <button
-                        key={day}
-                        type="button"
-                        className="day-btn"
-                        onClick={() => setSelectedDay(day)}
-                      >
-                        Day {day}
-                      </button>
-                    ))}
-                  </div>
-                )}
-          </div>
+                  )}
+            </div>
+          )}
         </>
       ) : (
         <QuestionsView

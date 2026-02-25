@@ -721,17 +721,17 @@ function QuestionsView({ dayNumber, onClose }) {
               </button>
             )}
           </div>
-        </div>
 
-        {/* Answer Reference */}
-        {isAnswered && currentQuestion.answer && (
-          <div className="answer-reference">
-            <h3>📚 Expected Answer:</h3>
-            <div className="reference-text">
-              {currentQuestion.answer}
+          {/* Answer Reference – inside card so it stacks below, no overlap */}
+          {isAnswered && currentQuestion.answer && (
+            <div className="answer-reference">
+              <h3>📚 Expected Answer:</h3>
+              <div className="reference-text">
+                {currentQuestion.answer}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
