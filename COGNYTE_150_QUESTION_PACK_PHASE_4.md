@@ -924,6 +924,239 @@ Prefer explicit version in URL for clarity in many orgs.
 
 ---
 
+## Frontend Testing (Q225-Q248)
+
+### 225) What is the core idea behind React Testing Library (RTL)?
+**Theory:** UI tests should resemble how users interact with the app.
+**Answer:** Query the rendered DOM by roles/labels/text and assert visible outcomes—not implementation details like component state or private methods.
+**Explanation:** Interviewers want confidence that you test behavior and accessibility, not brittle internals.
+```tsx
+// Good direction: assert what the user sees
+expect(screen.getByRole("button", { name: /save/i })).toBeEnabled();
+```
+
+### 226) How do `render`, `screen`, and `getByRole` fit together?
+**Theory:** RTL renders into a test DOM and exposes queries globally via `screen`.
+**Answer:** `render(<App />)` mounts the tree; `screen.getByRole("heading", { level: 1 })` finds an element the way assistive tech would.
+**Explanation:** Prefer roles (and accessible names) over test IDs unless there is no better option.
+```tsx
+import { render, screen } from "@testing-library/react";
+render(<Page title="Dashboard" />);
+expect(screen.getByRole("heading", { name: "Dashboard" })).toBeInTheDocument();
+```
+
+### 227) When do you prefer `userEvent` over `fireEvent`?
+**Theory:** `userEvent` simulates realistic browser interaction sequences.
+**Answer:** Use `@testing-library/user-event` for clicks, typing, tab focus—closer to real users; `fireEvent` is a lower-level escape hatch.
+**Explanation:** Shows you know modern RTL best practices from the docs.
+```tsx
+import userEvent from "@testing-library/user-event";
+const user = userEvent.setup();
+await user.click(screen.getByRole("button", { name: /submit/i }));
+```
+
+### 228) What is the difference between `getBy*`, `queryBy*`, and `findBy*`?
+**Theory:** Synchronous vs asynchronous presence matters for stable tests.
+**Answer:** `getBy*` throws if missing (assert existence); `queryBy*` returns null (assert absence); `findBy*` waits/rejects (async updates).
+**Explanation:** This triplet is a common junior interview filter question.
+```tsx
+expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+await screen.findByText(/welcome/i);
+```
+
+### 229) How do you test a component that fetches data on mount?
+**Theory:** Async UI updates must be awaited in assertions.
+**Answer:** Use `findBy*` or `waitFor` after rendering; mock the network layer (or MSW) so the test is deterministic.
+**Explanation:** Mention avoiding arbitrary `setTimeout` sleeps.
+```tsx
+render(<Profile userId="u1" />);
+expect(await screen.findByText(/alice/i)).toBeInTheDocument();
+```
+
+### 230) How do you mock `fetch` or a module in Jest-style tests?
+**Theory:** Tests need stable inputs and no real network.
+**Answer:** `global.fetch = jest.fn(async () => ({ json: async () => ({ ok: true }) }))` or `jest.mock("./api", () => ({ getUser: () => Promise.resolve({ name: "A" }) }))`.
+**Explanation:** Emphasize restoring mocks between tests (`beforeEach`/`afterEach`).
+```js
+beforeEach(() => { jest.resetAllMocks(); });
+```
+
+### 231) When are snapshot tests helpful vs harmful?
+**Theory:** Snapshots catch unintended output churn but hide intent.
+**Answer:** Useful for stable serializer-like output; harmful for large evolving components where reviewers blindly update snapshots.
+**Explanation:** Junior answer: prefer explicit assertions on user-visible text and roles.
+```txt
+Prefer targeted assertions; use snapshots sparingly for stable fixtures.
+```
+
+### 232) What should you assert in a component unit test?
+**Theory:** Tests should encode requirements, not implementation.
+**Answer:** Visible text, button disabled/enabled states, ARIA roles, error messages, and calls-to-action—not internal hook call order unless truly critical.
+**Explanation:** Tie answers to user stories (“given empty email, show validation”).
+```tsx
+await user.type(screen.getByLabelText(/email/i), "a@b.com");
+expect(screen.queryByText(/invalid email/i)).not.toBeInTheDocument();
+```
+
+### 233) Why are accessible names important in RTL queries?
+**Theory:** Accessible names are how users (and AT) identify controls.
+**Answer:** `getByRole("button", { name: /sign in/i })` matches the visible label/ARIA labeling algorithm—good tests double as a11y checks.
+**Explanation:** Mention `getByLabelText` for form controls tied to `<label>`.
+```tsx
+expect(screen.getByRole("textbox", { name: /password/i })).toBeRequired();
+```
+
+### 234) How do you test that a callback prop was invoked?
+**Theory:** Props are the public contract of presentational components.
+**Answer:** Pass `jest.fn()` (or vi.fn) as a prop, perform the interaction, then `expect(onSave).toHaveBeenCalledWith(...)`.
+**Explanation:** Shows isolation and fast feedback without mounting parents.
+```tsx
+const onSave = jest.fn();
+render(<Form onSave={onSave} />);
+await user.click(screen.getByRole("button", { name: /save/i }));
+expect(onSave).toHaveBeenCalledTimes(1);
+```
+
+### 235) How do people test custom React hooks?
+**Theory:** Hooks are not components; they need a harness.
+**Answer:** Use `renderHook` from `@testing-library/react` (or a tiny test component wrapper) and assert return values/side effects with `act` when needed.
+**Explanation:** Note that hook tests still benefit from realistic state transitions.
+```tsx
+import { renderHook, act } from "@testing-library/react";
+import { useCounter } from "./useCounter";
+const { result } = renderHook(() => useCounter());
+act(() => { result.current.inc(); });
+expect(result.current.value).toBe(1);
+```
+
+### 236) What problem does Mock Service Worker (MSW) solve in React tests?
+**Theory:** Full fetch stacks are hard to stub consistently.
+**Answer:** MSW intercepts network requests at a low level so tests exercise real `fetch`/XHR code paths with deterministic fixtures.
+**Explanation:** Mention it for integration-ish tests without spinning a real backend.
+```txt
+MSW = consistent API mocking across browser + node test environments.
+```
+
+### 237) What does `TestBed.configureTestingModule` do in Angular?
+**Theory:** Angular tests mirror the runtime DI graph in miniature.
+**Answer:** It declares/imports the component under test and provides mocks so `TestBed.createComponent` can instantiate it with dependencies.
+**Explanation:** Interviewers expect you to mention `declarations`, `imports`, and `providers` at a high level.
+```ts
+TestBed.configureTestingModule({
+  declarations: [GreeterComponent],
+  providers: [{ provide: NameService, useValue: { get: () => "Ada" } }]
+});
+```
+
+### 238) What is `ComponentFixture` and when do you call `detectChanges`?
+**Theory:** Angular change detection is explicit in tests.
+**Answer:** `fixture = TestBed.createComponent(MyCmp);` gives `fixture.componentInstance` and `fixture.nativeElement`; call `fixture.detectChanges()` after changing inputs/inputs-bound fields to render updates.
+**Explanation:** Missing `detectChanges` is a classic “my test DOM is empty” bug in interviews.
+```ts
+const fixture = TestBed.createComponent(GreeterComponent);
+fixture.componentInstance.name = "Bob";
+fixture.detectChanges();
+expect(fixture.nativeElement.textContent).toContain("Bob");
+```
+
+### 239) How do you get a service instance in an Angular unit test?
+**Theory:** DI is central to Angular; tests should resolve services the same way.
+**Answer:** `TestBed.inject(MyService)` (or `fixture.debugElement.injector.get(...)` for localized providers).
+**Explanation:** Prefer `TestBed.inject` for clarity in modern Angular.
+```ts
+const svc = TestBed.inject(CartService);
+expect(svc.total()).toBe(0);
+```
+
+### 240) What are `fakeAsync` and `tick` used for?
+**Theory:** Time-based async can make tests flaky without control.
+**Answer:** `fakeAsync` wraps a test so `tick(ms)` advances the virtual timer and flushes microtasks in a deterministic way (useful for `setTimeout`, debounce, etc.).
+**Explanation:** Contrast with `waitForAsync` + `fixture.whenStable()` as another pattern.
+```ts
+it("debounces", fakeAsync(() => {
+  fixture.detectChanges();
+  tick(300);
+  fixture.detectChanges();
+  expect(...).toBe(...);
+}));
+```
+
+### 241) Why use `HttpClientTestingModule` for service tests?
+**Theory:** Real HTTP would be slow and nondeterministic.
+**Answer:** It swaps the backend with a test harness that records expectations on outgoing requests.
+**Explanation:** Sets up the companion `HttpTestingController`.
+```ts
+TestBed.configureTestingModule({
+  imports: [HttpClientTestingModule],
+  providers: [UserApiService]
+});
+```
+
+### 242) How does `HttpTestingController.expectOne` work?
+**Theory:** You assert both the request shape and the mocked response.
+**Answer:** After the service method runs, `httpMock.expectOne("/api/user")` grabs the request; call `req.flush({ id: 1 })` to complete it; then `httpMock.verify()` ensures no stray requests.
+**Explanation:** Forgetting `verify()` hides accidental extra calls.
+```ts
+const req = httpMock.expectOne(r => r.url.includes("/api/user"));
+req.flush({ name: "Ada" });
+httpMock.verify();
+```
+
+### 243) How do you test an Angular `@Input()` binding?
+**Theory:** Inputs are just component properties before CD runs.
+**Answer:** Set `fixture.componentInstance.userId = "u1"` (or use a host test component template), then `detectChanges`, then assert DOM.
+**Explanation:** Shows you understand property bindings vs attributes in tests.
+```ts
+fixture.componentInstance.label = "Save";
+fixture.detectChanges();
+expect(fixture.nativeElement.querySelector("button")?.textContent).toContain("Save");
+```
+
+### 244) When would you use `fixture.debugElement.query`?
+**Theory:** `debugElement` wraps Angular elements with test helpers.
+**Answer:** Use `By.css(".err")` or `By.directive(MyDir)` when you need DI-aware queries instead of raw `querySelector`.
+**Explanation:** Junior tip: start simple with `nativeElement`, upgrade when DI/directives matter.
+```ts
+const err = fixture.debugElement.query(By.css(".error"));
+expect(err.nativeElement.textContent).toContain("required");
+```
+
+### 245) How do you spy on a service method in Angular tests?
+**Theory:** Spies verify collaboration without real work.
+**Answer:** `spyOn(service, "save").and.callThrough()` or return resolved promises; assert the spy was called after UI interaction.
+**Explanation:** Same idea as `jest.fn` in React tests, different syntax.
+```ts
+const api = TestBed.inject(ApiService);
+spyOn(api, "load").and.returnValue(Promise.resolve([]));
+```
+
+### 246) What is the difference between an isolated component test and a more integrated module test?
+**Theory:** Tests trade speed vs confidence.
+**Answer:** Isolated tests stub child components/services; integrated tests import real child modules to catch wiring issues—slower but closer to the app.
+**Explanation:** Give a pragmatic rule: default isolated, add integration for routing/forms trouble spots.
+```txt
+Isolated = fast + focused; integrated = catches real template/DI mistakes.
+```
+
+### 247) When do you reach for E2E instead of unit/component tests?
+**Theory:** Different layers catch different bugs.
+**Answer:** E2E (Playwright/Cypress) validates full flows across routing, auth, and real backends; unit tests validate logic and small UI states cheaply.
+**Explanation:** Mention flakiness/time cost of E2E as a trade-off.
+```txt
+Unit: cheap signal; E2E: user journey confidence, slower and flakier.
+```
+
+### 248) What does running tests in CI typically require?
+**Theory:** CI environments are non-interactive.
+**Answer:** Use non-watch mode (`CI=true` on many React setups), fail builds on test failures, cache dependencies, and shard suites if slow.
+**Explanation:** Shows operational maturity beyond writing a single test file.
+```yaml
+# concept only
+- run: npm test -- --watch=false
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).

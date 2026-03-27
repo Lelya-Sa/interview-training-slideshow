@@ -79,7 +79,7 @@ function App() {
     { day: 3, focus: 'Angular fundamentals (full core + extension)', questions: 'Q51-Q75, Q166-Q180' },
     { day: 4, focus: 'API + async + REST/CORS/auth (React, Angular, fullstack junior)', questions: 'Q67-Q73, Q75, Q136-Q147, Q181-Q200' },
     { day: 5, focus: 'State management (React + Angular)', questions: 'Q10, Q12, Q13, Q15, Q19, Q21, Q157, Q160, Q163, Q61, Q62, Q171, Q201-Q212, Q213-Q224' },
-    { day: 6, focus: 'Angular core architecture', questions: 'Q56-Q66' },
+    { day: 6, focus: 'Testing fundamentals (RTL/Jest + Angular TestBed)', questions: 'Q148, Q225-Q248' },
     { day: 7, focus: 'Angular + HTTP + RxJS', questions: 'Q67-Q77' },
     { day: 8, focus: 'TypeScript essentials', questions: 'Q78-Q88' },
     { day: 9, focus: 'JS/TS depth + communication', questions: 'Q89-Q99' },

@@ -43,7 +43,12 @@ const DAY_TO_IDS = {
     201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212,
     213, 214, 215, 216, 217, 218, 219, 220, 221, 222, 223, 224
   ],
-  6: [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66],
+  // Day 6: testing essentials (RTL/Jest + Angular TestBed/HTTP testing).
+  6: [
+    148,
+    225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236,
+    237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248
+  ],
   7: [67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77],
   8: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
   9: [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
@@ -55,6 +60,9 @@ const DAY_TO_IDS = {
 };
 
 function topicFromId(id) {
+  if (id === 148) return 'Testing (Jest basics)';
+  if (id >= 237 && id <= 248) return 'Angular (Testing)';
+  if (id >= 225 && id <= 236) return 'React (Testing)';
   if (id >= 213 && id <= 224) return 'Angular (State)';
   if (id >= 201 && id <= 212) return 'React (State)';
   if (id >= 181 && id <= 200) return 'API & Integration';

@@ -5,6 +5,7 @@ Use it together with:
 - `COGNYTE_150_QUESTION_PACK_PHASE_2.md`
 - `COGNYTE_150_QUESTION_PACK_PHASE_3.md`
 - `COGNYTE_150_QUESTION_PACK_PHASE_4.md`
+- Optional extra React angles for Day 2: `COGNYTE_REACT_DAY2_SUPPLEMENT.md` (alternate Q151–Q165 prompts—the in-app API uses Phase 2 as the canonical text for those IDs)
 
 How to run each day:
 1. Answer each question aloud before reading.
@@ -22,6 +23,7 @@ How to run each day:
 ## Day 2 - React fundamentals (full core + interview pitfalls)
 - Questions: Q1-Q25, Q151-Q165
 - Focus: full React junior fundamentals + high-frequency pitfalls (effects, stale closures, race conditions, refs, reducer/custom hooks)
+- Optional read: `COGNYTE_REACT_DAY2_SUPPLEMENT.md` (extra “web-informed” prompts at the same ID range; compare with Phase 2 answers)
 
 ## Day 3 - Angular fundamentals (full core + extension)
 - Questions: Q51-Q75, Q166-Q180
@@ -35,9 +37,9 @@ How to run each day:
 - Questions: Q10, Q12, Q13, Q15, Q19, Q21, Q157, Q160, Q163, Q61, Q62, Q171, Q201-Q212, Q213-Q224
 - Focus: Context vs local state, prop drilling, useReducer, custom hooks, batching; Angular DI services, `BehaviorSubject` stores, `async` pipe, OnPush + immutability, reactive forms as state, NgRx awareness, testing stateful services
 
-## Day 6 - Angular core architecture
-- Questions: Q56-Q66
-- Focus: lifecycle, DI, routing, guards, lazy loading
+## Day 6 - Testing fundamentals (React + Angular)
+- Questions: Q148, Q225-Q248
+- Focus: RTL/Jest patterns (queries, async, mocks, userEvent, hooks, MSW) + Angular TestBed, `HttpClientTestingModule`, `fakeAsync`, spies; also how E2E vs unit tests fit in CI
 
 ## Day 7 - Angular + HTTP + RxJS
 - Questions: Q67-Q77

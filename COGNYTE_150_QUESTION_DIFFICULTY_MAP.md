@@ -177,6 +177,35 @@ Use:
 
 ---
 
+## Q225-Q248 (Frontend testing)
+
+- Q225: must-know-for-junior
+- Q226: must-know-for-junior
+- Q227: easy
+- Q228: must-know-for-junior
+- Q229: must-know-for-junior
+- Q230: medium
+- Q231: easy
+- Q232: must-know-for-junior
+- Q233: must-know-for-junior
+- Q234: easy
+- Q235: medium
+- Q236: medium
+- Q237: must-know-for-junior
+- Q238: must-know-for-junior
+- Q239: easy
+- Q240: medium
+- Q241: must-know-for-junior
+- Q242: must-know-for-junior
+- Q243: easy
+- Q244: medium
+- Q245: easy
+- Q246: medium
+- Q247: medium
+- Q248: easy
+
+---
+
 ## Recommended Study Order
 
 1. All `must-know-for-junior` questions (core interview pass threshold)
