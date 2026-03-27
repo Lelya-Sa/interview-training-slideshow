@@ -40,9 +40,9 @@ How to run each day:
 - Questions: Q148, Q225-Q248
 - Focus: RTL/Jest patterns (queries, async, mocks, userEvent, hooks, MSW) + Angular TestBed, `HttpClientTestingModule`, `fakeAsync`, spies; also how E2E vs unit tests fit in CI
 
-## Day 7 - Angular + HTTP + RxJS
-- Questions: Q67-Q77
-- Focus: HttpClient, observables, forms, TS fundamentals
+## Day 7 - Angular + HTTP + RxJS (core + interview deep dive)
+- Questions: Q67-Q77, Q264-Q285
+- Focus: HttpClient, core operators, interceptors, loading/error patterns, routing guards and resolvers, forms + RxJS, caching with `shareReplay`; Q76-Q77 bridge TypeScript—use before or after mock interview #1 per `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ## Day 8 - TypeScript essentials
 - Questions: Q78-Q88

@@ -82,6 +82,7 @@ Goal: Move from basics to interview-grade implementation clarity.
 
 ### Day 7 - Mock Interview #1
 
+- [ ] Review Cognyte Day 7 queue: Q67–Q77 and Q264–Q285 (HttpClient + RxJS deep dive); see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] 45 min technical interview simulation (React/Angular/JS).
 - [ ] 30 min coding challenge.
 - [ ] 15 min behavioral Q&A.

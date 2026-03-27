@@ -751,6 +751,228 @@ function presentStar(answer) {
 
 ---
 
+## Angular HttpClient & RxJS interview set (Q264-Q285)
+
+### 264) What is the RxJS `tap` operator used for?
+**Theory:** Side effects belong out of pure `map` transforms.
+**Answer:** `tap` runs side effects (logging, mutable updates) without changing the emitted value.
+**Explanation:** Keeps `map` predictable; common in debugging and analytics hooks.
+```ts
+import { tap, map } from "rxjs";
+this.http.get<User>("/api/me").pipe(
+  tap(u => console.log("loaded", u.id)),
+  map(u => u.name)
+);
+```
+
+### 265) How does `catchError` handle failed HTTP calls in Angular?
+**Theory:** Observables need a fallback path or the stream errors out.
+**Answer:** `catchError` intercepts errors and returns a replacement observable (e.g. `of(default)`, `EMPTY`, retry logic).
+**Explanation:** Juniors should separate transport errors from business validation errors.
+```ts
+import { catchError, of } from "rxjs";
+return this.http.get<Item[]>("/api/items").pipe(
+  catchError(() => of([]))
+);
+```
+
+### 266) When do you use RxJS `finalize`?
+**Theory:** Teardown runs whether success or failure.
+**Answer:** `finalize` runs a callback when the stream completes or errors—ideal for `loading = false`.
+**Explanation:** Prefer over duplicating code in `next` and `error` handlers.
+```ts
+import { finalize } from "rxjs";
+this.loading = true;
+this.http.get("/api/x").pipe(
+  finalize(() => { this.loading = false; })
+).subscribe(/* ... */);
+```
+
+### 267) How would you explain `retry` in an Angular HTTP pipeline?
+**Theory:** Transient failures benefit from bounded retries.
+**Answer:** `retry(n)` resubscribes after error up to `n` times; `retryWhen` allows backoff strategies.
+**Explanation:** Only safe for idempotent GET-style calls; mention duplicate POST risk.
+```ts
+import { retry } from "rxjs";
+this.http.get("/api/health").pipe(retry(2));
+```
+
+### 268) What is the difference between `debounceTime` and `throttleTime`?
+**Theory:** Both reduce noisy streams but with different semantics.
+**Answer:** `debounceTime` waits for silence; `throttleTime` emits first then enforces a minimum gap.
+**Explanation:** Search-as-you-type often uses debounce; scroll handlers often throttle.
+```ts
+import { debounceTime, throttleTime } from "rxjs";
+search$.pipe(debounceTime(300));
+scroll$.pipe(throttleTime(100));
+```
+
+### 269) When do you choose `combineLatest` vs `forkJoin`?
+**Theory:** Parallel vs latest combinations matter for UI state.
+**Answer:** `combineLatest` emits whenever any source emits with latest from all; `forkJoin` waits for all to complete once and emits an array/object of finals.
+**Explanation:** `forkJoin` fits one-shot parallel requests; `combineLatest` fits linked form fields.
+```ts
+import { combineLatest, forkJoin } from "rxjs";
+combineLatest([a$, b$]);
+forkJoin([this.http.get("/a"), this.http.get("/b")]);
+```
+
+### 270) What is the `takeUntil` unsubscribe pattern?
+**Theory:** Long-lived subscriptions leak memory without cleanup.
+**Answer:** Emit on a `Subject` in `ngOnDestroy` and pipe `takeUntil(destroy$)`.
+**Explanation:** Preferred over manual `subscription.unsubscribe()` when many streams exist.
+```ts
+private destroy$ = new Subject<void>();
+ngOnInit() {
+  this.svc.data$.pipe(takeUntil(this.destroy$)).subscribe();
+}
+ngOnDestroy() {
+  this.destroy$.next(); this.destroy$.complete();
+}
+```
+
+### 271) Why does `async` pipe reduce subscription boilerplate?
+**Theory:** Angular manages subscription lifecycle when template binds to observable.
+**Answer:** `async` pipe subscribes/unsubscribes automatically as the view is created/destroyed.
+**Explanation:** Compare to manual subscribe in component for interview clarity.
+```html
+<p>{{ user$ | async }}</p>
+```
+
+### 272) How do you pass query params with `HttpClient.get`?
+**Theory:** APIs use query strings for filters/pagination.
+**Answer:** Pass `{ params: new HttpParams().set("page","2").set("q", q) }` in options.
+**Explanation:** Keeps URLs encoded correctly vs string concatenation.
+```ts
+import { HttpParams } from "@angular/common/http";
+const params = new HttpParams().set("limit", "20");
+this.http.get<Item[]>("/api/items", { params });
+```
+
+### 273) What does `observe: 'response'` change in `HttpClient`?
+**Theory:** Sometimes you need status headers, not only JSON body.
+**Answer:** With `observe: 'response'`, `HttpClient` returns `HttpResponse<T>` including `status` and `headers`.
+**Explanation:** Useful for pagination headers like `Link` or custom metadata.
+```ts
+this.http.get("/api/x", { observe: "response" }).subscribe(res => {
+  console.log(res.status, res.body);
+});
+```
+
+### 274) How are immutable `HttpHeaders` updated in Angular?
+**Theory:** Headers are immutable; each change returns a new instance.
+**Answer:** `headers.set('X-Req-Id', id)` or `headers.append`—reassign to a new variable and pass in options.
+**Explanation:** Junior pitfall is mutating a shared header object incorrectly.
+```ts
+let h = new HttpHeaders();
+h = h.set("Authorization", `Bearer ${token}`);
+this.http.get("/api/me", { headers: h });
+```
+
+### 275) What is `HttpParams` used for beyond simple strings?
+**Theory:** Parameter encoding repeats keys for arrays in APIs.
+**Answer:** `HttpParams` builder handles encoding; `fromObject` accepts plain objects.
+**Explanation:** Mention `append` for repeated keys if API expects `tag=a&tag=b`.
+```ts
+HttpParams.fromObject({ sort: "name", dir: "asc" });
+```
+
+### 276) What is a common HTTP interceptor responsibility?
+**Theory:** Cross-cutting concerns should not scatter across every service.
+**Answer:** Attach auth header, normalize errors, log requests, or inject correlation IDs.
+**Explanation:** `intercept(req, next)` returns `next.handle(modifiedReq)`.
+```ts
+intercept(req: HttpRequest<unknown>, next: HttpHandler) {
+  const cloned = req.clone({ setHeaders: { Authorization: `Bearer ${this.token}` } });
+  return next.handle(cloned);
+}
+```
+
+### 277) How do you model loading flags with RxJS cleanly?
+**Theory:** UI loading should track stream lifecycle.
+**Answer:** Use `finalize`, `startWith`, or `tap` with a `BehaviorSubject` for loading/errors.
+**Explanation:** Avoid setting loading in multiple branches when `finalize` exists.
+```ts
+this.loading$.next(true);
+this.http.get("/api/x").pipe(
+  finalize(() => this.loading$.next(false))
+).subscribe(v => this.data$.next(v));
+```
+
+### 278) What is a route resolver and why use it?
+**Theory:** Some routes should not render until data exists.
+**Answer:** Resolver preloads data before activation; component reads resolved data via `ActivatedRoute.data`.
+**Explanation:** Reduces empty-first-render flashes vs static `*ngIf` loading.
+```ts
+resolve: { user: UserResolver }
+// component: this.route.data.pipe(map(d => d["user"]))
+```
+
+### 279) What can `canActivate` return besides `boolean`?
+**Theory:** Guards integrate with router navigation.
+**Answer:** `CanActivate` can return `boolean`, `UrlTree`, `Observable<boolean|UrlTree>`, or `Promise<...>`.
+**Explanation:** `UrlTree` redirects without imperative `router.navigate`.
+```ts
+if (!this.auth.ok) return this.router.parseUrl("/login");
+return true;
+```
+
+### 280) What is the difference between `paramMap` and `queryParamMap`?
+**Theory:** Route data splits path params vs query string.
+**Answer:** `paramMap` reads `/user/:id`; `queryParamMap` reads `?tab=settings`.
+**Explanation:** Both are observables on `ActivatedRoute` in modern Angular.
+```ts
+this.route.paramMap.subscribe(p => p.get("id"));
+this.route.queryParamMap.subscribe(q => q.get("tab"));
+```
+
+### 281) Why pair `valueChanges` with `distinctUntilChanged` on forms?
+**Theory:** Reactive forms emit duplicate consecutive values.
+**Answer:** `distinctUntilChanged` avoids redundant work when the same value re-emits.
+**Explanation:** Mention reference equality for objects vs deep compare gap.
+```ts
+this.form.get("email")!.valueChanges.pipe(
+  distinctUntilChanged()
+).subscribe(/* ... */);
+```
+
+### 282) What does `shareReplay(1)` provide for HTTP responses?
+**Theory:** Multiple subscribers can re-trigger network calls.
+**Answer:** `shareReplay({ bufferSize: 1, refCount: true })` multicasts the last value to late subscribers (often used to cache GET).
+**Explanation:** Warn that caching POST or auth-sensitive endpoints needs care.
+```ts
+const users$ = this.http.get<User[]>("/api/users").pipe(
+  shareReplay({ bufferSize: 1, refCount: true })
+);
+```
+
+### 283) When do you return `EMPTY` vs `of([])` from `catchError`?
+**Theory:** Stream completion semantics differ for consumers.
+**Answer:** `of([])` emits one empty value then completes; `EMPTY` completes immediately with no emission—choose based on what subscribers expect.
+**Explanation:** UI lists often prefer `of([])` so async pipe still updates once.
+```ts
+import { EMPTY, of } from "rxjs";
+catchError(() => of([] as Item[]));
+```
+
+### 284) What is a quick way to explain cold vs hot observables?
+**Theory:** Interviewers check if you know producer timing.
+**Answer:** Cold observable starts producer per subscriber; hot observable shares one producer (late subscribers may miss early values unless replayed).
+**Explanation:** `HttpClient` calls are typically cold until shared.
+```txt
+Cold: each subscribe triggers new work; hot: multicast (Subject, shared HTTP with shareReplay).
+```
+
+### 285) Why pick `BehaviorSubject` over plain `Subject` for component state broadcasts?
+**Theory:** New subscribers often need the latest value immediately.
+**Answer:** `BehaviorSubject` stores current value; `Subject` has no initial value and emits only future events.
+**Explanation:** State stores and selected-id streams commonly use `BehaviorSubject`.
+```ts
+private state$ = new BehaviorSubject<UiState>({ filter: "" });
+```
+
+---
+
 ## Self-Verification for Phase 3
 
 - [ ] Answer at least 35/50 without notes.
