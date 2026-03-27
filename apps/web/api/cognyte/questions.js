@@ -17,9 +17,12 @@ const DAY_TO_IDS = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
     11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
     21, 22, 23, 24, 25,
-    // React Day-2 supplement (web-informed junior interview coverage)
+    // Phase 2 React extension (Q151-Q165)
     151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
-    161, 162, 163, 164, 165
+    161, 162, 163, 164, 165,
+    // Day 2 supplement file (Q249-Q263), no ID collision with Phase 2
+    249, 250, 251, 252, 253, 254, 255, 256, 257, 258,
+    259, 260, 261, 262, 263
   ],
   // Day 3 is dedicated Angular fundamentals (core + extension).
   3: [
@@ -61,6 +64,7 @@ const DAY_TO_IDS = {
 
 function topicFromId(id) {
   if (id === 148) return 'Testing (Jest basics)';
+  if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';
   if (id >= 225 && id <= 236) return 'React (Testing)';
   if (id >= 213 && id <= 224) return 'Angular (State)';
@@ -119,6 +123,7 @@ function loadAllCognyteQuestions() {
   const root = path.resolve(__dirname, '../../../..');
   const files = [
     path.join(root, 'COGNYTE_150_QUESTION_PACK_PHASE_2.md'),
+    path.join(root, 'COGNYTE_REACT_DAY2_SUPPLEMENT.md'),
     path.join(root, 'COGNYTE_150_QUESTION_PACK_PHASE_3.md'),
     path.join(root, 'COGNYTE_150_QUESTION_PACK_PHASE_4.md')
   ];

@@ -5,7 +5,7 @@ Use it together with:
 - `COGNYTE_150_QUESTION_PACK_PHASE_2.md`
 - `COGNYTE_150_QUESTION_PACK_PHASE_3.md`
 - `COGNYTE_150_QUESTION_PACK_PHASE_4.md`
-- Optional extra React angles for Day 2: `COGNYTE_REACT_DAY2_SUPPLEMENT.md` (alternate Q151–Q165 prompts—the in-app API uses Phase 2 as the canonical text for those IDs)
+- Day 2 interview supplement (loaded in-app as **Q249–Q263**): `COGNYTE_REACT_DAY2_SUPPLEMENT.md`
 
 How to run each day:
 1. Answer each question aloud before reading.
@@ -20,10 +20,9 @@ How to run each day:
 - Questions: Q26-Q50, Q76-Q92, Q97-Q100
 - Focus: full junior JS/TS fundamentals (scope, closures, event loop, async, typing, modules, promises, complexity)
 
-## Day 2 - React fundamentals (full core + interview pitfalls)
-- Questions: Q1-Q25, Q151-Q165
-- Focus: full React junior fundamentals + high-frequency pitfalls (effects, stale closures, race conditions, refs, reducer/custom hooks)
-- Optional read: `COGNYTE_REACT_DAY2_SUPPLEMENT.md` (extra “web-informed” prompts at the same ID range; compare with Phase 2 answers)
+## Day 2 - React fundamentals (full core + Phase 2 extension + interview supplement)
+- Questions: Q1-Q25, Q151-Q165, Q249-Q263
+- Focus: core React Q&A from the main pack, Phase 2 extension topics (JSX, lists, hooks, patterns), plus supplemental interview-deep prompts (effects, races, batching, `useLayoutEffect`, etc.) via Q249-Q263
 
 ## Day 3 - Angular fundamentals (full core + extension)
 - Questions: Q51-Q75, Q166-Q180

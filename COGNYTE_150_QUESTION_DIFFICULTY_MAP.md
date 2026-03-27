@@ -206,6 +206,26 @@ Use:
 
 ---
 
+## Q249-Q263 (React Day 2 interview supplement)
+
+- Q249: must-know-for-junior
+- Q250: must-know-for-junior
+- Q251: medium
+- Q252: must-know-for-junior
+- Q253: must-know-for-junior
+- Q254: medium
+- Q255: must-know-for-junior
+- Q256: must-know-for-junior
+- Q257: easy
+- Q258: medium
+- Q259: easy
+- Q260: must-know-for-junior
+- Q261: must-know-for-junior
+- Q262: medium
+- Q263: must-know-for-junior
+
+---
+
 ## Recommended Study Order
 
 1. All `must-know-for-junior` questions (core interview pass threshold)

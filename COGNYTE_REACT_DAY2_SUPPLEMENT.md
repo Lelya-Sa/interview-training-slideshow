@@ -1,4 +1,4 @@
-# Cognyte React Day 2 Supplement (Q151-Q165)
+# Cognyte React Day 2 Supplement (Q249-Q263)
 
 Source rationale:
 - Added from common junior React interview fundamentals frequently emphasized in official docs and interview prep material:
@@ -7,9 +7,11 @@ Source rationale:
   - controlled forms, refs, reducer/custom hooks,
   - race condition handling with AbortController.
 
+These IDs are **249-263** so they load in Cognyte Mode alongside Phase 2 **Q151-Q165** (different prompts; no ID collision).
+
 ---
 
-### 151) When should you NOT use `useEffect`?
+### 249) When should you NOT use `useEffect`?
 **Theory:** Effects are for syncing with external systems, not for pure calculations.
 **Answer:** Do not use `useEffect` for values that can be directly derived from props/state during render.
 **Explanation:** Derived values belong in render or `useMemo`; unnecessary effects add complexity and rerenders.
@@ -20,7 +22,7 @@ function Price({ items }) {
 }
 ```
 
-### 152) How do you prevent fetch race conditions in React?
+### 250) How do you prevent fetch race conditions in React?
 **Theory:** Older request can finish after newer one and overwrite state.
 **Answer:** Use `AbortController` and abort previous request in cleanup.
 **Explanation:** Keeps only latest request active.
@@ -35,7 +37,7 @@ React.useEffect(() => {
 }, [query]);
 ```
 
-### 153) How do you track previous prop/state value?
+### 251) How do you track previous prop/state value?
 **Theory:** `useRef` persists across renders without rerendering.
 **Answer:** Store current value in ref inside effect, read old value before update.
 **Explanation:** Useful for comparing transitions.
@@ -47,7 +49,7 @@ function usePrevious(value) {
 }
 ```
 
-### 154) What is a custom Hook and why use it?
+### 252) What is a custom Hook and why use it?
 **Theory:** Repeated stateful logic should be extracted.
 **Answer:** Custom Hook is a function starting with `use` that reuses hook logic across components.
 **Explanation:** Keeps components focused and testable.
@@ -59,7 +61,7 @@ function useToggle(initial = false) {
 }
 ```
 
-### 155) When prefer `useReducer` over `useState`?
+### 253) When prefer `useReducer` over `useState`?
 **Theory:** Complex state transitions benefit from explicit action-driven logic.
 **Answer:** Prefer `useReducer` when state has multiple related fields and update paths.
 **Explanation:** Improves predictability and testability.
@@ -73,7 +75,7 @@ function reducer(state, action) {
 }
 ```
 
-### 156) What is prop drilling alternative besides Context?
+### 254) What is prop drilling alternative besides Context?
 **Theory:** Composition can reduce coupling without global context.
 **Answer:** Use component composition (children/render props) to pass capabilities, not raw data through many layers.
 **Explanation:** Often simpler than introducing global state too early.
@@ -83,7 +85,7 @@ function Layout({ header, content }) {
 }
 ```
 
-### 157) How to avoid rerenders caused by unstable object props?
+### 255) How to avoid rerenders caused by unstable object props?
 **Theory:** New object/function references break memoization.
 **Answer:** Memoize objects/functions with `useMemo`/`useCallback`.
 **Explanation:** Keeps child props referentially stable.
@@ -91,7 +93,7 @@ function Layout({ header, content }) {
 const options = React.useMemo(() => ({ pageSize: 20, sort }), [sort]);
 ```
 
-### 158) Controlled form best practice for multiple inputs?
+### 256) Controlled form best practice for multiple inputs?
 **Theory:** Single source of truth keeps forms predictable.
 **Answer:** Store form object in state and update by input name.
 **Explanation:** Scales well for junior-to-mid forms.
@@ -100,7 +102,7 @@ const [form, setForm] = React.useState({ email: '', password: '' });
 const onChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 ```
 
-### 159) Why is key placement important with extracted components?
+### 257) Why is key placement important with extracted components?
 **Theory:** Keys are used by parent array mapping.
 **Answer:** Put `key` where you map list items, not inside child component internals.
 **Explanation:** React needs keys in list creation context.
@@ -108,7 +110,7 @@ const onChange = e => setForm(prev => ({ ...prev, [e.target.name]: e.target.valu
 items.map(item => <Row key={item.id} item={item} />);
 ```
 
-### 160) What is lazy state initialization in `useState`?
+### 258) What is lazy state initialization in `useState`?
 **Theory:** Expensive init should run once.
 **Answer:** Pass function to `useState` so initial computation runs only on first render.
 **Explanation:** Avoids repeated heavy work.
@@ -116,7 +118,7 @@ items.map(item => <Row key={item.id} item={item} />);
 const [data] = React.useState(() => heavyParse(initialJson));
 ```
 
-### 161) How do you reset component state intentionally?
+### 259) How do you reset component state intentionally?
 **Theory:** Changing key forces remount.
 **Answer:** Use a changing `key` to remount component when you need full state reset.
 **Explanation:** Useful for form/session restart.
@@ -124,7 +126,7 @@ const [data] = React.useState(() => heavyParse(initialJson));
 <Quiz key={sessionId} />
 ```
 
-### 162) What is batching in React updates?
+### 260) What is batching in React updates?
 **Theory:** React groups updates for performance.
 **Answer:** Multiple state updates in the same event are batched into one render cycle.
 **Explanation:** Improves performance and consistency.
@@ -135,7 +137,7 @@ function handleClick() {
 }
 ```
 
-### 163) How to safely update state from async callback?
+### 261) How to safely update state from async callback?
 **Theory:** Component may unmount before callback resolves.
 **Answer:** Use cleanup guard or abort pattern before setting state.
 **Explanation:** Prevents setState-on-unmounted patterns.
@@ -147,7 +149,7 @@ React.useEffect(() => {
 }, []);
 ```
 
-### 164) What is the difference between `useEffect` and `useLayoutEffect`?
+### 262) What is the difference between `useEffect` and `useLayoutEffect`?
 **Theory:** They run at different times relative to paint.
 **Answer:** `useEffect` runs after paint; `useLayoutEffect` runs synchronously after DOM mutations before paint.
 **Explanation:** Use layout effect only when DOM measurement/mutation before paint is required.
@@ -158,7 +160,7 @@ React.useLayoutEffect(() => {
 }, []);
 ```
 
-### 165) How would you explain React rendering to an interviewer?
+### 263) How would you explain React rendering to an interviewer?
 **Theory:** Interviewers test conceptual clarity, not buzzwords.
 **Answer:** Render is a pure calculation from state/props to UI description; commit applies actual DOM changes.
 **Explanation:** State/props changes schedule render, reconciliation computes diff, then commit updates DOM.
