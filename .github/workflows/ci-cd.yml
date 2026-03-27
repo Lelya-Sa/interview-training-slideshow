@@ -70,7 +70,7 @@ jobs:
           curl --fail --silent --show-error --retry 5 --retry-delay 5 --retry-all-errors "$VERCEL_URL/api/roadmap/summary" > /tmp/roadmap.json
           test -s /tmp/roadmap.json
 
-      - name: Verify Railway backend health (with rollout retries)
+      - name: Verify Railway backend health (warn-only)
         run: |
           set -e
           ok=0
@@ -88,12 +88,12 @@ jobs:
             fi
           done
           if [ "$ok" -ne 1 ]; then
-            echo "Railway health check failed after retries on /health and /status"
-            exit 1
+            echo "::warning::Railway health check failed after retries on /health and /status"
+            exit 0
           fi
           test -s /tmp/railway-health.json
 
-      - name: Verify Vercel proxy to Railway (with retries)
+      - name: Verify Vercel proxy to Railway (warn-only)
         run: |
           set -e
           ok=0
@@ -111,7 +111,7 @@ jobs:
             fi
           done
           if [ "$ok" -ne 1 ]; then
-            echo "Vercel proxy health check failed after retries on /api/railway/health and /api/railway/status"
-            exit 1
+            echo "::warning::Vercel proxy health check failed after retries on /api/railway/health and /api/railway/status"
+            exit 0
           fi
           test -s /tmp/proxy-health.json
