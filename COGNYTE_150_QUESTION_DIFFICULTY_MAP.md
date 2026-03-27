@@ -206,7 +206,7 @@ Use:
 
 ---
 
-## Q264-Q285 (Angular HTTP & RxJS — Day 7)
+## Q264-Q307 (Angular HTTP & RxJS — Day 7)
 
 - Q264: easy
 - Q265: must-know-for-junior
@@ -230,6 +230,28 @@ Use:
 - Q283: medium
 - Q284: must-know-for-junior
 - Q285: must-know-for-junior
+- Q286: must-know-for-junior
+- Q287: must-know-for-junior
+- Q288: medium
+- Q289: medium
+- Q290: medium
+- Q291: must-know-for-junior
+- Q292: must-know-for-junior
+- Q293: must-know-for-junior
+- Q294: medium
+- Q295: medium
+- Q296: must-know-for-junior
+- Q297: must-know-for-junior
+- Q298: must-know-for-junior
+- Q299: medium
+- Q300: must-know-for-junior
+- Q301: medium
+- Q302: must-know-for-junior
+- Q303: easy
+- Q304: medium
+- Q305: medium
+- Q306: must-know-for-junior
+- Q307: medium
 
 ---
 

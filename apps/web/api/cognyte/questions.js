@@ -52,11 +52,13 @@ const DAY_TO_IDS = {
     225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236,
     237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248
   ],
-  // Day 7: Angular HttpClient + RxJS core (Q67–Q77) + interview-deep set (Q264–Q285).
+  // Day 7: Angular HttpClient + RxJS + routing/http edge cases (Q67–Q77, Q264–Q307).
   7: [
     67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77,
     264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275,
-    276, 277, 278, 279, 280, 281, 282, 283, 284, 285
+    276, 277, 278, 279, 280, 281, 282, 283, 284, 285,
+    286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297,
+    298, 299, 300, 301, 302, 303, 304, 305, 306, 307
   ],
   8: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
   9: [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
@@ -69,7 +71,7 @@ const DAY_TO_IDS = {
 
 function topicFromId(id) {
   if (id === 148) return 'Testing (Jest basics)';
-  if (id >= 264 && id <= 285) return 'Angular (HTTP & RxJS)';
+  if (id >= 264 && id <= 307) return 'Angular (HTTP & RxJS)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';
   if (id >= 225 && id <= 236) return 'React (Testing)';

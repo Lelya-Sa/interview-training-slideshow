@@ -751,7 +751,7 @@ function presentStar(answer) {
 
 ---
 
-## Angular HttpClient & RxJS interview set (Q264-Q285)
+## Angular HttpClient & RxJS interview set (Q264-Q307)
 
 ### 264) What is the RxJS `tap` operator used for?
 **Theory:** Side effects belong out of pure `map` transforms.
@@ -969,6 +969,204 @@ Cold: each subscribe triggers new work; hot: multicast (Subject, shared HTTP wit
 **Explanation:** State stores and selected-id streams commonly use `BehaviorSubject`.
 ```ts
 private state$ = new BehaviorSubject<UiState>({ filter: "" });
+```
+
+### 286) How do `mergeMap`, `switchMap`, `concatMap`, and `exhaustMap` differ?
+**Theory:** Flattening operators control concurrency of inner observables—common senior-junior filter.
+**Answer:** `mergeMap`: concurrent inner subscriptions; `switchMap`: cancel previous inner when new outer emits; `concatMap`: queue in order (one at a time); `exhaustMap`: ignore new outer while inner busy.
+**Explanation:** Search uses `switchMap`; independent parallel fetches may use `mergeMap`; strict ordering uses `concatMap`; button spam protection uses `exhaustMap`.
+```ts
+clicks$.pipe(exhaustMap(() => this.http.post("/api/login", body)));
+search$.pipe(switchMap(q => this.http.get(`/api/s?q=${q}`)));
+```
+
+### 287) Why is `switchMap` preferred for debounced type-ahead search?
+**Theory:** Out-of-order responses cause wrong UI if old requests complete late.
+**Answer:** `switchMap` unsubscribes/cancels prior inner HTTP when a new term arrives, keeping only the latest response.
+**Explanation:** Pair with `debounceTime` + `distinctUntilChanged` on the input stream.
+```ts
+this.term$.pipe(
+  debounceTime(250),
+  distinctUntilChanged(),
+  switchMap(t => this.http.get<Item[]>(`/api/search?q=${encodeURIComponent(t)}`))
+);
+```
+
+### 288) When do `firstValueFrom` and `lastValueFrom` help in Angular code?
+**Theory:** Sometimes async/await reads clearer than nested `subscribe`.
+**Answer:** They convert an observable to a Promise (first or last emission). Useful in guards/resolvers or `async` service helpers when you truly want one value.
+**Explanation:** Watch for streams that never complete—`firstValueFrom` needs at least one emit; add timeout or default `catchError` if needed.
+```ts
+import { firstValueFrom } from "rxjs";
+const user = await firstValueFrom(this.http.get<User>("/api/me"));
+```
+
+### 289) Why add `startWith` when using `combineLatest` on form controls?
+**Theory:** `combineLatest` waits for every source to emit at least once.
+**Answer:** `startWith` seeds an initial value so the combined stream emits immediately for UI that depends on all fields.
+**Explanation:** Without it, the screen may stay blank until every control fires `valueChanges`.
+```ts
+combineLatest([
+  this.a.valueChanges.pipe(startWith(this.a.value)),
+  this.b.valueChanges.pipe(startWith(this.b.value))
+]);
+```
+
+### 290) What is `pairwise` useful for in reactive forms or streams?
+**Theory:** Sometimes you need previous and current value together.
+**Answer:** `pairwise` emits `[prev, curr]` pairs consecutively—handy for undo hints, diffing, or validation that depends on transition.
+**Explanation:** First emission is skipped until two values exist.
+```ts
+this.ctrl.valueChanges.pipe(pairwise()).subscribe(([prev, next]) => { /* ... */ });
+```
+
+### 291) How do you read `HttpErrorResponse` fields in Angular?
+**Theory:** HTTP failures are not thrown as plain `Error` objects consistently.
+**Answer:** In interceptor or `subscribe` error callback, check `err.status`, `err.error` (often server JSON body), headers, and `err.message` for client-side issues.
+**Explanation:** Distinguish 401/403/404/500 in UX and logging.
+```ts
+this.http.get("/api/x").subscribe({
+  error: (e: HttpErrorResponse) => console.log(e.status, e.error)
+});
+```
+
+### 292) Why must interceptors call `req.clone(...)` instead of mutating `HttpRequest`?
+**Theory:** Requests are immutable for safe retries and logging pipelines.
+**Answer:** Always build a new request with `clone`; never mutate the incoming object in place.
+**Explanation:** Interview signal that you understand predictability across interceptor chains.
+```ts
+const nextReq = req.clone({ setHeaders: { "X-Trace": id } });
+return next.handle(nextReq);
+```
+
+### 293) Where should `catchError` live: `subscribe` error handler vs `pipe`?
+**Theory:** Operators compose; scattered `subscribe` error handling becomes inconsistent.
+**Answer:** Prefer `pipe(catchError(...))` to convert failures into fallback values or rethrow with context; use `subscribe({ error })` for terminal UI alerts when you do not transform the stream.
+**Explanation:** Interceptors often normalize errors; services often use `catchError` for local fallbacks.
+```ts
+return this.http.get<T>("/api/x").pipe(catchError(() => of(null as T | null)));
+```
+
+### 294) How does `defer` differ from `of(...)` when building observables?
+**Theory:** Lazy vs eager creation matters when work is expensive or time-sensitive.
+**Answer:** `defer(() => obsFactory())` creates the inner observable only when subscribed; `of(x)` emits synchronously on subscribe with an already-known value.
+**Explanation:** Useful when the factory reads current DI state or timestamp at subscription time.
+```ts
+import { defer } from "rxjs";
+const lazy$ = defer(() => this.http.get("/api/now"));
+```
+
+### 295) How does `timeout` help with hanging HTTP calls?
+**Theory:** Network stalls should not freeze UX forever.
+**Answer:** `timeout(ms)` errors if no emission within window; pair with `catchError` for retry/fallback messaging.
+**Explanation:** Name trade-off: too low causes false failures on slow mobile networks.
+```ts
+this.http.get("/api/x").pipe(timeout(8000), catchError(() => of([])));
+```
+
+### 296) What is an interview-safe downside of `forkJoin`?
+**Theory:** All-or-nothing aggregation has sharp edges.
+**Answer:** If any inner observable errors or never completes, `forkJoin` does not emit success—whole call fails or stalls.
+**Explanation:** Alternative: per-request `catchError` inside `forkJoin` array, or parallel `mergeMap` with result objects.
+```ts
+forkJoin([
+  a$.pipe(catchError(() => of(null))),
+  b$.pipe(catchError(() => of(null)))
+]);
+```
+
+### 297) When is `exhaustMap` the right choice over `switchMap`?
+**Theory:** Sometimes cancellation is wrong—user must finish current action first.
+**Answer:** `exhaustMap` ignores new outer values while inner observable is active—great for submits/login to prevent duplicate posts while one is in flight.
+**Explanation:** `switchMap` would cancel an in-flight login when user double-clicks—often undesirable.
+```ts
+this.submit$.pipe(exhaustMap(body => this.http.post("/api/order", body)));
+```
+
+### 298) When do you reach for `concatMap` instead of `mergeMap`?
+**Theory:** Ordering and backpressure semantics differ.
+**Answer:** `concatMap` processes inner observables strictly in sequence; `mergeMap` runs many concurrently.
+**Explanation:** Sequential REST steps that depend on prior IDs often use `concatMap`.
+```ts
+ids$.pipe(concatMap(id => this.http.get(`/api/item/${id}`)));
+```
+
+### 299) When is `mergeMap` acceptable for independent parallel calls?
+**Theory:** Concurrency is not always bad.
+**Answer:** If inner calls are independent and server can handle it, `mergeMap(concurrency)` can fetch many IDs in parallel with a cap.
+**Explanation:** Contrast with unbounded merge that can overload browser/network.
+```ts
+from(idList).pipe(mergeMap(id => this.http.get(`/api/x/${id}`), 4));
+```
+
+### 300) How does `*ngIf` with `as` help with `async` pipe typing and null safety?
+**Theory:** Templates should avoid repeated `async` subscriptions.
+**Answer:** `*ngIf="data$ | async as data"` binds once and narrows truthiness for child template.
+**Explanation:** Mention `NgIf` also creates an embedded view only when stream emits truthy value.
+```html
+<ng-container *ngIf="user$ | async as user">
+  <p>{{ user.name }}</p>
+</ng-container>
+```
+
+### 301) What is the difference between `router.parseUrl` and `router.navigate` in guards?
+**Theory:** Returning a `UrlTree` integrates with router state.
+**Answer:** `parseUrl` builds a `UrlTree` you can return from functional guards; `navigate` is imperative side effect—prefer `UrlTree` return when possible.
+**Explanation:** Both can redirect, but `UrlTree` keeps flow declarative inside guard APIs.
+```ts
+return this.router.parseUrl("/login");
+```
+
+### 302) How should a resolver handle failures gracefully?
+**Theory:** Bad network should not always hard-crash the app shell.
+**Answer:** Return `catchError` that maps to a default route data object, or return `EMPTY`/`of(null)` plus navigate via router in a tap—interviewer wants a clear user-facing strategy.
+**Explanation:** Align with design: error page vs toast + fallback empty state.
+```ts
+return this.http.get("/api/me").pipe(catchError(() => of(null)));
+```
+
+### 303) What is XSRF and how does Angular’s `HttpClient` relate?
+**Theory:** Cross-site request forgery protections matter for cookie sessions.
+**Answer:** Angular can add XSRF token header for same-origin requests when configured; backend sets readable cookie, Angular reads and sets header name expected by server.
+**Explanation:** Junior answer stays high-level: defense when using cookie-based sessions.
+```txt
+Angular HttpClientXsrfModule / built-in interceptor story depends on version; know the concept.
+```
+
+### 304) When do you set `withCredentials` on `HttpClient` requests?
+**Theory:** Browser default blocks cross-origin cookies unless CORS allows credentials.
+**Answer:** Set `{ withCredentials: true }` when calling APIs that rely on cookies across origins with proper CORS headers.
+**Explanation:** Pair with backend `Access-Control-Allow-Credentials: true` and specific origin (not `*`).
+```ts
+this.http.get("/api/me", { withCredentials: true });
+```
+
+### 305) Why use `filter(Boolean)` carefully on streams of numbers or strings?
+**Theory:** Type narrowing in TS templates vs RxJS differs.
+**Answer:** `filter(Boolean)` removes falsy values but may not narrow TS types without a type guard; prefer `filter((x): x is T => x != null)` for nullables.
+**Explanation:** Interview nit: know difference between `null`, `undefined`, and empty string in form streams.
+```ts
+stream$.pipe(filter((x): x is string => typeof x === "string" && x.length > 0));
+```
+
+### 306) When do you chain `filter` + `switchMap` vs a single `switchMap` with inner guard?
+**Theory:** Readability and resubscription behavior both matter.
+**Answer:** `filter` before `switchMap` avoids spawning inner HTTP for invalid states (empty search term); inner guard handles per-response errors.
+**Explanation:** Keeps inner observables only for meaningful inputs.
+```ts
+term$.pipe(
+  filter(t => t.trim().length >= 2),
+  switchMap(t => this.http.get(`/api?q=${encodeURIComponent(t)}`))
+);
+```
+
+### 307) What is the difference between `share()` and `shareReplay(1)`?
+**Theory:** Multicasting saves duplicate side effects.
+**Answer:** `share()` multicasts hot-like behavior without replay; late subscribers miss prior emissions. `shareReplay` replays last N emissions to late subscribers—good for cached GET streams.
+**Explanation:** Prefer `shareReplay` with `refCount: true` to avoid leaking subscriptions when consumers unsubscribe.
+```ts
+const shared$ = cold$.pipe(share());
+const cached$ = cold$.pipe(shareReplay({ bufferSize: 1, refCount: true }));
 ```
 
 ---
