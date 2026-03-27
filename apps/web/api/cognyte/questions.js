@@ -60,7 +60,12 @@ const DAY_TO_IDS = {
     286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297,
     298, 299, 300, 301, 302, 303, 304, 305, 306, 307
   ],
-  8: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88],
+  // Day 8: TypeScript essentials (Q78–Q88) + React perf/forms interview set (Q308–Q332).
+  8: [
+    78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88,
+    308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319,
+    320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332
+  ],
   9: [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
   10: [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
   11: [111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
@@ -72,6 +77,7 @@ const DAY_TO_IDS = {
 function topicFromId(id) {
   if (id === 148) return 'Testing (Jest basics)';
   if (id >= 264 && id <= 307) return 'Angular (HTTP & RxJS)';
+  if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';
   if (id >= 225 && id <= 236) return 'React (Testing)';

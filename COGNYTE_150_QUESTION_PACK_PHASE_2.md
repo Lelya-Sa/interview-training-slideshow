@@ -979,3 +979,227 @@ Context for theme/auth snapshot; Redux-like stores when actions are complex and 
 ```jsx
 <Child value={v} onChange={setV} />
 ```
+
+---
+
+## React performance, rendering, and forms (Day 8 interview set, Q308-Q332)
+
+### 308) When should you wrap a component with `React.memo`?
+**Theory:** Re-rendering every parent update can waste work for expensive or wide pure subtrees.
+**Answer:** Use `memo` when props are comparatively stable and render cost is meaningful; skip it when children always receive new object/function props unless parents stabilize them.
+**Explanation:** `memo` is a shallow prop compare—it does not stop renders if you pass inline `{}` or lambdas each render.
+```jsx
+export const Row = React.memo(function Row({ title, onSelect }) {
+  return <button type="button" onClick={() => onSelect(title)}>{title}</button>;
+});
+```
+
+### 309) What problem does `useMemo` solve—and when is it overkill?
+**Theory:** Referential identity and heavy pure calculations matter for `memo`/`useEffect` dependencies.
+**Answer:** `useMemo` memoizes a computed value across renders when deps unchanged; skip for trivial math/strings—measure or wait for real hotspots.
+**Explanation:** Interviewers want “don’t optimize by default.”
+```jsx
+const sorted = React.useMemo(() => items.slice().sort((a, b) => a.p - b.p), [items]);
+```
+
+### 310) When do you need `useCallback`?
+**Theory:** Child components optimized with `memo` depend on stable function props.
+**Answer:** Stabilize callbacks passed to memoized children or listed in other hooks’ dependency arrays when referential equality matters.
+**Explanation:** Unnecessary `useCallback` everywhere adds noise without `memo` consumers.
+```jsx
+const onSave = React.useCallback(() => doSave(id), [id]);
+return <MemoRow id={id} onSave={onSave} />;
+```
+
+### 311) How can `useCallback` still see a “stale” value?
+**Theory:** Closures capture values from render when the callback was created.
+**Answer:** If dependencies omit changing values, callback uses stale state; fix dependency list or functional updates (`setS(s => …)`).
+**Explanation:** This ties directly to ESLint `react-hooks/exhaustive-deps` discussions.
+```jsx
+// Bug: missing count in deps
+const inc = React.useCallback(() => setCount(count + 1), []);
+```
+
+### 312) What does `React.memo` compare, and what breaks it?
+**Theory:** Shallow comparison only.
+**Answer:** New array/object/function references each render always fail shallow compare—even if contents are “equal.”
+**Explanation:** Fix upstream: stable props or lift derived data to parent with `useMemo`.
+```jsx
+<MemoList items={items} /> // ok if parent reuses same items ref when unchanged
+<MemoList items={items.filter(x => x.ok)} /> // often new array each time
+```
+
+### 313) Why prefer computing Derived values during render instead of mirroring in state?
+**Theory:** Duplicated state is a common junior bug.
+**Answer:** If value can be computed from props/state without async lag, compute in render; store separately only when user edits a fork.
+**Explanation:** Mention controlled “edit buffer” pattern vs pure derivation.
+```jsx
+const total = items.reduce((s, i) => s + i.price, 0);
+```
+
+### 314) How does `key` affect reconciliation for lists?
+**Theory:** React matches fiber nodes across updates using keys.
+**Answer:** Stable unique ids preserve state/DOM identity; index keys misbehave on reorder/filter causing lost focus/state bugs.
+**Explanation:** Interview classic: “never key by array index for mutable lists.”
+```jsx
+{users.map(u => <Row key={u.id} user={u} />)}
+```
+
+### 315) What is the difference between controlled and uncontrolled inputs in React?
+**Theory:** Source of truth placement.
+**Answer:** Controlled: React state owns value; uncontrolled: DOM owns value, read via ref/events.
+**Explanation:** Hybrid patterns exist but confuse debugging—pick one per field in interviews.
+```jsx
+<input value={email} onChange={e => setEmail(e.target.value)} />
+```
+
+### 316) How do you validate a controlled form at submit vs on change?
+**Theory:** UX vs performance trade-off.
+**Answer:** Validate on submit for short forms; on blur/on change with debounce for faster feedback; keep single validation function reused by both.
+**Explanation:** Mention accessibility: tie errors to inputs with `aria-describedby`.
+```jsx
+const errs = validate(values);
+if (Object.keys(errs).length) { setErrors(errs); return; }
+```
+
+### 317) What is a Field- vs Form-level error modeling approach?
+**Theory:** Interviewers want structured error thinking.
+**Answer:** Store errors keyed by field name (`Record<string,string>`) or array of issues; normalize server API errors into the same shape client-side.
+**Explanation:** Mention mapping backend `400` validation payload to fields.
+```jsx
+setErrors({ email: "Invalid email" });
+```
+
+### 318) When should form state lift vs stay colocated?
+**Theory:** Form ownership mirrors component ownership.
+**Answer:** Lift when multiple siblings submit together or parent needs values; keep local when subtree is self-contained wizard step.
+**Explanation:** Mention “single submit boundary” for clarity.
+```jsx
+<CheckoutPage email={email} setEmail={setEmail} />
+```
+
+### 319) What are two valid uses of `useRef` in forms and UI?
+**Theory:** Refs escape React’s declarative render for stable mutable boxes or DOM.
+**Answer:** Focus management (`inputRef.current?.focus()`), measuring DOM, storing timeout ids without rerender, or keeping latest value without triggering effect deps.
+**Explanation:** Don’t store visual truth in ref alone when it should be in state for rendering.
+```jsx
+const inputRef = React.useRef(null);
+React.useEffect(() => { inputRef.current?.focus(); }, []);
+```
+
+### 320) What does `flushSync` do (and why avoid it in most apps)?
+**Theory:** React batches updates for performance.
+**Answer:** `flushSync` forces synchronous DOM flush for rare measurement/integration cases; misuse hurts performance and can fight concurrent features.
+**Explanation:** Junior answer: “know the name; use only with a measured reason.”
+```jsx
+import { flushSync } from 'react-dom';
+flushSync(() => setFlag(true));
+// read layout immediately after
+```
+
+### 321) What is `startTransition` used for in React 18+?
+**Theory:** Keep UI responsive during heavy state updates.
+**Answer:** Mark non-urgent state updates as transitions so React can keep the UI responsive and interruptible.
+**Explanation:** Pair with deferred values when appropriate; don’t wrap truly urgent typing feedback.
+```jsx
+import { startTransition } from 'react';
+startTransition(() => setFiltered(hugeFilter(query)));
+```
+
+### 322) When do you consider list virtualization?
+**Theory:** Large DOM count hurts scroll/layout.
+**Answer:** Thousands of rows/cards—virtualize so only visible window mounts (`react-window` / similar pattern).
+**Explanation:** Mention “measure row height” complexity for variable-size lists.
+```txt
+Virtualize when rendering cost or DOM nodes dominate profiling.
+```
+
+### 323) When is `useLayoutEffect` appropriate in performance-sensitive UI?
+**Theory:** It runs before browser paint after DOM mutations.
+**Answer:** Measure layout or prevent visual flicker (sync scroll position); otherwise prefer `useEffect`.
+**Explanation:** Overuse blocks paint—interviewers watch for abuse.
+```jsx
+React.useLayoutEffect(() => {
+  const h = el.getBoundingClientRect().height;
+  setHeight(h);
+}, []);
+```
+
+### 324) How would you use React Profiler in an interview answer?
+**Theory:** Prove optimization with data.
+**Answer:** Profiler records commit cost per component; look for unexpected renders after interactions; combine with `why-did-you-render` mindset conceptually.
+**Explanation:** Junior: “baseline commit time, change one thing, compare.”
+```jsx
+import { Profiler } from 'react';
+<Profiler id="List" onRender={(id, phase,a,b,dur)=>console.log(dur)}><List /></Profiler>
+```
+
+### 325) What is automatic batching in React 18 and why care?
+**Theory:** Fewer renders mean better performance.
+**Answer:** Multiple `setState` calls in same event often batch to one render even in async handlers/timeouts in modern React.
+**Explanation:** Affects expectations about intermediate UI states during debugging.
+```jsx
+function click() {
+  setA(a=>a+1); setB(b=>b+1); // typically one render
+}
+```
+
+### 326) Why can `children` props defeat `memo` on a wrapper?
+**Theory:** Elements created in parent are new objects each render.
+**Answer:** If parent passes `{children}` from inline JSX, wrapper may rerender whenever parent renders unless structure is stable—sometimes lift `memo` or stabilize composition.
+**Explanation:** Mention explicit slot props vs raw `children` trade-offs.
+```jsx
+const Layout = React.memo(({ children }) => <div>{children}</div>);
+// Parent still re-renders Layout when parent state changes; memo helps only if props shallow-equal
+```
+
+### 327) How do you reduce context-driven rerender noise?
+**Theory:** Context updates rerender all consumers.
+**Answer:** Split contexts by concern, pass memoized values, or use selector patterns/external stores for hot paths.
+**Explanation:** Junior honest answer: “don’t put fast-changing data in mega-context.”
+```jsx
+const ThemeCtx = React.createContext('light');
+const UserCtx = React.createContext(null);
+```
+
+### 328) How do `React.lazy` and `Suspense` fit a junior interview answer?
+**Theory:** Code splitting improves initial load.
+**Answer:** `lazy` loads component bundle on demand; `Suspense` fallback shows while loading; error boundaries cover lazy failures differently than suspense.
+**Explanation:** Mention route-level split as common pattern.
+```jsx
+const Admin = React.lazy(() => import('./Admin'));
+<Suspense fallback={<p>Loading…</p>}><Admin /></Suspense>
+```
+
+### 329) What do error boundaries catch—and what do they not catch?
+**Theory:** Resilience boundaries.
+**Answer:** Boundaries catch render/lifecycle errors in subtree—not async errors in event handlers unless rethrown to trigger render failure; not SSR-only nuances in depth for junior.
+**Explanation:** Pair with `try/catch` in async code paths.
+```jsx
+class Boundary extends React.Component { /* getDerivedStateFromError */ }
+```
+
+### 330) Controlled file input caveats in React?
+**Theory:** Security and DOM constraints.
+**Answer:** File inputs are often read-only controlled for value; use refs or uncontrolled pattern to clear; rely on `onChange` for selection.
+**Explanation:** Mention never uploading secrets to client logs.
+```jsx
+<input type="file" onChange={e => setFile(e.target.files?.[0] ?? null)} />
+```
+
+### 331) Why avoid passing inline style objects for rapidly updating lists?
+**Theory:** Object identity and style recalculation.
+**Answer:** Inline `style={{…}}` creates new object each render; for hot paths prefer classNames/CSS modules or memoized style reference.
+**Explanation:** Practical interview: “profile first, then fix obvious churn.”
+```jsx
+<div className={flag ? 'active' : ''} />
+```
+
+### 332) What is the purpose of `displayName` on components?
+**Theory:** Developer experience and debugging.
+**Answer:** Sets readable name in React DevTools/stack traces for `memo`/anonymous HOC outputs.
+**Explanation:** Especially for higher-order components and `forwardRef`.
+```jsx
+const Box = React.memo(function Box() { return null; });
+Box.displayName = 'Box';
+```

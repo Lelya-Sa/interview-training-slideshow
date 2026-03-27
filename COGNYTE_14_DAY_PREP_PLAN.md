@@ -104,6 +104,7 @@ Goal: Cover common junior-intermediate questions interviewers use.
 
 ### Day 8 - React Intermediate
 
+- [ ] Cognyte question queue: Q78–Q88 (TypeScript) and Q308–Q332 (React perf & forms); see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] `useMemo`, `useCallback`, `memo` and when not to use them.
 - [ ] Controlled/uncontrolled forms and validation approach.
 - [ ] Optimize one React component with measurable reason.

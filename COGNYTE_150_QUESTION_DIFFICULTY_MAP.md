@@ -255,6 +255,36 @@ Use:
 
 ---
 
+## Q308-Q332 (React performance & forms — Day 8)
+
+- Q308: must-know-for-junior
+- Q309: must-know-for-junior
+- Q310: must-know-for-junior
+- Q311: must-know-for-junior
+- Q312: must-know-for-junior
+- Q313: must-know-for-junior
+- Q314: must-know-for-junior
+- Q315: must-know-for-junior
+- Q316: medium
+- Q317: medium
+- Q318: medium
+- Q319: must-know-for-junior
+- Q320: easy
+- Q321: medium
+- Q322: medium
+- Q323: medium
+- Q324: easy
+- Q325: must-know-for-junior
+- Q326: medium
+- Q327: medium
+- Q328: must-know-for-junior
+- Q329: must-know-for-junior
+- Q330: medium
+- Q331: medium
+- Q332: easy
+
+---
+
 ## Q249-Q263 (React Day 2 interview supplement)
 
 - Q249: must-know-for-junior

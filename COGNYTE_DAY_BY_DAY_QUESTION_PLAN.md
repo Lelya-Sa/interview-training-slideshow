@@ -44,9 +44,9 @@ How to run each day:
 - Questions: Q67-Q77, Q264-Q307
 - Focus: HttpClient and `HttpErrorResponse`, interceptors/immutability, XSRF and `withCredentials`, resolvers/guards/UrlTree; RxJS flattening (`switchMap`, `mergeMap`, `concatMap`, `exhaustMap`), `combineLatest`/`forkJoin` pitfalls, `timeout`, `firstValueFrom`, multicasting; template `async` + `*ngIf as`. Q76-Q77 TypeScript bridge—pair with mock #1 per `COGNYTE_14_DAY_PREP_PLAN.md`
 
-## Day 8 - TypeScript essentials
-- Questions: Q78-Q88
-- Focus: unions, generics, narrowing, utility types
+## Day 8 - TypeScript essentials + React intermediate (perf & forms)
+- Questions: Q78-Q88, Q308-Q332
+- Focus: TS unions, generics, narrowing, utilities (`Pick`, `Partial`, `Record`, `readonly`); React `memo` / `useMemo` / `useCallback`, stale closures, list keys, controlled forms, validation UX, refs, `startTransition`, lazy/Suspense, error boundaries—aligned with Phase 3 Day 8 in `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ## Day 9 - JS/TS depth + interview communication
 - Questions: Q89-Q99
