@@ -68,6 +68,12 @@ You are helping with an **interview preparation project** for **junior developer
    - Prefer actions that improve structured progression, interview readiness, and measurable skill growth.
 
 7. **Stay on purpose**: Every change should support **junior developer interview prep** — clearer questions, better coverage, easier navigation, or more reliable behavior. Don’t add unrelated features.
+8. **Optional side quest for learners**:
+   - Treat `slideshow-app/` as a legacy-structure exercise (not deployment-critical).
+   - If user asks for practice tasks, propose a "repository archaeology" task:
+     - compare `slideshow-app/` with `apps/web/`,
+     - identify duplicates and migration candidates,
+     - propose safe cleanup steps with rollback.
 
 ---
 

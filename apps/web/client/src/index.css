@@ -85,6 +85,22 @@ textarea:focus-visible {
   color: var(--color-text-muted);
 }
 
+.header-actions {
+  margin-top: 0.85rem;
+}
+
+.side-quest-btn {
+  border-color: var(--color-warning);
+  background: var(--color-warning-muted);
+  color: #92400e;
+}
+
+.side-quest-btn:hover {
+  border-color: #b45309;
+  background: #fcd34d;
+  color: #78350f;
+}
+
 /* Loading state */
 .roadmap-loading {
   display: flex;
@@ -224,4 +240,47 @@ textarea:focus-visible {
 
 .roadmap-day-topics li {
   margin-bottom: 0.2rem;
+}
+
+/* ========== Side quest panel ========== */
+.side-quest-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.25rem;
+}
+
+.side-quest-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.side-quest-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.side-quest-description {
+  margin: 0.9rem 0 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.side-quest-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: var(--color-text);
+}
+
+.side-quest-list li {
+  margin: 0.35rem 0;
+}
+
+.side-quest-note {
+  margin-top: 0.9rem;
+  color: var(--color-text-muted);
+  font-size: 0.92rem;
 }

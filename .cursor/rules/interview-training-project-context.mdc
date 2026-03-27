@@ -45,5 +45,9 @@ Deployment preference:
 - Railway for persistent backend services, workers, and databases
 - Keep env vars clear by platform and validate end-to-end integration
 
+Optional learner side quest:
+- `slideshow-app/` is legacy/duplicate and not required for current deploy.
+- Use it as a refactor exercise: compare against `apps/web/`, identify duplicates, and propose safe cleanup + rollback.
+
 Prioritize junior developer interview prep outcomes (coverage, clarity, reliability, usability).
 Primary objective: user becomes job-ready in 3 months.

@@ -114,3 +114,30 @@ Use this plan with the question banks in `ai/langchain/questions.md` and `ai/ai-
 - **Recommended (3 days):** Add Day 3 (1.5–2 h) ≈ **7–8 h** — adds safety, memory, and full question-bank pass.
 
 If you have only **one day**, do: LangChain 1–15 + AI Agents 1–9 (theory), then build the Day 1 chain and the Day 2 agent (skip full RAG build); total ~4–5 h.
+
+---
+
+## Side Quest (optional) - Repository Archaeology
+
+Use `slideshow-app/` as a learning side quest to practice real-world refactoring skills.
+
+### Goal
+
+Understand legacy/duplicate project structures and design a safe migration plan.
+
+### Tasks (60-90 min)
+
+1. Compare `slideshow-app/client` with `apps/web/client`.
+2. Identify what is legacy, duplicated, or still useful.
+3. Write a short migration note with:
+   - files to keep,
+   - files to delete,
+   - risks if removed,
+   - rollback plan.
+4. Propose one cleanup PR that removes low-risk duplicates first.
+
+### Why this helps interviews
+
+- Shows you can reason about messy codebases.
+- Demonstrates migration planning and risk management.
+- Gives concrete stories for "Tell me about a refactor you did."
