@@ -15,6 +15,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { getCognyteDayRoadmap } from '../cognyteDayRoadmap';
 import './QuestionsView.css';
 
 const CONF_STORAGE_PREFIX = 'cognyteConfidence:v1';
@@ -544,6 +545,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   const isAnswered = submitted[currentQuestionIndex];
   const cognyteInterviewFlow = cognyteMode && interviewMode;
   const canAdvanceInterview = !cognyteInterviewFlow || !!confidenceByKey[currentKey];
+  const cognyteRoadmap = cognyteMode ? getCognyteDayRoadmap(dayNumber) : null;
 
   // ============================================
   // RENDER QUESTIONS VIEW
@@ -599,6 +601,28 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
           )}
         </div>
       </div>
+
+      {cognyteMode && cognyteRoadmap && (
+        <details
+          className="cognyte-roadmap-details"
+          defaultOpen={Number(dayNumber) === 11}
+        >
+          <summary className="cognyte-roadmap-summary">{cognyteRoadmap.headline}</summary>
+          <div className="cognyte-roadmap-body">
+            <p className="cognyte-roadmap-intro">{cognyteRoadmap.intro}</p>
+            {cognyteRoadmap.tracks.map((tr) => (
+              <div key={tr.label} className="cognyte-roadmap-track">
+                <div className="cognyte-roadmap-track-label">{tr.label}</div>
+                <ul className="cognyte-roadmap-track-list">
+                  {tr.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
 
       {cognyteMode && (
         <div className="interview-prep-toolbar quick-navigation">

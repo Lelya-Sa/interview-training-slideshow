@@ -1389,9 +1389,9 @@ Multiple apps on one page vs single SPA with feature folders
 
 ---
 
-## Performance & web security (Day 11 interview set, Q386-Q411)
+## Performance & web security (Day 11 interview set, Q386-Q421)
 
-Grounded in common 2025–2026 junior interview expectations: **Core Web Vitals** (LCP, INP, CLS), rendering cost, and **OWASP-style** browser risks (XSS, CSRF, cookies, CSP)—see e.g. [MDN Web Security](https://developer.mozilla.org/en-US/docs/Web/Security), [web.dev Vitals](https://web.dev/articles/vitals), and summaries like [FrontendTools security essentials](https://www.frontendtools.tech/blog/frontend-security-essentials-guide-2025).
+Grounded in common 2025–2026 junior interview expectations: **Core Web Vitals** (LCP, INP, CLS), rendering cost, **CSP** + **Trusted Types**, and **OWASP-style** browser risks (XSS, CSRF, cookies)—see [MDN Web Security](https://developer.mozilla.org/en-US/docs/Web/Security), [Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API), [web.dev Vitals](https://web.dev/articles/vitals), and practitioner guides (e.g. [FrontendTools security essentials](https://www.frontendtools.tech/blog/frontend-security-essentials-guide-2025)).
 
 ### 386) What is the difference between reflow and repaint?
 **Theory:** Browser work is not free; layout and paint differ.
@@ -1602,6 +1602,86 @@ HTTPS page + http:// script = bad
 **Explanation:** Junior honesty: “I’d follow team policy and escalate suspicious packages.”
 ```txt
 Lockfile + audit + review major upgrades
+```
+
+### 412) What does a Content-Security-Policy (CSP) header do?
+**Theory:** Browsers enforce allow-lists for where scripts/styles/load can come from—first-class in 2025–2026 security interviews.
+**Answer:** CSP restricts sources of executable content (`script-src`, `default-src`, etc.), blocks inline script unless nonce/hash, and can report violations—reduces XSS blast radius.
+**Explanation:** Start-then-tighten mode (`Report-Only`) is common in mature rollouts; mention `frame-ancestors` ties to earlier clickjacking answers.
+```http
+Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'self'
+```
+
+### 413) What are Trusted Types and why do they matter for DOM XSS?
+**Theory:** “Safe by default” sinks—aligned with CSP `require-trusted-types-for` (see [MDN Trusted Types](https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API)).
+**Answer:** APIs like `innerHTML` accept only **TrustedHTML** from registered policies that sanitize/transform—raw strings from user data are blocked at runtime.
+**Explanation:** Pairs with DOMPurify inside `createHTML`; React `dangerouslySetInnerHTML` must feed policy output when CSP enforces Trusted Types.
+```js
+// policy.createHTML(sanitized) — not raw user string
+```
+
+### 414) How do **nonces** or **hashes** work in `script-src` CSP?
+**Theory:** Inline scripts break `script-src 'self'` unless explicitly trusted.
+**Answer:** Server issues per-response **nonce** (`script-src 'nonce-abc'`) on each `<script>` tag, or lists allowed inline **hash** of script body—enabling tight CSP without `unsafe-inline`.
+**Explanation:** Frameworks/metas often document nonce middleware; junior knows *why*, not every framework wiring detail.
+```http
+Content-Security-Policy: script-src 'self' 'nonce-rAnd0m'
+```
+
+### 415) What is HTTP Strict-Transport-Security (HSTS)?
+**Theory:** First connection downgrade risk—HSTS tells browser “only HTTPS for this host.”
+**Answer:** `Strict-Transport-Security` with `max-age` (and optionally `includeSubDomains`, `preload`) forces HTTPS on future visits.
+**Explanation:** Complements cookie `Secure` flag; does not replace XSS defenses.
+```http
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+```
+
+### 416) What is the **Permissions-Policy** header?
+**Theory:** Limits powerful browser features per frame—common in security checklists next to CSP.
+**Answer:** Declares which features (`geolocation`, `camera`, `payment`, etc.) may run in the page and embedded iframes—reduces abuse surface.
+**Explanation:** Formerly “Feature-Policy”; interview: “deny-by-default for sensors we don’t use.”
+```http
+Permissions-Policy: geolocation=(), camera=(), microphone=()
+```
+
+### 417) What does `Cross-Origin-Opener-Policy` (COOP) help prevent?
+**Theory:** Cross-origin window references enable some XS-Leak / Spectre-class attacks and `window.opener` quirks.
+**Answer:** `COOP: same-origin` isolates browsing context so other documents lose `window.opener` coupling where policy applies—pairs with CORP/COEP in advanced hardening.
+**Explanation:** Junior depth: “isolates opener relationship; part of hardening stack with CSP.”
+```http
+Cross-Origin-Opener-Policy: same-origin
+```
+
+### 418) What is an **open redirect** and why is it dangerous?
+**Theory:** Abuse for phishing and OAuth token theft.
+**Answer:** App redirects to URL from untrusted query params without allow-list—attacker sends victim to fake login while URL bar still looks trusted briefly or confuses OAuth `redirect_uri`.
+**Explanation:** Fix: server-side allow-list of redirect paths, signed redirect tokens, never `location = req.query.next` blindly.
+```txt
+/redirect?to=https://evil.com — block unvalidated external URLs
+```
+
+### 419) Why is **client-side validation not sufficient** for security?
+**Theory:** Attackers bypass the browser.
+**Answer:** Users and bots can call APIs directly—every privilege and data rule must be enforced server-side; client validation is UX and fast feedback only.
+**Explanation:** Pair with rate limiting and authz on API as interview closer.
+```txt
+Never trust the client for auth, pricing, or inventory rules
+```
+
+### 420) What is **prototype pollution** in a JS interview context?
+**Theory:** Unsafe merge of JSON/objects can mutate `Object.prototype`.
+**Answer:** Attacker-controlled deep merge/`JSON.parse` + `__proto__` tricks may inject properties seen by all objects—mitigate with safe parsers, schema validation, frozen prototypes in libs, or `structuredClone` discipline.
+**Explanation:** Often cited with `lodash.merge`-style bugs—junior names risk + “validate and freeze shapes.”
+```txt
+Never deep-merge untrusted objects into app config without guards
+```
+
+### 421) Why prefer `wss://` and HTTPS for WebSocket APIs?
+**Theory:** Cookies and tokens ride the session—plaintext WS is observable and tamperable.
+**Answer:** Secure WebSocket (`wss`) encrypts like HTTPS; mixed pages and `ws://` on public networks leak traffic.
+**Explanation:** Same-origin and cookie rules still apply—mention CORS is not WebSocket’s primary model (Upgrade handshake).
+```txt
+wss + auth on server after handshake; never secrets in query strings ideally
 ```
 
 ---

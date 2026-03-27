@@ -255,7 +255,7 @@ Use:
 
 ---
 
-## Q386-Q411 (Performance & security — Day 11)
+## Q386-Q421 (Performance & security — Day 11)
 
 - Q386: must-know-for-junior
 - Q387: must-know-for-junior
@@ -283,6 +283,16 @@ Use:
 - Q409: medium
 - Q410: medium
 - Q411: medium
+- Q412: must-know-for-junior
+- Q413: must-know-for-junior
+- Q414: medium
+- Q415: must-know-for-junior
+- Q416: medium
+- Q417: medium
+- Q418: must-know-for-junior
+- Q419: must-know-for-junior
+- Q420: medium
+- Q421: must-know-for-junior
 
 ---
 

@@ -512,6 +512,84 @@
   transform: none;
 }
 
+/* Cognyte day roadmap (expandable; aligns with 14-day prep plan) */
+.cognyte-roadmap-details {
+  margin-bottom: 1rem;
+  padding: 0.65rem 1rem;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-md, 10px);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.cognyte-roadmap-summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-text, #0f172a);
+  list-style: none;
+}
+
+.cognyte-roadmap-summary::-webkit-details-marker {
+  display: none;
+}
+
+.cognyte-roadmap-summary::before {
+  content: '';
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-right: 0.5em;
+  border-right: 2px solid var(--color-text-muted, #64748b);
+  border-bottom: 2px solid var(--color-text-muted, #64748b);
+  transform: rotate(-45deg);
+  vertical-align: 0.15em;
+  transition: transform 0.15s ease;
+}
+
+.cognyte-roadmap-details[open] .cognyte-roadmap-summary::before {
+  transform: rotate(45deg);
+  vertical-align: 0.05em;
+}
+
+.cognyte-roadmap-body {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}
+
+.cognyte-roadmap-intro {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--color-text-muted, #64748b);
+}
+
+.cognyte-roadmap-track {
+  margin-bottom: 0.65rem;
+}
+
+.cognyte-roadmap-track:last-child {
+  margin-bottom: 0;
+}
+
+.cognyte-roadmap-track-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-primary, #2563eb);
+  margin-bottom: 0.35rem;
+}
+
+.cognyte-roadmap-track-list {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--color-text, #0f172a);
+}
+
 /* Cognyte interview prep */
 .interview-prep-toolbar {
   margin-bottom: 1rem;

@@ -57,8 +57,8 @@ How to run each day:
 - Focus: Q100 behavioral STAR + Q101-Q110 starter LeetCode; **Q358-Q385** architecture & clean code (feature-first vs type-first, colocation, smart/dumb UI, API layer, DRY, barrels, tokens, resilient UI states, i18n/env, feature flags, dependency cycles, a11y in review, bundles, **TanStack Query** vs ad hoc fetch, facades, design systems, testability, monorepos, **RSC** vs client boundaries, micro-frontends, ADRs)—grounded in current interview prep (system-design style axes, FSD/colocation ideas, React 18/19 server–client split)
 
 ## Day 11 - Logic set 1 + performance & security
-- Questions: Q111-Q120, Q386-Q411
-- Focus: **Q111-Q120** DP/sliding window/maps/stack-queue patterns; **Q386-Q411** browser rendering (reflow/repaint, thrashing, rAF), debounce/throttle, **Core Web Vitals (LCP, INP, CLS)**, lazy images, resource hints, long tasks, bundle splitting, memory leaks; **XSS** (types, mitigations, React/Angular sinks), **CSRF** (SameSite, tokens), cookies (`HttpOnly`/`Secure`), token storage trade-offs, **CORS preflight**, clickjacking (`frame-ancestors`), mixed content, **SRI**, npm supply-chain hygiene—aligned with `COGNYTE_14_DAY_PREP_PLAN.md` Day 11
+- Questions: Q111-Q120, Q386-Q421
+- Focus: **Q111-Q120** DP/sliding window/maps/stack-queue patterns; **Q386-Q421** rendering + **Core Web Vitals (LCP, INP, CLS)**, debounce/throttle, rAF, bundles/leaks; **XSS/CSRF**, cookies, CORS, **CSP**, **Trusted Types**, nonces/hashes, **HSTS**, **Permissions-Policy**, **COOP**, open redirects, server-side validation, prototype pollution, **`wss://`**; SRI & npm hygiene—matches roadmap **Day 11 – Performance + Security** and Checkpoint C in `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ## Day 12 - Logic/LeetCode pattern set 2
 - Questions: Q121-Q130
