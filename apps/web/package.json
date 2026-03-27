@@ -1,0 +1,10 @@
+{
+  "name": "interview-training-web",
+  "private": true,
+  "description": "Vercel web app (React + serverless API)",
+  "scripts": {
+    "install-all": "npm install && npm --prefix client install",
+    "build": "node build-direct.js",
+    "start": "npm --prefix client start"
+  }
+}

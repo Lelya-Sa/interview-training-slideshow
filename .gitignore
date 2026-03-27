@@ -2,10 +2,15 @@
 node_modules/
 server/node_modules/
 client/node_modules/
+apps/web/node_modules/
+apps/web/client/node_modules/
+services/backend/node_modules/
 
 # Build output
 build/
 client/build/
+apps/web/build/
+apps/web/client/build/
 
 # Logs
 npm-debug.log*

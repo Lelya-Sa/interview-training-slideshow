@@ -19,15 +19,15 @@ You are helping with an **interview preparation project** for **junior developer
    - Never run destructive Git commands (`reset --hard`, force-push, or checkout that discards local changes) unless explicitly requested.
 
 2. **Read the project carefully** before making any changes:
-   - **Root**: `package.json`, `vercel.json`, `build-direct.js` — React app + Vercel serverless, build outputs to `build/`.
-   - **Client**: `client/` — React app (`client/src/App.js`, `client/src/components/QuestionsView.js`). Uses `/api/roadmap/summary`, `/api/roadmap/days/:dayNumber`, `/api/questions?path=...&dayNumber=...&topicName=...`.
-   - **API**: `api/` — Vercel serverless:
-     - `api/roadmap/summary.js` — GET, returns all days (1–34) with topic names from `api/daily-schedule/day-NN/topics.md`.
-     - `api/roadmap/days.js` — GET `?dayNumber=N`, returns day N with topics (name + path) parsed from `api/daily-schedule/day-NN/topics.md`.
-     - `api/questions.js` — GET `?path=...&dayNumber=...&topicName=...&count=...`, serves questions from markdown under `api/` (e.g. `frontend/javascript/questions.md`). Parses `### N. Question` / `### Question` and `**Answer:**` blocks.
-   - **Content**: `api/daily-schedule/day-01` … `day-34` (and beyond): each has `topics.md` (list of topics with `### Topic Name` and `**Path**: \`../../category/subtopic/questions.md\``). Topic paths are relative to day folder; API expects paths relative to `api/` (e.g. `frontend/javascript/questions.md`).
-   - **Question banks**: Under `api/` — e.g. `api/frontend/javascript/questions.md`, `api/backend/nodejs/questions.md`, `api/algorithms/leetcode/questions.md`, `api/logic-building-101/questions.md`. Format: `### 1. Question text` then `**Answer:**` and the answer (markdown allowed).
-   - **Build**: `build-direct.js` copies `daily-schedule`, topic folders (frontend, backend, apis, algorithms, etc.) and markdown into `api/` then builds React to `build/`. Do not rely on content living only outside `api/` for production.
+   - **Monorepo root**: `package.json` orchestrates commands.
+   - **Web app (Vercel)**: `apps/web` (`apps/web/vercel.json`, `apps/web/build-direct.js`) — React app + Vercel serverless, build outputs to `apps/web/build/`.
+   - **Client**: `apps/web/client/` — React app (`apps/web/client/src/App.js`, `apps/web/client/src/components/QuestionsView.js`). Uses `/api/roadmap/summary`, `/api/roadmap/days/:dayNumber`, `/api/questions?path=...&dayNumber=...&topicName=...`.
+   - **API**: `apps/web/api/` — Vercel serverless:
+     - `apps/web/api/roadmap/summary.js` — GET, returns all days (1–34) with topic names from `apps/web/api/daily-schedule/day-NN/topics.md`.
+     - `apps/web/api/roadmap/days.js` — GET `?dayNumber=N`, returns day N with topics (name + path) parsed from `apps/web/api/daily-schedule/day-NN/topics.md`.
+     - `apps/web/api/questions.js` — GET `?path=...&dayNumber=...&topicName=...&count=...`, serves questions from markdown under `apps/web/api/` (e.g. `frontend/javascript/questions.md`). Parses `### N. Question` / `### Question` and `**Answer:**` blocks.
+   - **Railway backend**: `services/backend/src/server.js`, deployed from `services/backend`.
+   - **Build**: `apps/web/build-direct.js` copies content folders into `apps/web/api/` then builds React to `apps/web/build/`.
 
 3. **Ask the user what they want** before implementing:
    - "What would you like to add or improve? For example: new day/topic, new question bank, new UI feature, new API, or fix/refactor."
@@ -74,7 +74,7 @@ You are helping with an **interview preparation project** for **junior developer
 ## Short version (paste this into Cursor)
 
 ```
-This repo is a junior developer interview prep app: React client + Vercel serverless API. It has a 34-day roadmap (api/daily-schedule/day-NN/topics.md), API routes /api/roadmap/summary, /api/roadmap/days?dayNumber=N, and /api/questions?path=... which serve questions from markdown files under api/ (format: ### Question then **Answer:**).
+This repo is a junior developer interview prep app in a monorepo: Vercel web app under apps/web (React + serverless API) and Railway backend under services/backend. It has a roadmap in apps/web/api/daily-schedule/day-NN/topics.md, API routes /api/roadmap/summary, /api/roadmap/days?dayNumber=N, and /api/questions?path=... which serve questions from markdown files under apps/web/api/ (format: ### Question then **Answer:**).
 
 Git/VCS rules first:
 1. Use C:/Users/lelya/Desktop/intreview_training as the VCS root.
@@ -89,7 +89,7 @@ Deployment architecture:
 - If I ask for deployment improvements, propose and implement Vercel+Railway integration with env vars, proxying, and validation steps.
 
 Before changing anything:
-1. Read the project: client (App.js, QuestionsView), api (roadmap/summary.js, roadmap/days.js, questions.js), and the structure of daily-schedule and question markdown.
+1. Read the project: apps/web/client (App.js, QuestionsView), apps/web/api (roadmap/summary.js, roadmap/days.js, questions.js), services/backend, and the structure of roadmap/question markdown.
 2. Ask me what I want to add or improve (e.g. new day/topic, new questions, UI feature, fix).
 3. If I give a topic, first generate a 12-week job-ready schedule for that topic with weekly goals, daily practice plan, milestones, projects, mock interviews, and validation criteria.
 4. Implement it following existing conventions: topics.md format (### Name, **Path**: `...`), questions.md format (### N. Question, **Answer:**), API response shape { success, ... }, and update any day ranges or constants if we add days.

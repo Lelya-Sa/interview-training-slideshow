@@ -11,10 +11,14 @@ const clientDir = path.join(projectRoot, 'client');
 const buildDir = path.join(projectRoot, 'build');
 const clientBuildDir = path.join(clientDir, 'build');
 
-// Content (daily-schedule, logic-building-101, etc.): same dir as app when repo root is app (Vercel), else parent (local slideshow-app)
-const parentDir = fs.existsSync(path.join(projectRoot, 'daily-schedule'))
-  ? projectRoot
-  : path.join(projectRoot, '..');
+// Content source can live next to apps/web (monorepo root).
+const contentDirCandidates = [
+  projectRoot,
+  path.resolve(projectRoot, '..'),
+  path.resolve(projectRoot, '..', '..')
+];
+const parentDir = contentDirCandidates.find((candidate) => fs.existsSync(path.join(candidate, 'daily-schedule')))
+  || path.resolve(projectRoot, '..', '..');
 
 console.log('🔨 Starting build process...');
 console.log('Project root:', projectRoot);

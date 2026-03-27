@@ -1,0 +1,8 @@
+{
+  "name": "interview-training-backend",
+  "private": true,
+  "description": "Railway backend service",
+  "scripts": {
+    "start": "node src/server.js"
+  }
+}

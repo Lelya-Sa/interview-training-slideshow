@@ -1,12 +1,13 @@
 {
-  "name": "interview-training-slideshow",
+  "name": "interview-training-monorepo",
   "private": true,
-  "description": "App at repo root for Vercel (no submodules)",
+  "description": "Monorepo with Vercel web app and Railway backend",
   "scripts": {
-    "install-all": "npm install && cd client && npm install",
-    "build": "node build-direct.js"
+    "install-all": "npm --prefix apps/web install-all && npm --prefix services/backend install",
+    "build:web": "npm --prefix apps/web run build",
+    "start:web": "npm --prefix apps/web run start",
+    "start:backend": "npm --prefix services/backend run start",
+    "start": "npm run start:backend"
   },
-  "devDependencies": {
-    "concurrently": "^8.2.2"
-  }
+  "devDependencies": {}
 }
