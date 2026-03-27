@@ -12,6 +12,9 @@ client/build/
 apps/web/build/
 apps/web/client/build/
 
+# Local deploy metadata
+.vercel/
+
 # Logs
 npm-debug.log*
 yarn-debug.log*
