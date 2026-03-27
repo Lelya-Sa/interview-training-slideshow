@@ -131,6 +131,7 @@ Goal: Cover common junior-intermediate questions interviewers use.
 
 ### Day 11 - Performance + Security Basics
 
+- [ ] Cognyte question queue: Q111–Q120 and Q386–Q411; see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] Browser rendering basics (reflow/repaint), debouncing/throttling.
 - [ ] Frontend security fundamentals: XSS, auth token handling, validation.
 - [ ] Add one perf improvement and one reliability improvement.

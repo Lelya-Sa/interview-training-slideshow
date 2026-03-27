@@ -79,7 +79,13 @@ const DAY_TO_IDS = {
     370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381,
     382, 383, 384, 385
   ],
-  11: [111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
+  // Day 11: LeetCode set 1 (Q111–Q120) + performance & security (Q386–Q411).
+  11: [
+    111, 112, 113, 114, 115, 116, 117, 118, 119, 120,
+    386, 387, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397,
+    398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409,
+    410, 411
+  ],
   12: [121, 122, 123, 124, 125, 126, 127, 128, 129, 130],
   13: [131, 132, 133, 134, 135, 136, 137, 138, 139, 140],
   14: [141, 142, 143, 144, 145, 146, 147, 148, 149, 150]
@@ -90,6 +96,7 @@ function topicFromId(id) {
   if (id >= 264 && id <= 307) return 'Angular (HTTP & RxJS)';
   if (id >= 333 && id <= 357) return 'Angular (Intermediate)';
   if (id >= 358 && id <= 385) return 'Architecture & Clean Code';
+  if (id >= 386 && id <= 411) return 'Performance & Security';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

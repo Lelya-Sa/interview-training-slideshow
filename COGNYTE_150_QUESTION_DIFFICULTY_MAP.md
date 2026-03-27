@@ -255,6 +255,37 @@ Use:
 
 ---
 
+## Q386-Q411 (Performance & security — Day 11)
+
+- Q386: must-know-for-junior
+- Q387: must-know-for-junior
+- Q388: must-know-for-junior
+- Q389: medium
+- Q390: must-know-for-junior
+- Q391: medium
+- Q392: must-know-for-junior
+- Q393: medium
+- Q394: must-know-for-junior
+- Q395: must-know-for-junior
+- Q396: must-know-for-junior
+- Q397: must-know-for-junior
+- Q398: must-know-for-junior
+- Q399: must-know-for-junior
+- Q400: must-know-for-junior
+- Q401: must-know-for-junior
+- Q402: must-know-for-junior
+- Q403: must-know-for-junior
+- Q404: medium
+- Q405: must-know-for-junior
+- Q406: must-know-for-junior
+- Q407: must-know-for-junior
+- Q408: medium
+- Q409: medium
+- Q410: medium
+- Q411: medium
+
+---
+
 ## Q358-Q385 (Architecture & clean code — Day 10)
 
 - Q358: must-know-for-junior

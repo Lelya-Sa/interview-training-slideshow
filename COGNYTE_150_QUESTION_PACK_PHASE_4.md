@@ -1389,6 +1389,223 @@ Multiple apps on one page vs single SPA with feature folders
 
 ---
 
+## Performance & web security (Day 11 interview set, Q386-Q411)
+
+Grounded in common 2025–2026 junior interview expectations: **Core Web Vitals** (LCP, INP, CLS), rendering cost, and **OWASP-style** browser risks (XSS, CSRF, cookies, CSP)—see e.g. [MDN Web Security](https://developer.mozilla.org/en-US/docs/Web/Security), [web.dev Vitals](https://web.dev/articles/vitals), and summaries like [FrontendTools security essentials](https://www.frontendtools.tech/blog/frontend-security-essentials-guide-2025).
+
+### 386) What is the difference between reflow and repaint?
+**Theory:** Browser work is not free; layout and paint differ.
+**Answer:** **Reflow** (layout) recomputes geometry/positions when structure/size changes; **repaint** redraws pixels when look changes without full layout (sometimes both chain).
+**Explanation:** Interview: “batch DOM reads/writes” to reduce thrashing.
+```txt
+Reflow: widths/heights positions; repaint: colors shadows without layout
+```
+
+### 387) What is layout thrashing?
+**Theory:** Interleaved read/write DOM APIs force synchronous layout.
+**Answer:** Alternating `offsetHeight`-style reads with style writes in a loop forces the browser to flush layout repeatedly—very slow.
+**Explanation:** Fix by batching writes then reads or using `requestAnimationFrame`.
+```js
+// bad pattern: read write read write in tight loop
+```
+
+### 388) When do you choose debouncing vs throttling for UI events?
+**Theory:** Both reduce work; semantics differ (Day 8 RxJS parallels).
+**Answer:** **Debounce** fires after quiet period—search input. **Throttle** enforces max rate—scroll/resize handlers.
+**Explanation:** Mention leading vs trailing edge if interviewer wants depth.
+```txt
+Debounce: “after user pauses”; throttle: “at most every N ms”
+```
+
+### 389) Why use `requestAnimationFrame` for visual updates?
+**Theory:** Sync with display refresh ~60Hz (or VRR).
+**Answer:** Schedules work before next paint for smoother animation and avoids running more frames than needed.
+**Explanation:** Contrast `setInterval` for game loops without paint sync.
+```js
+function tick() { update(); requestAnimationFrame(tick); }
+```
+
+### 390) What are Core Web Vitals at a high level?
+**Theory:** Google uses user-centric metrics to reflect perceived performance.
+**Answer:** **LCP** (largest content paint—load), **INP** (interaction to next paint—responsiveness; replaced FID as primary interaction metric), **CLS** (cumulative layout shift—visual stability).
+**Explanation:** Junior ties improvements to real measurements in Lighthouse/Field data.
+```txt
+LCP load, INP input lag, CLS jank
+```
+
+### 391) What does INP measure compared to old First Input Delay?
+**Theory:** FID only captured first interaction; modern UX needs sustained responsiveness.
+**Answer:** **INP** looks at latency of **all** interactions throughout the page session (worst percentiles), not just the first click.
+**Explanation:** Name the shift honestly: “FID was a first-impression metric.”
+```txt
+INP holistic; FID first input only
+```
+
+### 392) How does native `loading="lazy"` help LCP strategy?
+**Theory:** Not every image is above-the-fold.
+**Answer:** Lazy images defer offscreen decode/network until needed—improves initial contention; **do not** lazy-load the hero LCP image incorrectly.
+**Explanation:** Interview trap: “lazy everything” can hurt LCP if misapplied.
+```html
+<img src="hero.jpg" alt="Hero" fetchpriority="high" />
+<img src="below.jpg" alt="" loading="lazy" />
+```
+
+### 393) What is the difference between `preload` and `prefetch`?
+**Theory:** Resource hints prioritize timing.
+**Answer:** `preload` is high-priority **this** navigation (fonts/critical chunks); `prefetch` is lower priority **future** navigation hints.
+**Explanation:** Misuse can steal bandwidth from LCP resources.
+```html
+<link rel="preload" href="/font.woff2" as="font" crossorigin />
+<link rel="prefetch" href="/next-route-chunk.js" />
+```
+
+### 394) What is a “long task” and why does it hurt INP?
+**Theory:** Main thread busy cannot respond quickly.
+**Answer:** JS blocks >50ms (rule-of-thumb) monopolizes the thread—clicks feel late; break work into chunks or move to worker.
+**Explanation:** Mention `scheduler.postTask`/`MessageChannel` only if comfortable.
+```txt
+Heavy sync work on main thread delays paint after input
+```
+
+### 395) How does route-level code splitting improve initial load?
+**Theory:** Users rarely need all features in first second.
+**Answer:** Split bundles per route/feature so first paint downloads less JS—better TTI/LCP trade-offs on large SPAs.
+**Explanation:** Pair with HTTP caching and HTTP/2 multiplexing at high level.
+```js
+const Admin = lazy(() => import("./Admin"));
+```
+
+### 396) Name two common **frontend** memory leak sources.
+**Theory:** Long-lived references prevent GC.
+**Answer:** Forgotten `addEventListener`, `setInterval`, or RxJS subscriptions; holding DOM nodes in global caches.
+**Explanation:** Fix with cleanup on unmount, `AbortController`, `takeUntilDestroyed`, etc.
+```js
+window.addEventListener("scroll", onScroll);
+// must remove on teardown
+```
+
+### 397) What is XSS (Cross-Site Scripting)?
+**Theory:** Attacker injects executable script into your origin’s context.
+**Answer:** Browser runs attacker HTML/JS as if from your app—steals cookies, defaces UI, exfiltrates tokens from DOM.
+**Explanation:** Three families: stored, reflected, DOM-based—junior names at least one scenario.
+```txt
+Untrusted data becomes executable in user browser
+```
+
+### 398) How does DOM-based XSS differ from reflected XSS?
+**Theory:** Sink location matters for defenses.
+**Answer:** **Reflected/stored** often involves server echoing unsafe HTML; **DOM-based** happens when client JS writes URL hash/query or storage into `innerHTML` without sanitization.
+**Explanation:** Client-only apps still XSS themselves.
+```js
+document.body.innerHTML = location.hash.slice(1); // dangerous pattern
+```
+
+### 399) What are practical XSS mitigations for SPAs?
+**Theory:** Defense in depth.
+**Answer:** Escape output by default, avoid `innerHTML` for untrusted strings, sanitize when rich HTML required (**DOMPurify**), enforce **CSP**, use frameworks’ safe bindings, HTTP-only cookies for session where possible.
+**Explanation:** Mention `textContent` vs `innerHTML` decisions.
+```txt
+CSP + escape + sanitize + avoid dangerous sinks
+```
+
+### 400) Why is `dangerouslySetInnerHTML` “dangerous”?
+**Theory:** React escapes text by default—this API opts out.
+**Answer:** It bypasses escaping; passing unsanitized server/user HTML enables XSS.
+**Explanation:** Partner with sanitizer or strict server policy.
+```jsx
+<div dangerouslySetInnerHTML={{ __html: clean }} />
+```
+
+### 401) Why is `bypassSecurityTrust...` in Angular risky?
+**Theory:** Explicit trust APIs disable framework guards.
+**Answer:** Tells Angular a string is “safe HTML/style/script/url”—if attacker-controlled, XSS follows.
+**Explanation:** Only for tightly validated server HTML or impossible-to-XSS sources.
+```ts
+this.sanitizer.bypassSecurityTrustHtml(userHtml); // only if truly safe
+```
+
+### 402) What is CSRF (Cross-Site Request Forgery)?
+**Theory:** Browser automatically attaches cookies; attacker forges requests as user.
+**Answer:** Malicious site triggers state-changing request to your API while user is logged in via cookies.
+**Explanation:** Does not read response cross-origin in browser model—still harmful for mutations.
+```html
+<img src="https://bank.example/transfer?to=attacker" />
+```
+
+### 403) How do `SameSite` cookies reduce CSRF?
+**Theory:** Cross-site request contexts vary cookie sending.
+**Answer:** `SameSite=Lax` or `Strict` limits cookies on cross-site POST/navigation patterns—major modern mitigation with HTTPS.
+**Explanation:** `None` requires `Secure` and careful CORS/CSRF token pairing.
+```http
+Set-Cookie: session=...; HttpOnly; Secure; SameSite=Lax; Path=/
+```
+
+### 404) What is a classic CSRF token pattern?
+**Theory:** Attacker cannot read your page cross-origin to steal token in many setups.
+**Answer:** Embed unpredictable token in form/header; server verifies on mutation; works with cookie sessions.
+**Explanation:** Contrast with double-submit cookie variant.
+```txt
+Hidden form field or custom header X-CSRF-Token
+```
+
+### 405) What do `HttpOnly` and `Secure` cookie flags mean?
+**Theory:** Cookie scope controls XSS and transport risk.
+**Answer:** `HttpOnly` hides cookie from `document.cookie` JS (reduces token theft via XSS); `Secure` sends only over HTTPS.
+**Explanation:** Not silver bullet—XSS still bad due to actions-as-user, but token exfil harder.
+```http
+Set-Cookie: id=...; HttpOnly; Secure; SameSite=Lax
+```
+
+### 406) Why do interviewers caution against storing tokens in `localStorage`?
+**Theory:** Any XSS becomes full account compromise.
+**Answer:** JavaScript-readable storage is exfiltratable—prefer **HTTP-only** cookies (+ CSRF defenses) or short-lived memory patterns per product threat model.
+**Explanation:** SPAs with pure Bearer headers trade CSRF complexity vs XSS—be honest about trade-offs.
+```txt
+XSS can read localStorage; HttpOnly cookies cannot from JS
+```
+
+### 407) What triggers a CORS **preflight** request?
+**Theory:** Browser protects user data cross-origin.
+**Answer:** “Non-simple” requests (custom headers, methods beyond GET/POST-certain, exotic content-types) send `OPTIONS` first; server must allow origin/method/headers.
+**Explanation:** Junior symptom: POST works in curl but not browser—often CORS/preflight.
+```txt
+OPTIONS first for non-simple cross-origin requests
+```
+
+### 408) How do you reduce clickjacking risk?
+**Theory:** Embed your app in attacker `<iframe>` and trick clicks.
+**Answer:** `Content-Security-Policy: frame-ancestors 'none'` or legacy `X-Frame-Options: DENY/SAMEORIGIN`.
+**Explanation:** Mention UI redress is real for auth flows.
+```http
+Content-Security-Policy: frame-ancestors 'self'
+```
+
+### 409) What is mixed content and why block it?
+**Theory:** HTTPS page loading HTTP subresources weakens security.
+**Answer:** Passive mixed content leaks integrity; active (JS) is blocked/modern browsers upgrade block—causes broken sites if assets hardcode `http:`.
+**Explanation:** Fix with `https://` URLs or protocol-relative avoidance.
+```txt
+HTTPS page + http:// script = bad
+```
+
+### 410) What is Subresource Integrity (SRI)?
+**Theory:** CDN compromise should not auto-own your users.
+**Answer:** `<script integrity="sha384-..." crossorigin="anonymous">` verifies file hash matches expected—browser rejects tampered scripts.
+**Explanation:** Pair `crossorigin` correctly for CORS/CDN.
+```html
+<script src="https://cdn/vendor.js" integrity="sha384-..." crossorigin="anonymous"></script>
+```
+
+### 411) What is a minimal “supply chain” hygiene step for npm dependencies?
+**Theory:** Dependencies run build/runtime with your privileges.
+**Answer:** Lockfiles, `npm audit`/SCA, pin versions, review installs, avoid copy-paste install scripts blindly; segregate CI permissions.
+**Explanation:** Junior honesty: “I’d follow team policy and escalate suspicious packages.”
+```txt
+Lockfile + audit + review major upgrades
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).
