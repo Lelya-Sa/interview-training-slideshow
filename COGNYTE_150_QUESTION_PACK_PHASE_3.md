@@ -400,6 +400,118 @@ features/
 
 ---
 
+## Angular State Management Extension (Q213-Q224)
+
+### 213) How do you share state between unrelated components in Angular?
+**Theory:** Not every relation is parent-child.
+**Answer:** Use a singleton injectable service exposed via `providedIn: 'root'` and expose state as `BehaviorSubject`/`Observable` fields.
+**Explanation:** This is the idiomatic “lightweight store” before NgRx.
+```ts
+@Injectable({ providedIn: 'root' })
+export class CartStore {
+  private items$ = new BehaviorSubject<Item[]>([]);
+  readonly items = this.items$.asObservable();
+  add(item: Item) { this.items$.next([...this.items$.value, item]); }
+}
+```
+
+### 214) Why is `BehaviorSubject` common for UI state?
+**Theory:** New subscribers need the latest value immediately.
+**Answer:** `BehaviorSubject` keeps a current value and emits it on subscribe, unlike a plain `Subject`.
+**Explanation:** Fits selected tab, current user snapshot, filters.
+```ts
+private tab$ = new BehaviorSubject<'a'|'b'>('a');
+```
+
+### 215) How do you avoid components subscribing manually when possible?
+**Theory:** Manual `subscribe` often causes leaks or boilerplate.
+**Answer:** Prefer `async` pipe in templates for presentation reads; for imperative work use `takeUntil` cleanup.
+**Explanation:** Interview expects mention of `takeUntil` in components when not using `async`.
+```html
+<div *ngIf="user$ | async as user">{{ user.name }}</div>
+```
+
+### 216) What is a simple “facade” service pattern?
+**Theory:** Component should orchestrate UX, not micro-manage streams.
+**Answer:** Facade service groups related API/observable logic behind a clear component-facing API.
+**Explanation:** Keeps components thin and testable.
+```ts
+@Injectable({ providedIn: 'root' })
+export class UsersFacade {
+  users$ = this.http.get<User[]>('/api/users');
+  constructor(private http: HttpClient) {}
+}
+```
+
+### 217) How does `OnPush` relate to state updates?
+**Theory:** Immutable patterns pair with OnPush.
+**Answer:** OnPush runs change detection when inputs change by reference, events fire, or async pipe emits—so state updates should create new references when needed.
+**Explanation:** Mutating arrays in place can miss UI updates under OnPush.
+```ts
+this.items = [...this.items, newItem]; // new reference
+```
+
+### 218) Can you use reactive forms as a state container?
+**Theory:** Forms have their own model (`FormGroup` value).
+**Answer:** Yes for form-heavy screens; you listen to `valueChanges` for reactive flows.
+**Explanation:** Know that form state is separate from arbitrary component fields.
+```ts
+this.form.valueChanges.pipe(debounceTime(200)).subscribe(v => this.saveDraft(v));
+```
+
+### 219) When would a team introduce NgRx (junior expectation)?
+**Theory:** Interview checks awareness, not expert config.
+**Answer:** Large apps, strict unidirectional data flow, DevTools, many writers, predictable side effects—otherwise service + `BehaviorSubject` may suffice.
+**Explanation:** Say you would follow team standards and learn store patterns incrementally.
+```txt
+NgRx: actions/reducers/effects when complexity justifies it.
+```
+
+### 220) How do `@Input()` setters interact with state?
+**Theory:** Side effects in setters must stay small.
+**Answer:** Use setters when input change should refresh local derived state, but avoid heavy work or hidden network calls without clarity.
+**Explanation:** Interviewers look for discipline.
+```ts
+@Input() set userId(v: string) { this._id = v; this.reload(); }
+```
+
+### 221) What is wrong with storing huge app state only in component fields?
+**Theory:** Survives navigation poorly and duplicates truth.
+**Answer:** Routed components destroy/recreate—persistent cross-route state belongs in services or store.
+**Explanation:** Explain lifecycle impact.
+```txt
+Route A -> Route B loses local fields unless persisted externally.
+```
+
+### 222) How do outputs (`@Output`) help keep state ownership clear?
+**Theory:** Child emits intent; parent owns mutation.
+**Answer:** Child emits events; parent updates model of truth.
+**Explanation:** Mirrors single source of truth.
+```ts
+@Output() quantityChange = new EventEmitter<number>();
+```
+
+### 223) Why prefer `providedIn: 'root'` for shared state services?
+**Theory:** Singleton by design across lazy modules.
+**Answer:** One instance app-wide, tree-shakable provider registration.
+**Explanation:** Safer than duplicating providers in many modules.
+```ts
+@Injectable({ providedIn: 'root' })
+export class SessionStore {}
+```
+
+### 224) How do you test a simple stateful service?
+**Theory:** Services are easy unit-test targets.
+**Answer:** Instantiate service (or use `TestBed`), act on methods, subscribe/`getValue` on `BehaviorSubject` and assert.
+**Explanation:** Shows junior testing maturity.
+```ts
+const s = new CartStore();
+s.add({ id: 1 } as any);
+s.items.subscribe(vals => expect(vals.length).toBe(1));
+```
+
+---
+
 ## JavaScript/TypeScript Depth (Q76-Q100)
 
 ### 76) What is TypeScript and why use it?

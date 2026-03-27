@@ -31,9 +31,9 @@ How to run each day:
 - Questions: Q67-Q73, Q75, Q136-Q147, Q181-Q200
 - Focus: HttpClient/fetch patterns, loading/errors, guards/forms, retries/cloning, plus REST verbs, status codes, CORS/preflight, JWT vs cookies, race conditions, pagination, rate limits, and API client design
 
-## Day 5 - JavaScript completion + Angular start
-- Questions: Q45-Q55
-- Focus: final JS core + Angular first principles
+## Day 5 - State management (React + Angular)
+- Questions: Q10, Q12, Q13, Q15, Q19, Q21, Q157, Q160, Q163, Q61, Q62, Q171, Q201-Q212, Q213-Q224
+- Focus: Context vs local state, prop drilling, useReducer, custom hooks, batching; Angular DI services, `BehaviorSubject` stores, `async` pipe, OnPush + immutability, reactive forms as state, NgRx awareness, testing stateful services
 
 ## Day 6 - Angular core architecture
 - Questions: Q56-Q66

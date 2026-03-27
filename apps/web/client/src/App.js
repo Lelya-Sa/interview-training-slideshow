@@ -78,7 +78,7 @@ function App() {
     { day: 2, focus: 'React fundamentals (full core + interview pitfalls)', questions: 'Q1-Q25, Q151-Q165' },
     { day: 3, focus: 'Angular fundamentals (full core + extension)', questions: 'Q51-Q75, Q166-Q180' },
     { day: 4, focus: 'API + async + REST/CORS/auth (React, Angular, fullstack junior)', questions: 'Q67-Q73, Q75, Q136-Q147, Q181-Q200' },
-    { day: 5, focus: 'JavaScript completion + Angular start', questions: 'Q45-Q55' },
+    { day: 5, focus: 'State management (React + Angular)', questions: 'Q10, Q12, Q13, Q15, Q19, Q21, Q157, Q160, Q163, Q61, Q62, Q171, Q201-Q212, Q213-Q224' },
     { day: 6, focus: 'Angular core architecture', questions: 'Q56-Q66' },
     { day: 7, focus: 'Angular + HTTP + RxJS', questions: 'Q67-Q77' },
     { day: 8, focus: 'TypeScript essentials', questions: 'Q78-Q88' },

@@ -870,3 +870,112 @@ const onSelect = React.useCallback((id) => {
 
 const rows = React.useMemo(() => buildRows(data), [data]);
 ```
+
+---
+
+## React State Management Extension (Q201-Q212)
+
+### 201) When do you choose `useReducer` over `useState` in an interview answer?
+**Theory:** Interviewers want a decision rule, not a definition.
+**Answer:** Prefer `useReducer` when multiple state fields update together from a small set of actions, or when next state depends on complex previous state.
+**Explanation:** `useState` stays best for independent simple values.
+```jsx
+const [state, dispatch] = React.useReducer(reducer, { step: 1, error: null });
+```
+
+### 202) How do you avoid unnecessary Context re-renders?
+**Theory:** Context updates re-render all consumers of that context.
+**Answer:** Split contexts by concern, keep values stable (memoize object/function providers), or move state closer to leaves.
+**Explanation:** Big single context objects cause broad rerenders.
+```jsx
+const ThemeCtx = React.createContext("light");
+const UserCtx = React.createContext(null);
+```
+
+### 203) What is “prop drilling” and when is Context the right fix?
+**Theory:** Passing props through many layers is verbose and couples intermediates.
+**Answer:** Prop drilling is threading props through components that do not use them; Context helps for widely needed data (theme, auth snapshot) with few updates.
+**Explanation:** Avoid Context for high-frequency granular updates across huge trees.
+```jsx
+// Drilling: A->B->C only C needs user
+<C user={user} />
+```
+
+### 204) Why should you not put short-lived UI-only state in global Context?
+**Theory:** Global state makes local concerns global.
+**Answer:** Local modal open/expand flags should stay in the component that owns the UI to limit rerender scope and simplify reasoning.
+**Explanation:** Context is for cross-cutting concerns, not every `useState`.
+```jsx
+const [open, setOpen] = React.useState(false); // local modal
+```
+
+### 205) How does React 18 automatic batching affect multiple `setState` calls?
+**Theory:** Fewer intermediate renders improve performance; mental model matters in interviews.
+**Answer:** React may batch multiple `setState` calls in the same event tick into one render (including async cases in many setups).
+**Explanation:** Do not rely on seeing every intermediate render during async flows without understanding batching.
+```jsx
+function save() {
+  setSaving(true);
+  setError(null); // often batched with setSaving in React 18
+}
+```
+
+### 206) Can you pass `setState` down as a prop and is that idiomatic?
+**Theory:** Parent owns state and passes updater to child.
+**Answer:** Yes, parent passes `setX` or more often a wrapper callback for clearer API.
+**Explanation:** Idiomatic when child needs a narrow action (`onIncrement`) rather than raw `setState`.
+```jsx
+<Counter value={n} onChange={setN} />
+```
+
+### 207) What is “derived state” and a common mistake?
+**Theory:** Duplicating props in state causes stale UI bugs.
+**Answer:** Derived state can be computed during render from props/state; storing a copy in state often desyncs unless you truly need a fork.
+**Explanation:** Interview classic: `useState(props.value)` without controlled pattern.
+```jsx
+// Prefer: const total = items.reduce((s,i)=>s+i.price,0)
+```
+
+### 208) How do custom hooks help reuse stateful logic?
+**Theory:** Hooks compose logic across components.
+**Answer:** Extract repeated state+effect patterns into `useSomething` functions and share them.
+**Explanation:** Keeps components smaller and improves testability of logic in isolation.
+```jsx
+function useCounter(init = 0) {
+  const [n, setN] = React.useState(init);
+  const inc = () => setN(x => x + 1);
+  return { n, inc };
+}
+```
+
+### 209) When might a junior mention Redux (or similar) in an interview?
+**Theory:** Interviewers probe when global store beats Context.
+**Answer:** Mention for large apps needing predictable updates, devtools/time-travel, middleware for side effects, or many distant components reading/writing related slices.
+**Explanation:** Junior answer stays honest: “team standard + middleware needs,” not buzzwords only.
+```txt
+Context for theme/auth snapshot; Redux-like stores when actions are complex and widespread.
+```
+
+### 210) What is a state “colocation” principle?
+**Theory:** State should live as close as possible to where it is used.
+**Answer:** Prefer lifting only as far as needed so fewer components subscribe to changes.
+**Explanation:** Improves performance and simplicity versus premature global state.
+```jsx
+// Filter state lives in list feature component, not root App, when possible
+```
+
+### 211) How do you reset local state when a `key` changes?
+**Theory:** Changing `key` remounts subtree—clears state intentionally.
+**Answer:** Put `key={userId}` on a child to force remount when user changes.
+**Explanation:** Useful instead of fragile `useEffect` resets.
+```jsx
+<Editor key={selectedId} />
+```
+
+### 212) Explain one-way data flow in React in one sentence for interviews.
+**Theory:** Predictability for large teams.
+**Answer:** Data flows down as props/state; user intent flows up via callbacks/events to owners who update state.
+**Explanation:** Contrast briefly with two-way binding frameworks if asked.
+```jsx
+<Child value={v} onChange={setV} />
+```
