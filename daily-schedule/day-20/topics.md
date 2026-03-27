@@ -135,11 +135,23 @@
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 
 
-## Extra Topics (1 topics) - 20-30% Focus (Optional)
+## Extra Topics (3 topics) - 20-30% Focus (Optional)
 
 ### Authentication Authorization
 - **Path**: `../../security/authentication-authorization/questions.md`
 - **Priority**: MEDIUM
 - **Category**: EXTRA (For hightech acceptance)
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### LangChain
+- **Path**: `../../ai/langchain/questions.md`
+- **Priority**: MEDIUM
+- **Category**: EXTRA (AI/LLM)
+- **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
+
+### AI Agents
+- **Path**: `../../ai/ai-agents/questions.md`
+- **Priority**: MEDIUM
+- **Category**: EXTRA (AI/LLM)
 - **Status**: [ ] Not Started | [ ] In Progress | [ ] Completed
 

@@ -1,0 +1,47 @@
+---
+description: Interview-training project context, git root, and deployment guidance
+alwaysApply: true
+---
+
+# Interview Training Project Rule
+
+Use `C:/Users/lelya/Desktop/intreview_training` as the VCS root.
+Use `https://github.com/Lelya-Sa/interview-training-slideshow.git` as `origin`.
+
+At the start of work, confirm git context:
+- `git rev-parse --show-toplevel`
+- `git status`
+- `git remote -v`
+
+If `origin` is missing or wrong, fix it safely (no destructive commands).
+Never run destructive git actions unless the user explicitly asks.
+
+Read project structure before coding:
+- Root: `package.json`, `vercel.json`, `build-direct.js`
+- Client: `client/src/App.js`, `client/src/components/QuestionsView.js`
+- API: `api/roadmap/summary.js`, `api/roadmap/days.js`, `api/questions.js`
+- Content: `api/daily-schedule/day-NN/topics.md`, question banks under `api/**/questions.md`
+
+Ask the user what they want to add or improve before implementing.
+At prompt/chat initialization, if the user asks for a topic or learning path, first create a 3-month (12-week) job-ready schedule for that topic.
+Schedule requirements:
+- weekly goals for Week 1-12
+- daily split: theory, coding practice, interview Q&A, revision
+- milestone checkpoints every 2 weeks
+- mini-project tasks
+- mock interview checkpoints
+- measurable weekly validation criteria ("done" definition)
+- ask personalization questions: current level, hours/day, target role, deadline
+
+Follow content/API conventions:
+- `topics.md`: `### Topic Name` + `**Path**: \`../../category/subtopic/questions.md\``
+- `questions.md`: `### N. Question` (or `### Question`) + `**Answer:**`
+- API JSON shape: `{ success, ... }`; validate inputs; use proper 400/404/405 responses
+
+Deployment preference:
+- Vercel for frontend and lightweight serverless/proxy routes
+- Railway for persistent backend services, workers, and databases
+- Keep env vars clear by platform and validate end-to-end integration
+
+Prioritize junior developer interview prep outcomes (coverage, clarity, reliability, usability).
+Primary objective: user becomes job-ready in 3 months.

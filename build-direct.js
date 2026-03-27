@@ -62,7 +62,8 @@ try {
     'devops',
     'security',
     'design-patterns',
-    'logic-building-101'
+    'logic-building-101',
+    'ai'
   ];
   
   console.log('📚 Copying question markdown files (questions.md and README.md only)...');
