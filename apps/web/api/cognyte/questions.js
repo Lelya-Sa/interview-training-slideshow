@@ -12,9 +12,30 @@ const DAY_TO_IDS = {
     76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
     86, 87, 88, 89, 90, 91, 92, 97, 98, 99, 100
   ],
-  2: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
-  3: [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33],
-  4: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44],
+  // Day 2 is a complete React fundamentals pass (core to intermediate-junior).
+  2: [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    21, 22, 23, 24, 25,
+    // React Day-2 supplement (web-informed junior interview coverage)
+    151, 152, 153, 154, 155, 156, 157, 158, 159, 160,
+    161, 162, 163, 164, 165
+  ],
+  // Day 3 is dedicated Angular fundamentals (core + extension).
+  3: [
+    51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+    61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+    71, 72, 73, 74, 75,
+    166, 167, 168, 169, 170, 171, 172, 173, 174, 175,
+    176, 177, 178, 179, 180
+  ],
+  // Day 4 is API/async + fullstack integration (Angular HTTP, React fetch, REST/CORS/auth patterns).
+  4: [
+    67, 68, 69, 70, 71, 72, 73, 75,
+    136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,
+    181, 182, 183, 184, 185, 186, 187, 188, 189, 190,
+    191, 192, 193, 194, 195, 196, 197, 198, 199, 200
+  ],
   5: [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55],
   6: [56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66],
   7: [67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77],
@@ -28,6 +49,9 @@ const DAY_TO_IDS = {
 };
 
 function topicFromId(id) {
+  if (id >= 181 && id <= 200) return 'API & Integration';
+  if (id >= 151 && id <= 165) return 'React';
+  if (id >= 166 && id <= 180) return 'Angular';
   if (id <= 25) return 'React';
   if (id <= 50) return 'JavaScript';
   if (id <= 75) return 'Angular';

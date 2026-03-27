@@ -748,6 +748,182 @@ function solve(nums) {
 
 ---
 
+## API & Fullstack Frontend Integration (Q181-Q200)
+
+### 181) What is REST and what does “stateless” mean for APIs?
+**Theory:** Most junior roles integrate with REST-style HTTP APIs.
+**Answer:** REST uses HTTP resources and standard verbs; stateless means each request carries what the server needs (tokens, IDs)—the server does not rely on prior in-memory session for that call.
+**Explanation:** Interviewers check you know why scaling and caching relate to statelessness.
+```js
+// Stateless: auth in header each request
+fetch("/api/me", { headers: { Authorization: `Bearer ${token}` } });
+```
+
+### 182) When do you use GET vs POST vs PUT vs PATCH vs DELETE?
+**Theory:** Correct verb choice shows HTTP literacy.
+**Answer:** GET: read safe, POST: create/non-idempotent actions, PUT: replace resource, PATCH: partial update, DELETE: remove.
+**Explanation:** Wrong verbs break caches, proxies, and expectations.
+```js
+await fetch("/api/users/1", { method: "PATCH", body: JSON.stringify({ name: "Ann" }), headers: { "Content-Type": "application/json" } });
+```
+
+### 183) How do you interpret common HTTP status codes in an interview?
+**Theory:** You must map codes to user-facing behavior.
+**Answer:** 2xx success, 400 bad input, 401 not authenticated, 403 forbidden, 404 missing, 409 conflict, 429 rate limited, 5xx server error.
+**Explanation:** Example: 401 often means refresh/login; 403 means logged in but not allowed.
+```js
+if (res.status === 401) router.navigate(["/login"]);
+if (res.status === 403) showToast("You cannot do this.");
+```
+
+### 184) What is CORS and why does the browser block your request sometimes?
+**Theory:** Security model for cross-origin fetches.
+**Answer:** CORS is browser enforcement: a page on origin A cannot read responses from origin B unless B sends allowed headers and origin checks pass.
+**Explanation:** Fix is server CORS policy or same-origin proxy—`no-cors` is not a real read fix for JSON.
+```txt
+Browser blocks when API response lacks Access-Control-Allow-Origin for your frontend origin.
+```
+
+### 185) What is an HTTP preflight (OPTIONS) request?
+**Theory:** “Simple” vs non-simple requests trigger extra checks.
+**Answer:** For some methods/headers/content-types the browser sends OPTIONS first; server must respond allowing method and headers.
+**Explanation:** Interviews mention it when debugging “works in Postman, fails in browser”.
+```txt
+Custom headers like Authorization can trigger preflight.
+```
+
+### 186) Where should you store JWTs for a web app, and what are the trade-offs?
+**Theory:** Auth storage is a frequent junior+ question.
+**Answer:** `httpOnly` cookies reduce XSS token theft vs `localStorage`, but cookies need CSRF protections on state-changing routes; `localStorage` is easier but more XSS-sensitive.
+**Explanation:** Say you follow team/security guidance rather than inventing crypto.
+```js
+// localStorage (common in tutorials; know XSS risk)
+localStorage.setItem("token", token);
+```
+
+### 187) How do you avoid sending secrets in URLs?
+**Theory:** URLs leak via logs, referrers, browser history.
+**Answer:** Put tokens in `Authorization` header or secure cookie, never as query string.
+**Explanation:** Basic security hygiene question.
+```js
+fetch("/api/data", { headers: { Authorization: `Bearer ${token}` } });
+```
+
+### 188) What is idempotency and which HTTP operations are usually idempotent?
+**Theory:** Retries and safe replays depend on it.
+**Answer:** Repeating the request has the same effect as once. GET/PUT/DELETE are typically idempotent; POST often is not unless designed (idempotency keys).
+**Explanation:** Explains why POST retries can duplicate records.
+```txt
+PUT /users/1 with same body twice should still represent one replaced state.
+```
+
+### 189) How do you handle race conditions when the user triggers fast repeated searches?
+**Theory:** Out-of-order responses overwrite newer results with old data.
+**Answer:** Cancel prior requests (AbortController), use `switchMap` in RxJS, or ignore stale responses via request sequence id.
+**Explanation:** Very common in React/Angular data fetching interviews.
+```ts
+// RxJS: latest search wins
+this.term$.pipe(switchMap(t => this.http.get(`/api/search?q=${t}`))).subscribe();
+```
+
+### 190) How do you centralize API calls and error mapping for the UI?
+**Theory:** Duplicated fetch logic scatters error handling bugs.
+**Answer:** One client layer: base URL, JSON parsing, map HTTP errors to user-friendly messages, optional logging.
+**Explanation:** Pairs with interceptors in Angular or a `apiClient` in React.
+```js
+async function api(path, opts = {}) {
+  const res = await fetch(`${BASE}${path}`, opts);
+  const body = await res.json().catch(() => null);
+  if (!res.ok) throw new ApiError(res.status, body?.message);
+  return body;
+}
+```
+
+### 191) Why validate or normalize API responses before rendering?
+**Theory:** Backend fields may be null, renamed, or inconsistent.
+**Answer:** Parse to a small UI model, default missing fields, and guard renders—prevents white screen crashes.
+**Explanation:** Shows production mindset.
+```js
+function toUser(raw) {
+  return { id: raw.id, name: raw.name ?? "Unknown", email: raw.email ?? "" };
+}
+```
+
+### 192) What is optimistic UI and when is it risky?
+**Theory:** Perceived speed vs consistency.
+**Answer:** Update UI before server confirms; on failure roll back or show error.
+**Explanation:** Risky for payments or strict ordering; good for likes toggles with undo.
+```js
+setLiked(true); postLike(id).catch(() => setLiked(false));
+```
+
+### 193) Polling vs WebSocket: how would you choose (junior-level)?
+**Theory:** Real-time requirements vs simplicity.
+**Answer:** Polling is simple repeated HTTP; WebSocket/SSE suits push/high-frequency updates.
+**Explanation:** Many teams start with polling; upgrade when needed.
+```js
+const id = setInterval(() => refresh(), 5000);
+```
+
+### 194) How do environment-specific API base URLs work in deployment?
+**Theory:** Dev/stage/prod hosts differ.
+**Answer:** Use env vars (`VITE_*`, `NEXT_PUBLIC_*`, Angular `environment.ts`) injected at build or runtime—never hardcode prod URLs in source for all environments.
+**Explanation:** Standard deploy question.
+```ts
+export const environment = { apiUrl: "https://api.example.com" };
+```
+
+### 195) What is API pagination and how do offset vs cursor differ?
+**Theory:** Large lists cannot load at once.
+**Answer:** Offset/limit (`?page=&size=`) is simple but unstable if data shifts; cursor (`?after=id`) is better for live feeds.
+**Explanation:** Interview wants you to mention “duplicate/missing rows” with naive offset.
+```js
+fetch(`/api/items?limit=20&cursor=${encodeURIComponent(cursor)}`);
+```
+
+### 196) How do you handle HTTP 429 Too Many Requests?
+**Theory:** Client must cooperate with rate limits.
+**Answer:** Back off, respect `Retry-After`, avoid tight loops, debounce user-triggered calls.
+**Explanation:** Shows reliability thinking.
+```js
+if (res.status === 429) await sleep(Number(res.headers.get("Retry-After") || 1) * 1000);
+```
+
+### 197) compare `fetch` vs Axios in interviews: what do you say?
+**Theory:** Teams standardize on one HTTP stack.
+**Answer:** `fetch` is built-in, minimal; Axios adds interceptors, defaults, transform, older browser polyfill story depending on version.
+**Explanation:** Angular uses `HttpClient`; React projects often use either.
+```js
+// fetch: manual JSON and status checks
+const res = await fetch("/api/x"); if (!res.ok) throw new Error(String(res.status));
+```
+
+### 198) What is a refresh-token flow at a high level?
+**Theory:** Short-lived access tokens reduce exposure.
+**Answer:** Access token for API calls; when expired, call refresh endpoint with refresh token/cookie to get new access token—without re-login UX.
+**Explanation:** Junior answer stays high-level; don’t invent crypto details.
+```txt
+Access token short TTL; refresh rotates or extends session carefully.
+```
+
+### 199) What headers matter for JSON APIs?
+**Theory:** Serialization contract.
+**Answer:** `Content-Type: application/json` on requests with body; server responds with JSON—client parses safely.
+**Explanation:** Missing content-type breaks some servers.
+```js
+fetch("/api", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ a: 1 }) });
+```
+
+### 200) How do you explain API versioning to an interviewer?
+**Theory:** Breaking changes happen.
+**Answer:** Common patterns: path `/v1/users`, header `Accept: application/vnd...+version`, or query—goal is stable clients while backend evolves.
+**Explanation:** Mention deprecation and communication with backend team.
+```txt
+Prefer explicit version in URL for clarity in many orgs.
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).

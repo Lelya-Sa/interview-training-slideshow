@@ -19,17 +19,17 @@ How to run each day:
 - Questions: Q26-Q50, Q76-Q92, Q97-Q100
 - Focus: full junior JS/TS fundamentals (scope, closures, event loop, async, typing, modules, promises, complexity)
 
-## Day 2 - React deeper concepts
-- Questions: Q12-Q22
-- Focus: hooks rules, memoization, stale closures, architecture basics
+## Day 2 - React fundamentals (full core + interview pitfalls)
+- Questions: Q1-Q25, Q151-Q165
+- Focus: full React junior fundamentals + high-frequency pitfalls (effects, stale closures, race conditions, refs, reducer/custom hooks)
 
-## Day 3 - React + JS bridge
-- Questions: Q23-Q33
-- Focus: conditional rendering + essential JS interview topics
+## Day 3 - Angular fundamentals (full core + extension)
+- Questions: Q51-Q75, Q166-Q180
+- Focus: complete Angular junior fundamentals (components, DI, lifecycle, routing, RxJS, forms, interceptors, parent-child communication, validators, resolver, trackBy)
 
-## Day 4 - JavaScript fundamentals
-- Questions: Q34-Q44
-- Focus: async/event loop, array methods, immutability, debounce/throttle
+## Day 4 - API + async + REST/CORS/auth (React, Angular, fullstack junior)
+- Questions: Q67-Q73, Q75, Q136-Q147, Q181-Q200
+- Focus: HttpClient/fetch patterns, loading/errors, guards/forms, retries/cloning, plus REST verbs, status codes, CORS/preflight, JWT vs cookies, race conditions, pagination, rate limits, and API client design
 
 ## Day 5 - JavaScript completion + Angular start
 - Questions: Q45-Q55

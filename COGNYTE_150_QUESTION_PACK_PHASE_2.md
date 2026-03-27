@@ -676,3 +676,197 @@ async function debugFetchUsers() {
   }
 }
 ```
+
+---
+
+## React Fundamentals Extension (Q151-Q165)
+
+### 151) What is JSX and why do we use it in React?
+**Theory:** React UIs are declared with component trees, and JSX makes that tree readable.
+**Answer:** JSX is a syntax extension that lets you write HTML-like markup inside JavaScript, which React compiles to `React.createElement` calls.
+**Explanation:** JSX improves readability and keeps UI + logic close. It is not required, but it is the standard in React projects.
+```jsx
+function Welcome({ name }) {
+  return <h1>Hello, {name}</h1>;
+}
+```
+
+### 152) Why does React require a single root element in returned JSX?
+**Theory:** Components return one JavaScript expression.
+**Answer:** JSX return must be one parent node so React receives a single tree root for reconciliation.
+**Explanation:** Use `Fragment` when you do not want extra DOM wrappers.
+```jsx
+function Card() {
+  return (
+    <>
+      <h2>Title</h2>
+      <p>Body</p>
+    </>
+  );
+}
+```
+
+### 153) What is the difference between functional and class components today?
+**Theory:** React evolved from class-based lifecycle APIs to hooks.
+**Answer:** Functional components with hooks are now the default; class components still work but are less common in new code.
+**Explanation:** Most modern codebases and interview tasks use functional components.
+```jsx
+function Counter() {
+  const [count, setCount] = React.useState(0);
+  return <button onClick={() => setCount(c => c + 1)}>{count}</button>;
+}
+```
+
+### 154) How do you pass data from child to parent in React?
+**Theory:** Data flow is top-down, so child notifies parent via callback.
+**Answer:** Parent passes a function prop; child calls it with payload.
+**Explanation:** This preserves one-way data flow while allowing upward events.
+```jsx
+function Parent() {
+  const [value, setValue] = React.useState("");
+  return <Child onSend={setValue} />;
+}
+function Child({ onSend }) {
+  return <button onClick={() => onSend("from child")}>Send</button>;
+}
+```
+
+### 155) How do you conditionally apply CSS classes in React?
+**Theory:** UI state often controls styling.
+**Answer:** Build className dynamically with ternary expressions or helper utilities.
+**Explanation:** Keeps style behavior explicit and easy to test.
+```jsx
+function StatusBadge({ ok }) {
+  const className = ok ? "badge badge-success" : "badge badge-error";
+  return <span className={className}>{ok ? "OK" : "Error"}</span>;
+}
+```
+
+### 156) Why should list keys be stable and unique?
+**Theory:** Reconciliation uses keys to track identity across renders.
+**Answer:** Stable keys help React preserve component state and avoid incorrect reordering effects.
+**Explanation:** Index keys can cause bugs when list order changes.
+```jsx
+function TodoList({ todos }) {
+  return <ul>{todos.map(todo => <li key={todo.id}>{todo.text}</li>)}</ul>;
+}
+```
+
+### 157) What is a custom hook and when should you create one?
+**Theory:** Repeated stateful logic should be reusable.
+**Answer:** A custom hook is a function starting with `use` that encapsulates reusable hook logic.
+**Explanation:** It improves maintainability and keeps components focused.
+```jsx
+function useToggle(initial = false) {
+  const [value, setValue] = React.useState(initial);
+  const toggle = React.useCallback(() => setValue(v => !v), []);
+  return [value, toggle];
+}
+```
+
+### 158) How do you prevent unnecessary API calls in `useEffect`?
+**Theory:** Effects rerun when dependencies change.
+**Answer:** Keep dependency array accurate and guard conditions before fetching.
+**Explanation:** Also abort in-flight requests on cleanup.
+```jsx
+React.useEffect(() => {
+  if (!query) return;
+  const controller = new AbortController();
+  fetch(`/api/search?q=${encodeURIComponent(query)}`, { signal: controller.signal });
+  return () => controller.abort();
+}, [query]);
+```
+
+### 159) What is the difference between `onChange` and `onSubmit` in forms?
+**Theory:** Form UX needs real-time updates and final submission events.
+**Answer:** `onChange` updates local state per input change; `onSubmit` handles final form submit.
+**Explanation:** Typical pattern is controlled input + prevent default submit.
+```jsx
+function LoginForm() {
+  const [email, setEmail] = React.useState("");
+  const handleSubmit = (e) => { e.preventDefault(); console.log(email); };
+  return (
+    <form onSubmit={handleSubmit}>
+      <input value={email} onChange={e => setEmail(e.target.value)} />
+      <button type="submit">Login</button>
+    </form>
+  );
+}
+```
+
+### 160) How do you share state between sibling components?
+**Theory:** Siblings should not own duplicate source-of-truth state.
+**Answer:** Move shared state to common parent and pass via props.
+**Explanation:** This is the "lift state up" pattern for consistent UI.
+```jsx
+function Dashboard() {
+  const [filter, setFilter] = React.useState("all");
+  return (
+    <>
+      <Filter value={filter} onChange={setFilter} />
+      <Results filter={filter} />
+    </>
+  );
+}
+```
+
+### 161) What is the purpose of `React.StrictMode` in development?
+**Theory:** Dev mode should expose unsafe side-effects early.
+**Answer:** `StrictMode` enables additional checks/warnings and may intentionally double-invoke some lifecycle paths in dev.
+**Explanation:** It helps catch side-effect bugs before production.
+```jsx
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+### 162) How do you handle empty, loading, and error UI states?
+**Theory:** Good frontend UX requires explicit async state handling.
+**Answer:** Model each state separately and render the correct fallback.
+**Explanation:** Avoids ambiguous or blank screens.
+```jsx
+if (loading) return <p>Loading...</p>;
+if (error) return <p>Error: {error}</p>;
+if (items.length === 0) return <p>No results found.</p>;
+return <List items={items} />;
+```
+
+### 163) Why use `useReducer` instead of multiple `useState` calls?
+**Theory:** Complex transitions are easier with explicit action-driven updates.
+**Answer:** `useReducer` centralizes state transitions and makes updates predictable.
+**Explanation:** Useful when multiple fields change together.
+```jsx
+function reducer(state, action) {
+  switch (action.type) {
+    case "inc": return { ...state, count: state.count + 1 };
+    case "reset": return { count: 0 };
+    default: return state;
+  }
+}
+const [state, dispatch] = React.useReducer(reducer, { count: 0 });
+```
+
+### 164) How do you memoize derived values safely?
+**Theory:** Derived calculations can be expensive on frequent renders.
+**Answer:** Use `useMemo` and include all dependencies used in the calculation.
+**Explanation:** Incorrect dependency arrays produce stale bugs.
+```jsx
+const filtered = React.useMemo(() => {
+  return users.filter(u => u.name.toLowerCase().includes(term.toLowerCase()));
+}, [users, term]);
+```
+
+### 165) How do you debug excessive re-renders in a React component?
+**Theory:** Performance debugging starts with measurement and render tracing.
+**Answer:** Use React DevTools Profiler, inspect props/state changes, and memoize only where it helps.
+**Explanation:** Fix root cause first (state placement, unstable callbacks, object literals in props).
+```jsx
+const onSelect = React.useCallback((id) => {
+  setSelectedId(id);
+}, []);
+
+const rows = React.useMemo(() => buildRows(data), [data]);
+```

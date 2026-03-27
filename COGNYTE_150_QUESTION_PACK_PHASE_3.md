@@ -246,6 +246,160 @@ intercept(req: HttpRequest<any>, next: HttpHandler) {
 
 ---
 
+## Angular Fundamentals Extension (Q166-Q180)
+
+### 166) What is a standalone component in Angular?
+**Theory:** Modern Angular reduces module boilerplate.
+**Answer:** A standalone component is declared with `standalone: true` and can import dependencies directly without `NgModule`.
+**Explanation:** Common in newer Angular apps and interview discussions about modern patterns.
+```ts
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule],
+  template: '<p>Profile</p>'
+})
+export class ProfileComponent {}
+```
+
+### 167) What is `@Input()` and when is it used?
+**Theory:** Parent-to-child data flow is fundamental.
+**Answer:** `@Input()` defines data that parent passes into a child component.
+**Explanation:** Use for configuration/state that child renders.
+```ts
+@Component({ selector: 'app-child', template: '<p>{{title}}</p>' })
+export class ChildComponent {
+  @Input() title = '';
+}
+```
+
+### 168) What is `@Output()` and EventEmitter?
+**Theory:** Child-to-parent communication should be explicit.
+**Answer:** `@Output()` exposes events from child; parent subscribes in template.
+**Explanation:** Useful for button clicks, selected value events, etc.
+```ts
+@Output() saved = new EventEmitter<number>();
+save(id: number) { this.saved.emit(id); }
+```
+
+### 169) What is `ngOnChanges` and when does it run?
+**Theory:** Input-driven components need change awareness.
+**Answer:** `ngOnChanges` runs when one or more `@Input` values change.
+**Explanation:** Good for reacting to external input updates.
+```ts
+ngOnChanges(changes: SimpleChanges) {
+  if (changes['userId']) {
+    this.loadUser(changes['userId'].currentValue);
+  }
+}
+```
+
+### 170) What is the `async` pipe and why prefer it?
+**Theory:** Observable subscriptions in templates can leak if unmanaged.
+**Answer:** `async` pipe subscribes/unsubscribes automatically and emits latest value.
+**Explanation:** Reduces manual subscription code in components.
+```html
+<ul>
+  <li *ngFor="let user of users$ | async">{{ user.name }}</li>
+</ul>
+```
+
+### 171) `Subject` vs `BehaviorSubject` in RxJS?
+**Theory:** State streams often need latest value replay.
+**Answer:** `Subject` emits only future values; `BehaviorSubject` stores current value and emits it immediately to new subscribers.
+**Explanation:** `BehaviorSubject` is common for shared UI state.
+```ts
+const state$ = new BehaviorSubject<number>(0);
+state$.next(1);
+```
+
+### 172) `mergeMap` vs `switchMap` quick difference?
+**Theory:** Flattening strategy affects concurrency/cancellation.
+**Answer:** `mergeMap` keeps all inner streams; `switchMap` cancels previous inner stream and keeps latest.
+**Explanation:** `switchMap` for search; `mergeMap` for parallel independent actions.
+```ts
+clicks$.pipe(
+  mergeMap(id => this.http.get(`/api/item/${id}`))
+).subscribe();
+```
+
+### 173) What does `debounceTime` solve in Angular apps?
+**Theory:** High-frequency events can flood API.
+**Answer:** `debounceTime` delays emissions until input pauses for a duration.
+**Explanation:** Commonly used with search boxes.
+```ts
+this.searchControl.valueChanges
+  .pipe(debounceTime(300))
+  .subscribe(term => this.search(term));
+```
+
+### 174) How do you add query params in Angular navigation?
+**Theory:** URLs should carry filter/sort/page state.
+**Answer:** Use router navigation with `queryParams`.
+**Explanation:** Improves shareability and back/forward behavior.
+```ts
+this.router.navigate(['/users'], { queryParams: { page: 2, sort: 'name' } });
+```
+
+### 175) Difference between `setValue` and `patchValue` in reactive forms?
+**Theory:** Form updates can be full or partial.
+**Answer:** `setValue` requires all controls; `patchValue` updates only provided fields.
+**Explanation:** `patchValue` is safer for partial API responses.
+```ts
+this.form.patchValue({ email: 'a@b.com' });
+```
+
+### 176) How do you create a custom validator in Angular?
+**Theory:** Built-in validators are not always enough.
+**Answer:** Return a function that returns `null` (valid) or error object (invalid).
+**Explanation:** Keeps form rules reusable and testable.
+```ts
+function noSpaces(control: AbstractControl) {
+  return /\s/.test(control.value) ? { noSpaces: true } : null;
+}
+```
+
+### 177) How do you conditionally show validation errors?
+**Theory:** Show errors only after user interaction.
+**Answer:** Check `touched`/`dirty` with `invalid`.
+**Explanation:** Prevents noisy UX on first render.
+```html
+<input [formControl]="email" />
+<p *ngIf="email.touched && email.invalid">Invalid email</p>
+```
+
+### 178) What is a resolver in Angular routing?
+**Theory:** Some pages need data ready before render.
+**Answer:** Resolver fetches route data before component activation.
+**Explanation:** Useful for reducing loading flicker on critical routes.
+```ts
+resolve(): Observable<User[]> {
+  return this.api.getUsers();
+}
+```
+
+### 179) What is `trackBy` in `*ngFor` and why use it?
+**Theory:** Large lists rerendering hurts performance.
+**Answer:** `trackBy` provides stable identity so Angular reuses DOM nodes efficiently.
+**Explanation:** Important for dynamic list updates.
+```html
+<li *ngFor="let item of items; trackBy: trackById">{{ item.name }}</li>
+```
+
+### 180) How do you organize Angular code for maintainability?
+**Theory:** Interviewers evaluate architecture decisions too.
+**Answer:** Organize by feature, keep services for business logic, and keep components presentation-focused.
+**Explanation:** Improves testability and onboarding.
+```txt
+features/
+  users/
+    users-page.component.ts
+    users.service.ts
+    users.routes.ts
+```
+
+---
+
 ## JavaScript/TypeScript Depth (Q76-Q100)
 
 ### 76) What is TypeScript and why use it?

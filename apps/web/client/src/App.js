@@ -75,9 +75,9 @@ function App() {
   ];
   const dayByDayQuestionPlan = [
     { day: 1, focus: 'JS + TS core (full junior fundamentals set)', questions: 'Q26-Q50, Q76-Q92, Q97-Q100' },
-    { day: 2, focus: 'React deeper concepts', questions: 'Q12-Q22' },
-    { day: 3, focus: 'React + JS bridge', questions: 'Q23-Q33' },
-    { day: 4, focus: 'JavaScript fundamentals', questions: 'Q34-Q44' },
+    { day: 2, focus: 'React fundamentals (full core + interview pitfalls)', questions: 'Q1-Q25, Q151-Q165' },
+    { day: 3, focus: 'Angular fundamentals (full core + extension)', questions: 'Q51-Q75, Q166-Q180' },
+    { day: 4, focus: 'API + async + REST/CORS/auth (React, Angular, fullstack junior)', questions: 'Q67-Q73, Q75, Q136-Q147, Q181-Q200' },
     { day: 5, focus: 'JavaScript completion + Angular start', questions: 'Q45-Q55' },
     { day: 6, focus: 'Angular core architecture', questions: 'Q56-Q66' },
     { day: 7, focus: 'Angular + HTTP + RxJS', questions: 'Q67-Q77' },
