@@ -122,6 +122,7 @@ Goal: Cover common junior-intermediate questions interviewers use.
 
 ### Day 10 - Frontend Architecture + Clean Code
 
+- [ ] Cognyte question queue: Q100–Q110 and Q358–Q385; see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] Structure by feature vs by layer.
 - [ ] API/service layer design and reusable UI patterns.
 - [ ] Refactor one feature for readability + testability.

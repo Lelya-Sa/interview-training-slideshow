@@ -1157,6 +1157,238 @@ Unit: cheap signal; E2E: user journey confidence, slower and flakier.
 
 ---
 
+## Frontend architecture & clean code (Day 10 interview set, Q358-Q385)
+
+Topics align with common 2025–2026 junior–mid frontend interviews: feature-first layout, colocation, clear boundaries, fetch/state libraries, and measurable quality (a11y, bundles, CI)—see e.g. [frontend system design axes](https://frontendinterviews.dev/frontend-system-design-interview-questions), [feature/colocation guidance](https://feature-sliced.design/blog/frontend-folder-structure), and popular “interviews in 2026” digests on Dev.to/Coursera.
+
+### 358) Feature-first vs type-first folder structure—what do you say in an interview?
+**Theory:** Folder structure is how teams scale changes without merge conflicts and fear.
+**Answer:** **Feature-first** groups by product area (`checkout/`, `profile/`) with UI, state, and API helpers together; **type-first** splits `components/`, `hooks/`, `services/` globally—fine for tiny apps, painful when features cross-cut.
+**Explanation:** Tie choice to team size and rate of change—interviewers want trade-offs, not dogma.
+```txt
+Feature-first: checkout/{components,api,model}; Type-first: components/, hooks/
+```
+
+### 359) What is colocation in frontend projects?
+**Theory:** Related code should live where it is easiest to change together.
+**Answer:** Keep component-specific styles, tests, and hooks next to the component; promote to `shared/` only when a second feature truly reuses it.
+**Explanation:** Reduces “jumping around the repo” and signals you understand maintainability.
+```txt
+CheckoutForm.tsx next to CheckoutForm.test.tsx and checkoutSchema.ts
+```
+
+### 360) What does “screaming architecture” mean on the front end?
+**Theory:** The project tree should shout *what the app does*, not *which framework won*.
+**Answer:** Top-level folders reflect domains/features (billing, auth) rather than only technical layers—Angular/React both benefit.
+**Explanation:** Mentally map interviewer’s product to folders you would create on day one.
+```txt
+insurance-quote/ vs generic views/ + utils/
+```
+
+### 361) What is the presentational vs container (smart/dumb) split?
+**Theory:** Separates rendering from orchestration for readability and tests.
+**Answer:** **Presentational** receives data via props and emits events; **container** loads data, wires routing, and composes children.
+**Explanation:** Modern hooks blur lines—still a strong vocabulary for discussing where side effects live.
+```tsx
+<UserCard user={user} onEdit={onEdit} /> // presentational
+const UserPage = () => { const { data } = useQuery(...); return <UserCard user={data} />; }; // container-ish
+```
+
+### 362) How do you decide if a component is “too big”?
+**Theory:** Interviewers probe Maintainability and SRP.
+**Answer:** Split when file mixes unrelated concerns (data loading + complex form + routing), when JSX branches are hard to follow, or when tests need huge setup—extract subcomponents and hooks with clear names.
+**Explanation:** Mention cohesion: things that change together stay together.
+```txt
+>200 lines is a smell, not a law; cohesion matters more
+```
+
+### 363) Where should HTTP calls live: components vs service layer?
+**Theory:** Clear boundaries make mocking and reuse easier.
+**Answer:** Prefer a thin **API module** (functions or client class) per domain; components call those functions or hooks that wrap them—not raw URLs scattered in JSX.
+**Explanation:** Angular services or React hooks both can sit above fetch/HttpClient.
+```ts
+export async function fetchUser(id: string) { return api.get<User>(`/users/${id}`); }
+```
+
+### 364) When is “DRY” harmful?
+**Theory:** Premature abstraction creates rigid code.
+**Answer:** Duplication is cheaper than the wrong abstraction—wait for the **third** similar use case or clear domain pattern before extracting.
+**Explanation:** Classic senior-junior quote to show judgment: “reuse real patterns, not accidental similarity.”
+```txt
+Rule of three / avoid parametrized mega-components
+```
+
+### 365) Why favor composition over class inheritance in modern UI code?
+**Theory:** React/functional style rewards composition; Angular uses DI composition heavily.
+**Answer:** Build behavior by combining small pieces (hooks, directives, components) instead of deep inheritance trees that hide behavior.
+**Explanation:** Mention higher-order patterns briefly: render props, custom hooks, Angular feature modules.
+```tsx
+const Layout = ({ nav, main }) => <><Nav>{nav}</Nav><Main>{main}</Main></>;
+```
+
+### 366) What are barrel files (`index.ts`) good and bad for?
+**Theory:** Convenience vs build tool costs.
+**Answer:** Barrels simplify imports for a folder; they can hurt **tree-shaking** or slow IDE if everything re-exports everything—keep barrels shallow and explicit.
+**Explanation:** Mention team lint rules (`eslint-plugin-barrel-files`) if interviewer expects tooling awareness.
+```ts
+// checkout/index.ts — export { CheckoutPage } from "./CheckoutPage";
+```
+
+### 367) What are design tokens and why do teams use them?
+**Theory:** Consistent visual language across app and design handoff.
+**Answer:** Tokens name colors, spacing, typography as data—fed into CSS variables, Tailwind theme, or Material theming—so rebrand updates centralize.
+**Explanation:** Junior ties to “single source of truth,” not full design-system deep dive.
+```css
+:root { --color-primary: #2563eb; }
+```
+
+### 368) How do loading / empty / error states relate to architecture?
+**Theory:** Resilience is part of UX architecture, not an afterthought.
+**Answer:** Model async states explicitly (`idle|loading|success|error`) or use query libraries’ built-in flags; avoid blank screens that confuse users and observability.
+**Explanation:** Connects to interview “system design” axes: reliability and clarity.
+```tsx
+if (isLoading) return <Skeleton />;
+if (isError) return <ErrorBanner retry={refetch} />;
+```
+
+### 369) Where should translation strings live in a scalable app?
+**Theory:** i18n touches many layers—pick one workflow early.
+**Answer:** Namespace per feature (`checkout.json`), keys stable and descriptive; avoid hard-coded UI strings in business logic files.
+**Explanation:** Mention ICU/plural rules only if interviewer goes deeper.
+```json
+{ "checkout.title": "Checkout" }
+```
+
+### 370) How do you handle public config and secrets on the frontend?
+**Theory:** Browsers expose bundled values—never ship private secrets.
+**Answer:** Use build-time env vars (`VITE_*`, `NEXT_PUBLIC_*`, Angular `environment.ts`) for **non-secret** flags and public API URLs; real secrets stay on backend.
+**Explanation:** Classic pitfall story wins interviews.
+```txt
+API_BASE_URL ok; DATABASE_PASSWORD never
+```
+
+### 371) How do feature flags change how you structure code?
+**Theory:** Release risk management without long-lived branches.
+**Answer:** Isolate flag checks in one place (provider or hook) and keep flagged code paths testable; avoid sprinkling `if (flag)` everywhere without cleanup plan.
+**Explanation:** Mention removing dead flag code after rollout.
+```ts
+const { on } = useFlags(); return on("newCheckout") ? <CheckoutV2 /> : <CheckoutV1 />;
+```
+
+### 372) How do circular dependencies bite SPA codebases?
+**Theory:** Module graphs should be acyclic for predictable bundling.
+**Answer:** Cycles often come from `A` importing `B` importing `A` via barrel files or shared helpers—fix by extracting a third `shared/types` or inverting dependency direction.
+**Explanation:** Mention `madge`/`dependency-cruiser` if tools come up.
+```txt
+Extract interfaces to shared module or push logic down the dependency tree
+```
+
+### 373) What minimal observability can a junior add on the client?
+**Theory:** Production issues need signals—not only `console.log`.
+**Answer:** Structured error reporting (Sentry/OpenTelemetry hooks), correlation IDs from API responses in logs, user action breadcrumbs for critical flows.
+**Explanation:** Links to “resilience & observability” themes in modern frontend system-design prep.
+```ts
+reportError({ flow: "checkout", step: "pay", err });
+```
+
+### 374) Why is accessibility part of architecture, not a polish step?
+**Theory:** Retrofitting a11y is expensive; legal and UX requirements matter.
+**Answer:** Semantic HTML, focus management, labels, and keyboard paths should be designed with components—lint with eslint-plugin-jsx-a11y / Angular equivalents.
+**Explanation:** Shows maturity beyond visuals-only thinking.
+```html
+<button type="button" aria-expanded={open}>Menu</button>
+```
+
+### 375) What do you look for in a teammate’s PR (junior list)?
+**Theory:** Code review is where culture scales.
+**Answer:** Correctness, readability, tests for tricky logic, no secrets, performance smells (N+1 fetches), a11y basics, and clear commit/PR description.
+**Explanation:** Mention requesting screenshots for UI changes when relevant.
+```txt
+Naming, edge cases, tests, security, bundle impact
+```
+
+### 376) How do naming conventions help architecture at scale?
+**Theory:** Predictability beats cleverness.
+**Answer:** Consistent file suffixes (`.component`, `.hook`, `.service`), consistent event handler names (`onSubmit` vs `handleSubmit` team pick one), and domain vocabulary in module names reduce cognitive load.
+**Explanation:** Interview: “align with existing codebase rather than inventing styles.”
+```txt
+UserCard.tsx, useUserQuery.ts, userApi.ts
+```
+
+### 377) What basic bundle strategies should juniors mention?
+**Theory:** Users pay network cost for unused code.
+**Answer:** Route-level code splitting, lazy imports, analyzing bundles (source-map-explorer / Vite rollup visualizer), avoid importing whole libraries when a sub-import exists.
+**Explanation:** Tie action to LCP/TTI improvements when asked “why.”
+```ts
+const Admin = lazy(() => import("./Admin"));
+```
+
+### 378) What role does TanStack Query (React Query) play in architecture?
+**Theory:** In 2025–2026 interviews, “server state vs client state” is a frequent theme.
+**Answer:** It caches server data, dedupes requests, standardizes loading/error/retry, and separates **remote state** from local UI state—often replacing ad hoc `useEffect` fetches.
+**Explanation:** Angular analogue: `HttpClient` + custom cache or data services with similar concerns.
+```ts
+const q = useQuery({ queryKey: ["user", id], queryFn: () => fetchUser(id) });
+```
+
+### 379) What is a “facade” in Angular (or similar) feature design?
+**Theory:** One narrow API surface per feature reduces coupling.
+**Answer:** Components call a single injectable facade that coordinates services, stores, and HTTP—rather than injecting five services into templates.
+**Explanation:** Mirrors React “hooks that compose domain calls” pattern.
+```ts
+@Injectable() export class CheckoutFacade { submit() { /* orchestrate */ } }
+```
+
+### 380) How do design systems interface with application architecture?
+**Theory:** Shared UI kits reduce drift between products.
+**Answer:** Consume tokens/components from a package (or Storybook catalog); app code avoids one-off duplicates of primitives—extend with local composition components.
+**Explanation:** Mention versioning and breaking changes briefly.
+```txt
+@company/ui Button; local CheckoutSummary composes Button + layout
+```
+
+### 381) How does testability help drive architecture decisions?
+**Theory:** Hard-to-test code often signals tangled dependencies.
+**Answer:** Prefer pure functions, injectable API clients, smaller components, and hooks/services you can mock once—testing pyramid still matters (mostly unit, some integration, few E2E).
+**Explanation:** Pure logic tests stay cheap; over-relying on E2E slows teams—architecture should make the fast tests meaningful.
+```ts
+export function pricingTotal(items: Item[]) { return items.reduce(...); }
+```
+
+### 382) When might a company choose a monorepo for frontends?
+**Theory:** Coordination vs tooling complexity.
+**Answer:** Shared design system, unified CI, atomic cross-package changes—tools like Nx/Turborepo help; cost is build graph complexity and discipline.
+**Explanation:** Junior answer high-level—no need to preach one true layout.
+```txt
+Shared UI lib + aligned releases vs heavier tooling setup
+```
+
+### 383) What is a fair junior-level answer about React Server Components?
+**Theory:** Interviews still touch “server vs client component boundaries” in React 18/19-era stacks.
+**Answer:** Some components can render on the server, reduce client JS, and stream HTML—**client** components stay for hooks and browser-only APIs; boundaries are a design choice not automatic magic.
+**Explanation:** Avoid overclaiming; show you know it shifts data-fetch and bundle trade-offs.
+```txt
+Server: data-heavy read views; Client: interactivity + hooks
+```
+
+### 384) What is a micro-frontend (one-sentence junior answer)?
+**Theory:** Large orgs split delivery; juniors should know the term.
+**Answer:** Independent deployable frontends composed in browser or gateway—benefit team autonomy; cost runtime integration, shared deps, and consistent UX.
+**Explanation:** Contrast with modular monolith SPA split by routes.
+```txt
+Multiple apps on one page vs single SPA with feature folders
+```
+
+### 385) What is a lightweight “ADR” and why might the team use it?
+**Theory:** Architecture decisions need memory beyond Slack threads.
+**Answer:** Short markdown record: **context**, **decision**, **consequences**—stored in repo (`docs/adr/0001-react-query.md`) so newcomers know why the stack looks that way.
+**Explanation:** Signals you can work in mature engineering culture.
+```md
+# ADR 3: TanStack Query for server cache — status: accepted — see trade-offs…
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).

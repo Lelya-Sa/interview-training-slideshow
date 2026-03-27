@@ -72,7 +72,13 @@ const DAY_TO_IDS = {
     333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344,
     345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357
   ],
-  10: [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
+  // Day 10: logic intro (Q100–Q110) + architecture & clean code (Q358–Q385).
+  10: [
+    100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+    358, 359, 360, 361, 362, 363, 364, 365, 366, 367, 368, 369,
+    370, 371, 372, 373, 374, 375, 376, 377, 378, 379, 380, 381,
+    382, 383, 384, 385
+  ],
   11: [111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
   12: [121, 122, 123, 124, 125, 126, 127, 128, 129, 130],
   13: [131, 132, 133, 134, 135, 136, 137, 138, 139, 140],
@@ -83,6 +89,7 @@ function topicFromId(id) {
   if (id === 148) return 'Testing (Jest basics)';
   if (id >= 264 && id <= 307) return 'Angular (HTTP & RxJS)';
   if (id >= 333 && id <= 357) return 'Angular (Intermediate)';
+  if (id >= 358 && id <= 385) return 'Architecture & Clean Code';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

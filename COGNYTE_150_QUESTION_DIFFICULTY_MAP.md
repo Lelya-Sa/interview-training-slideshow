@@ -255,6 +255,39 @@ Use:
 
 ---
 
+## Q358-Q385 (Architecture & clean code — Day 10)
+
+- Q358: must-know-for-junior
+- Q359: must-know-for-junior
+- Q360: medium
+- Q361: must-know-for-junior
+- Q362: must-know-for-junior
+- Q363: must-know-for-junior
+- Q364: must-know-for-junior
+- Q365: medium
+- Q366: medium
+- Q367: medium
+- Q368: must-know-for-junior
+- Q369: medium
+- Q370: must-know-for-junior
+- Q371: medium
+- Q372: medium
+- Q373: medium
+- Q374: must-know-for-junior
+- Q375: medium
+- Q376: easy
+- Q377: must-know-for-junior
+- Q378: must-know-for-junior
+- Q379: medium
+- Q380: medium
+- Q381: must-know-for-junior
+- Q382: medium
+- Q383: medium
+- Q384: easy
+- Q385: easy
+
+---
+
 ## Q333-Q357 (Angular intermediate — Day 9)
 
 - Q333: must-know-for-junior

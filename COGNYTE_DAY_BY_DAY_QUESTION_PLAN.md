@@ -52,9 +52,9 @@ How to run each day:
 - Questions: Q89-Q99, Q333-Q357
 - Focus: ES modules, promises (`all` / `allSettled`), Big-O and memory basics; lazy routes, `canMatch`/`canLoad`, guards (`canDeactivate`), OnPush vs default CD, `markForCheck`/`detectChanges`, `NgZone`, `trackBy`, encapsulation, host bindings, projection, CVA/validators, `routerLinkActive`, `APP_INITIALIZER`, `inject()`, `takeUntilDestroyed`, standalone bootstrap—see `COGNYTE_14_DAY_PREP_PLAN.md` Day 9
 
-## Day 10 - Transition day (advanced + logic start)
-- Questions: Q100-Q110
-- Focus: behavioral STAR + core LeetCode patterns
+## Day 10 - Logic start + frontend architecture & clean code
+- Questions: Q100-Q110, Q358-Q385
+- Focus: Q100 behavioral STAR + Q101-Q110 starter LeetCode; **Q358-Q385** architecture & clean code (feature-first vs type-first, colocation, smart/dumb UI, API layer, DRY, barrels, tokens, resilient UI states, i18n/env, feature flags, dependency cycles, a11y in review, bundles, **TanStack Query** vs ad hoc fetch, facades, design systems, testability, monorepos, **RSC** vs client boundaries, micro-frontends, ADRs)—grounded in current interview prep (system-design style axes, FSD/colocation ideas, React 18/19 server–client split)
 
 ## Day 11 - Logic/LeetCode pattern set 1
 - Questions: Q111-Q120
