@@ -47,6 +47,56 @@ function fetchUrl(url) {
   });
 }
 
+function tryReadFromKnownRoots(safePath) {
+  const candidates = [
+    // apps/web/api/<path> (legacy copied-content layout)
+    path.resolve(__dirname, safePath),
+    // intreview_training/content/<path> (current monorepo layout)
+    path.resolve(__dirname, '../../../content', safePath),
+    // intreview_training/<path> (direct-content layout)
+    path.resolve(__dirname, '../../../', safePath),
+    // intreview_training/apps/web/api/<path> (defensive duplicate)
+    path.resolve(__dirname, '../api', safePath)
+  ];
+
+  for (const filePath of candidates) {
+    try {
+      if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        return fs.readFileSync(filePath, 'utf8');
+      }
+    } catch (e) {
+      // keep trying
+    }
+  }
+
+  return null;
+}
+
+async function tryFetchFromGitHub(safePath) {
+  const rawSafePath = safePath.split('/').map(encodeURIComponent).join('/');
+  const urlCandidates = [
+    // repo-root content
+    `${GITHUB_RAW}${rawSafePath}`,
+    // monorepo content folder
+    `${GITHUB_RAW}content/${rawSafePath}`,
+    // legacy folder kept in some branches
+    `${GITHUB_RAW}slideshow-app/${rawSafePath}`,
+    // old nested layout
+    `${GITHUB_RAW}intreview_training/${rawSafePath}`,
+    `${GITHUB_RAW}apps/web/api/${rawSafePath}`
+  ];
+
+  for (const url of urlCandidates) {
+    try {
+      return await fetchUrl(url);
+    } catch (e) {
+      // try next URL
+    }
+  }
+
+  return null;
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -69,24 +119,18 @@ module.exports = async function handler(req, res) {
 
   let content = null;
 
-  // 1) Try filesystem (api/<path>)
-  try {
-    const apiDir = path.resolve(path.join(__dirname));
-    const filePath = path.resolve(apiDir, safePath);
-    if (filePath.startsWith(apiDir) && fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-      content = fs.readFileSync(filePath, 'utf8');
-    }
-  } catch (e) {
-    // ignore
-  }
+  // 1) Try filesystem from known project roots
+  content = tryReadFromKnownRoots(safePath);
 
   // 2) Fallback: fetch from GitHub raw
   if (!content) {
-    try {
-      const url = GITHUB_RAW + safePath.split('/').map(encodeURIComponent).join('/');
-      content = await fetchUrl(url);
-    } catch (err) {
-      return res.status(404).json({ success: false, error: 'File not found', path: safePath });
+    content = await tryFetchFromGitHub(safePath);
+    if (!content) {
+      return res.status(404).json({
+        success: false,
+        error: 'File not found',
+        path: safePath
+      });
     }
   }
 
