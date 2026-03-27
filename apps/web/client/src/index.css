@@ -87,6 +87,9 @@ textarea:focus-visible {
 
 .header-actions {
   margin-top: 0.85rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
 .side-quest-btn {
@@ -99,6 +102,47 @@ textarea:focus-visible {
   border-color: #b45309;
   background: #fcd34d;
   color: #78350f;
+}
+
+.cognyte-roadmap-btn {
+  border-color: #7c3aed;
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.cognyte-roadmap-btn:hover {
+  border-color: #6d28d9;
+  background: #ddd6fe;
+  color: #4c1d95;
+}
+
+.day-by-day-btn {
+  border-color: #1d4ed8;
+  background: #dbeafe;
+  color: #1e3a8a;
+}
+
+.day-by-day-btn:hover {
+  border-color: #1e40af;
+  background: #bfdbfe;
+  color: #172554;
+}
+
+.mode-toggle-btn {
+  border-color: #0f766e;
+  background: #ccfbf1;
+  color: #115e59;
+}
+
+.mode-toggle-btn:hover {
+  border-color: #0d9488;
+  background: #99f6e4;
+}
+
+.mode-toggle-btn.active-mode {
+  border-color: #0f766e;
+  background: #0f766e;
+  color: #fff;
 }
 
 /* Loading state */
@@ -242,6 +286,22 @@ textarea:focus-visible {
   margin-bottom: 0.2rem;
 }
 
+.prep-day-card {
+  border-left: 4px solid #7c3aed;
+}
+
+.prep-day-focus {
+  margin: 0.2rem 0 0.45rem;
+  color: var(--color-text);
+  font-size: 0.92rem;
+}
+
+.prep-day-verify {
+  margin: 0.5rem 0 0;
+  color: #065f46;
+  font-size: 0.9rem;
+}
+
 /* ========== Side quest panel ========== */
 .side-quest-panel {
   background: var(--color-surface);
@@ -283,4 +343,72 @@ textarea:focus-visible {
   margin-top: 0.9rem;
   color: var(--color-text-muted);
   font-size: 0.92rem;
+}
+
+/* ========== Cognyte roadmap panel ========== */
+.cognyte-roadmap-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 1.25rem;
+}
+
+.cognyte-roadmap-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.cognyte-roadmap-title {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.cognyte-roadmap-description {
+  margin: 0.8rem 0 1rem;
+  color: var(--color-text-muted);
+}
+
+.cognyte-phase-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.cognyte-phase-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+  background: #fcfcff;
+}
+
+.cognyte-phase-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1rem;
+}
+
+.cognyte-phase-card p {
+  margin: 0.35rem 0;
+  color: var(--color-text);
+}
+
+.cognyte-phase-card ul {
+  margin: 0.35rem 0 0.25rem;
+  padding-left: 1.2rem;
+}
+
+.cognyte-phase-card li {
+  margin: 0.2rem 0;
+}
+
+.cognyte-verify {
+  color: #065f46;
+}
+
+.cognyte-roadmap-note {
+  margin-top: 1rem;
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
 }

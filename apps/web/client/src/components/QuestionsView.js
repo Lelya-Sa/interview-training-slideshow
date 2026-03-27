@@ -17,7 +17,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './QuestionsView.css';
 
-function QuestionsView({ dayNumber, onClose }) {
+function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   // ============================================
   // STATE MANAGEMENT
   // ============================================
@@ -42,6 +42,25 @@ function QuestionsView({ dayNumber, onClose }) {
     async function fetchQuestions() {
       try {
         setLoading(true);
+        if (cognyteMode) {
+          const cognyteRes = await axios.get('/api/cognyte/questions', {
+            params: { dayNumber }
+          });
+          if (cognyteRes.data && cognyteRes.data.success) {
+            const loaded = (cognyteRes.data.questions || []).map((q, idx) => ({
+              ...q,
+              originalIndex: idx
+            }));
+            setQuestions(loaded);
+            setError(null);
+            const topicsSet = new Set();
+            loaded.forEach((q) => { if (q.topicName) topicsSet.add(q.topicName); });
+            setExpandedTopics(topicsSet);
+          } else {
+            setError('Failed to load Cognyte questions.');
+          }
+          return;
+        }
         
         // Fetch day data to get topics
         const dayResponse = await axios.get(`/api/roadmap/days/${dayNumber}`);
@@ -228,7 +247,7 @@ function QuestionsView({ dayNumber, onClose }) {
     }
     
     fetchQuestions();
-  }, [dayNumber]);
+  }, [dayNumber, cognyteMode]);
 
   // ============================================
   // HANDLE ANSWER CHANGE
