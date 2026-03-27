@@ -74,7 +74,7 @@ function App() {
     { dayNumber: 14, title: 'Final Polish', focus: 'Weak topics + final rehearsal', tasks: ['4 tasks in 90m', 'project storytelling', 'interview opening'], verify: 'Ready to answer ~80% core questions without notes.' }
   ];
   const dayByDayQuestionPlan = [
-    { day: 1, focus: 'JS + TS core', questions: 'Q26, Q27, Q28, Q30, Q31, Q32, Q33, Q34, Q76, Q78, Q80' },
+    { day: 1, focus: 'JS + TS core (full junior fundamentals set)', questions: 'Q26-Q50, Q76-Q92, Q97-Q100' },
     { day: 2, focus: 'React deeper concepts', questions: 'Q12-Q22' },
     { day: 3, focus: 'React + JS bridge', questions: 'Q23-Q33' },
     { day: 4, focus: 'JavaScript fundamentals', questions: 'Q34-Q44' },

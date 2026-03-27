@@ -16,8 +16,8 @@ How to run each day:
 ---
 
 ## Day 1 - JS + TS core
-- Questions: Q26, Q27, Q28, Q30, Q31, Q32, Q33, Q34, Q76, Q78, Q80
-- Focus: scope, closures, event loop, async, strict typing basics
+- Questions: Q26-Q50, Q76-Q92, Q97-Q100
+- Focus: full junior JS/TS fundamentals (scope, closures, event loop, async, typing, modules, promises, complexity)
 
 ## Day 2 - React deeper concepts
 - Questions: Q12-Q22

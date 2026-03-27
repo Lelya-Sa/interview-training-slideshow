@@ -2,8 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 const DAY_TO_IDS = {
-  // Day 1 is intentionally JS/TS core to match the prep roadmap.
-  1: [26, 27, 28, 30, 31, 32, 33, 34, 76, 78, 80],
+  // Day 1 is intentionally broad JS/TS core to cover junior fundamentals deeply.
+  1: [
+    // JavaScript core block
+    26, 27, 28, 29, 30, 31, 32, 33, 34, 35,
+    36, 37, 38, 39, 40, 41, 42, 43, 44, 45,
+    46, 47, 48, 49, 50,
+    // TypeScript + JS/TS depth block
+    76, 77, 78, 79, 80, 81, 82, 83, 84, 85,
+    86, 87, 88, 89, 90, 91, 92, 97, 98, 99, 100
+  ],
   2: [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22],
   3: [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33],
   4: [34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44],
