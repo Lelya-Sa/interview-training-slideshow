@@ -15,9 +15,9 @@ How to run each day:
 
 ---
 
-## Day 1 - React + JS foundations
-- Questions: Q1-Q11
-- Focus: React core mental model and rendering basics
+## Day 1 - JS + TS core
+- Questions: Q26, Q27, Q28, Q30, Q31, Q32, Q33, Q34, Q76, Q78, Q80
+- Focus: scope, closures, event loop, async, strict typing basics
 
 ## Day 2 - React deeper concepts
 - Questions: Q12-Q22
@@ -86,7 +86,7 @@ How to run each day:
 ## End-of-Week Milestones
 
 ### End of Day 7
-- [ ] Q1-Q77 covered
+- [ ] Day 1-7 mapped queue completed (including JS/TS-focused Day 1 set)
 - [ ] React + Angular core concepts stable
 - [ ] First mock interview ready
 
