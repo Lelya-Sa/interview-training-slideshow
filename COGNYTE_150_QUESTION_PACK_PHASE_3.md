@@ -1171,6 +1171,218 @@ const cached$ = cold$.pipe(shareReplay({ bufferSize: 1, refCount: true }));
 
 ---
 
+## Angular intermediate interview set (Day 9, Q333-Q357)
+
+### 333) How does route lazy loading work in Angular at a high level?
+**Theory:** Initial bundle size affects Time-to-Interactive.
+**Answer:** Routes use `loadChildren` (dynamic import) so feature chunks load on navigation instead of upfront.
+**Explanation:** Interview mention: chunk per feature, share common vendors, handle loading/errors via router or `RouterModule` config-era patterns.
+```ts
+{
+  path: "admin",
+  loadChildren: () => import("./admin/routes").then(m => m.ADMIN_ROUTES)
+}
+```
+
+### 334) What is a preloading strategy and when use `PreloadAllModules`?
+**Theory:** Balance between lazy load and perceived speed.
+**Answer:** Preloading fetches lazy chunks after idle or by policy; `PreloadAllModules` eagerly preloads all lazy routes once app boots.
+**Explanation:** Trade-off: more bandwidth vs faster later navigations—custom strategies pick critical routes.
+```ts
+RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+```
+
+### 335) What does `canMatch` guard do compared to `canActivate`?
+**Theory:** Route configuration matching order matters for security and redirects.
+**Answer:** `canMatch` can prevent a route from matching at all—useful to hide lazy routes from unauthorized roles before activation; `canActivate` runs after a route is matched.
+**Explanation:** Modern Angular uses `canMatch` to avoid loading chunks users should not see.
+```txt
+canMatch: roleBasedMatcher; canActivate: authOk
+```
+
+### 336) What is `canDeactivate` used for?
+**Theory:** Protect user from losing work.
+**Answer:** Guard/window before navigating away if form dirty or async save in flight—return `boolean`, `UrlTree`, or async equivalent.
+**Explanation:** Pair with dialog service or browser `beforeunload` only as supplement.
+```ts
+canDeactivate(): boolean | Observable<boolean> { return !this.form.dirty; }
+```
+
+### 337) How does `canLoad` relate to lazy modules?
+**Theory:** Prevent downloading code paths user cannot access.
+**Answer:** `canLoad` blocks loading of `loadChildren` module when false—stops chunk fetch; differs from `canActivate` which runs after load.
+**Explanation:** Compare with `canMatch` in modern setups; know both names in interviews.
+```txt
+canLoad blocks lazy NgModule load in classic pattern
+```
+
+### 338) Why use `ChangeDetectionStrategy.OnPush`?
+**Theory:** Default change detection checks many components often.
+**Answer:** OnPush skips subtree unless inputs change by reference, events fire in subtree, observables via async pipe emit, or manual marks.
+**Explanation:** Requires immutable patterns or explicit `markForCheck` when mutating inputs.
+```ts
+@Component({ changeDetection: ChangeDetectionStrategy.OnPush })
+export class FastComponent {}
+```
+
+### 339) When do you call `ChangeDetectorRef.markForCheck`?
+**Theory:** OnPush components do not automatically detect async updates outside Angular zone or deep mutations.
+**Answer:** Call `markForCheck` after async callback mutates state that should render—but prefer `async` pipe or zone awareness first.
+**Explanation:** Signals/store patterns may reduce need; still common interview topic.
+```ts
+this.cd.markForCheck();
+```
+
+### 340) When is `detectChanges` justified over `markForCheck`?
+**Theory:** `detectChanges` runs CD for current component subtree synchronously.
+**Answer:** Rare testing or third-party widget integration—avoid in hot paths; overuse hurts performance.
+**Explanation:** Junior answer: “know it exists; prefer `async` pipe and immutable data.”
+```ts
+this.cd.detectChanges();
+```
+
+### 341) In which cases does default change detection run?
+**Theory:** Angular zones hook async sources.
+**Answer:** After browser events, timers, XHR, promises patched by zone, HTTP, and most async boundaries unless opted out.
+**Explanation:** `OnPush` still benefits from fewer subtree checks when parent avoids irrelevant updates.
+```txt
+Zone.js propagates tasks; Signals/zoneless setups differ by version
+```
+
+### 342) What is `NgZone.runOutsideAngular` for?
+**Theory:** High-frequency callbacks can thrash change detection.
+**Answer:** Run work outside Angular zone to avoid scheduling CD until you `run` back in for UI updates.
+**Explanation:** Example: streaming mousemove sampling, WebSocket flood with batched UI refresh.
+```ts
+this.ngZone.runOutsideAngular(() => {
+  this.sock.onmessage = batch => this.ngZone.run(() => this.apply(batch));
+});
+```
+
+### 343) Why pass `trackBy` to `*ngFor`?
+**Theory:** DOM reuse and performance.
+**Answer:** `trackBy` tells Angular identity of items across updates—stable keys reduce DOM churn and preserve focus/state.
+**Explanation:** Do not track by index for mutable/reordered lists.
+```html
+<div *ngFor="let u of users; trackBy: trackById">{{ u.name }}</div>
+```
+
+### 344) What are Angular `ViewEncapsulation` modes?
+**Theory:** Style scoping strategy.
+**Answer:** `Emulated` (default) scopes CSS per component; `None` global; `ShadowDom` uses native shadow root where supported.
+**Explanation:** Third-party CSS bleed fixes may use `None` with BEM discipline.
+```ts
+@Component({ encapsulation: ViewEncapsulation.Emulated })
+```
+
+### 345) What are `@HostListener` and `@HostBinding`?
+**Theory:** Declarative host element wiring.
+**Answer:** `@HostListener` subscribes to DOM events on host; `@HostBinding` binds host attributes/classes/properties.
+**Explanation:** Prefer when directive owns element; avoid duplicated manual listeners.
+```ts
+@HostListener("click") onClick() {}
+@HostBinding("class.active") active = false;
+```
+
+### 346) How does `ng-content` content projection work?
+**Theory:** Parent passes markup into child template slots.
+**Answer:** Default projection or `select` attributes map multiple slots; children render in child template locations.
+**Explanation:** Contrast with React `children` composition patterns in cross-framework interviews.
+```html
+<ng-content select="[toolbar]"></ng-content>
+```
+
+### 347) What is `ControlValueAccessor` at a junior level?
+**Theory:** Bridge custom widgets to reactive/template forms.
+**Answer:** Implement interface to connect custom component value changes to Angular Forms API (`registerOnChange`, `writeValue`, etc.).
+**Explanation:** Mention wrapping third-party date pickers or rich text.
+```txt
+CVA links custom UI to FormControl value
+```
+
+### 348) How do you add custom validators to reactive forms?
+**Theory:** Validation is composable functions.
+**Answer:** Pass `ValidatorFn` or `AsyncValidatorFn` in control constructor or `at()` with `setValidators`.
+**Explanation:** Return `ValidationErrors | null` object with error keys for templates.
+```ts
+this.fb.control("", [Validators.required, this.noWhitespace]);
+```
+
+### 349) How do `routerLinkActive` options shape class application?
+**Theory:** Nested links and exact matching confuse beginners.
+**Answer:** Configure `routerLinkActiveOptions` `{ exact: true }` for root paths or fine control with `isActiveMatchOptions`.
+**Explanation:** Prevents parent menu items staying active on child routes when inappropriate.
+```html
+<a routerLink="/a" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+```
+
+### 350) What is `APP_INITIALIZER` used for?
+**Theory:** Bootstrap-time configuration before first route render.
+**Answer:** Register multi-provider returning `Promise`/`Observable` for loading config, i18n, or auth bootstrap.
+**Explanation:** Keep tasks fast; failures block bootstrap—handle errors intentionally.
+```ts
+{ provide: APP_INITIALIZER, useFactory: loadConfig, multi: true }
+```
+
+### 351) How does the `inject()` function fit dependency injection?
+**Theory:** Constructor injection is not the only ergonomic path.
+**Answer:** `inject(Token)` usable in factory/provider/injection context (and in field initializers in modern Angular) to resolve dependencies.
+**Explanation:** Compare with constructor DI; know project’s Angular version conventions.
+```ts
+private http = inject(HttpClient);
+```
+
+### 352) What does `takeUntilDestroyed` replace in common component code?
+**Theory:** Boilerplate destroy subjects are error-prone.
+**Answer:** `takeUntilDestroyed()` operator ties stream completion to component/directive destroy lifecycle (with `DestroyRef`).
+**Explanation:** Modern alternative to manual `takeUntil(destroy$)` pattern in many apps.
+```ts
+data$.pipe(takeUntilDestroyed()).subscribe();
+```
+
+### 353) Why combine `async` pipe with `*ngIf` on observables?
+**Theory:** Avoid duplicate subscriptions and null flashes.
+**Answer:** `*ngIf="vm$ | async as vm"` subscribes once and binds locals; template narrows nullability.
+**Explanation:** Pair with OnPush-friendly observable inputs.
+```html
+<ng-container *ngIf="state$ | async as s"><p>{{ s.title }}</p></ng-container>
+```
+
+### 354) How would you explain `ActivatedRoute` vs `Router` in an interview?
+**Theory:** Read vs navigate responsibilities split.
+**Answer:** `ActivatedRoute` exposes params/data/url tree for current route; `Router` navigates programmatically and exposes events at app level.
+**Explanation:** Resolvers attach data readable from `route.data`.
+```ts
+this.router.navigate(["/items", id]);
+this.route.paramMap.pipe(map(p => p.get("id")));
+```
+
+### 355) What is the structural directive “star” microsyntax (`*ngIf`, `*ngFor`)?
+**Theory:** Syntactic sugar over `<ng-template>`.
+**Answer:** `*` expands to template input properties on `NgIf`/`NgFor` directives—framework desugars to explicit `ng-template` form.
+**Explanation:** Helps read Angular templates in code reviews.
+```html
+<div *ngIf="ok as x">...</div>
+```
+
+### 356) Why inject `DOCUMENT` instead of touching `window.document` directly?
+**Theory:** SSR and testability.
+**Answer:** `DOCUMENT` token abstracts environment—server can provide stubbed document in SSR or tests.
+**Explanation:** Junior answer for universal Angular awareness.
+```ts
+private doc = inject(DOCUMENT);
+```
+
+### 357) What is the high-level benefit of `bootstrapApplication` with standalone APIs?
+**Theory:** `NgModule` shell can be reduced for simpler boot.
+**Answer:** Standalone bootstrap wires providers/routes without root module ceremony in modern Angular apps.
+**Explanation:** Interview: “fewer files for small apps; teams still use modules where legacy requires.”
+```ts
+bootstrapApplication(AppComponent, appConfig);
+```
+
+---
+
 ## Self-Verification for Phase 3
 
 - [ ] Answer at least 35/50 without notes.

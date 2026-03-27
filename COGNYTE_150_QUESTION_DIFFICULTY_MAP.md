@@ -255,6 +255,36 @@ Use:
 
 ---
 
+## Q333-Q357 (Angular intermediate — Day 9)
+
+- Q333: must-know-for-junior
+- Q334: medium
+- Q335: must-know-for-junior
+- Q336: must-know-for-junior
+- Q337: must-know-for-junior
+- Q338: must-know-for-junior
+- Q339: must-know-for-junior
+- Q340: medium
+- Q341: medium
+- Q342: medium
+- Q343: must-know-for-junior
+- Q344: medium
+- Q345: medium
+- Q346: medium
+- Q347: medium
+- Q348: must-know-for-junior
+- Q349: medium
+- Q350: medium
+- Q351: must-know-for-junior
+- Q352: must-know-for-junior
+- Q353: must-know-for-junior
+- Q354: must-know-for-junior
+- Q355: medium
+- Q356: medium
+- Q357: medium
+
+---
+
 ## Q308-Q332 (React performance & forms — Day 8)
 
 - Q308: must-know-for-junior

@@ -66,7 +66,12 @@ const DAY_TO_IDS = {
     308, 309, 310, 311, 312, 313, 314, 315, 316, 317, 318, 319,
     320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332
   ],
-  9: [89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99],
+  // Day 9: JS/TS depth (Q89–Q99) + Angular intermediate (Q333–Q357).
+  9: [
+    89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+    333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344,
+    345, 346, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 357
+  ],
   10: [100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110],
   11: [111, 112, 113, 114, 115, 116, 117, 118, 119, 120],
   12: [121, 122, 123, 124, 125, 126, 127, 128, 129, 130],
@@ -77,6 +82,7 @@ const DAY_TO_IDS = {
 function topicFromId(id) {
   if (id === 148) return 'Testing (Jest basics)';
   if (id >= 264 && id <= 307) return 'Angular (HTTP & RxJS)';
+  if (id >= 333 && id <= 357) return 'Angular (Intermediate)';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

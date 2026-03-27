@@ -48,9 +48,9 @@ How to run each day:
 - Questions: Q78-Q88, Q308-Q332
 - Focus: TS unions, generics, narrowing, utilities (`Pick`, `Partial`, `Record`, `readonly`); React `memo` / `useMemo` / `useCallback`, stale closures, list keys, controlled forms, validation UX, refs, `startTransition`, lazy/Suspense, error boundaries—aligned with Phase 3 Day 8 in `COGNYTE_14_DAY_PREP_PLAN.md`
 
-## Day 9 - JS/TS depth + interview communication
-- Questions: Q89-Q99
-- Focus: modules, promises, complexity, memory leaks
+## Day 9 - JS/TS depth + Angular intermediate
+- Questions: Q89-Q99, Q333-Q357
+- Focus: ES modules, promises (`all` / `allSettled`), Big-O and memory basics; lazy routes, `canMatch`/`canLoad`, guards (`canDeactivate`), OnPush vs default CD, `markForCheck`/`detectChanges`, `NgZone`, `trackBy`, encapsulation, host bindings, projection, CVA/validators, `routerLinkActive`, `APP_INITIALIZER`, `inject()`, `takeUntilDestroyed`, standalone bootstrap—see `COGNYTE_14_DAY_PREP_PLAN.md` Day 9
 
 ## Day 10 - Transition day (advanced + logic start)
 - Questions: Q100-Q110

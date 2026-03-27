@@ -113,6 +113,7 @@ Goal: Cover common junior-intermediate questions interviewers use.
 
 ### Day 9 - Angular Intermediate
 
+- [ ] Cognyte question queue: Q89–Q99 (JS/TS) and Q333–Q357 (Angular intermediate); see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] RxJS essentials: `map`, `switchMap`, subscription lifecycle.
 - [ ] Routing guards + lazy loading concepts.
 - [ ] Change detection intro (Default vs OnPush conceptually).
