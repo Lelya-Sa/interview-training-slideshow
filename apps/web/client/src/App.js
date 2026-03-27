@@ -125,7 +125,7 @@ function App() {
                   <li>Use the verbal outline: theory → your answer → example or code → one trade-off or pitfall.</li>
                   <li>Use the timer as a soft cap (about two to three minutes); interviewers value clear structure over speed.</li>
                   <li>After each reveal, rate <strong>Strong</strong>, <strong>Partial</strong>, or <strong>Weak</strong>. Ratings persist in this browser for review.</li>
-                  <li>Next session, filter the sidebar for items you marked weak or partial, or use Shuffle to simulate unpredictable order.</li>
+                  <li>Next session, scroll the question list for Weak or Partial markers (colored bar), or use Shuffle to simulate unpredictable order.</li>
                   <li>Turn off Interview mode if you want the classic typed drill (same questions).</li>
                 </ol>
               </details>
