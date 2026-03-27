@@ -506,6 +506,168 @@
   border-color: #047857;
 }
 
+.next-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Cognyte interview prep */
+.interview-prep-toolbar {
+  margin-bottom: 1rem;
+}
+
+.interview-prep-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.interview-mode-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-text, #0f172a);
+  cursor: pointer;
+}
+
+.interview-clear-btn {
+  margin-left: auto;
+}
+
+.interview-verbal-hint {
+  margin: 0.35rem 0 0.65rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #64748b);
+  line-height: 1.45;
+}
+
+.interview-timer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.interview-timer-display {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  font-size: 1.1rem;
+  min-width: 3.25rem;
+  color: var(--color-primary, #2563eb);
+}
+
+.interview-timer-display.interview-timer-done {
+  color: var(--color-warning, #d97706);
+}
+
+.interview-timer-budget {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #64748b);
+}
+
+.interview-timer-budget select {
+  font: inherit;
+  padding: 0.25rem 0.4rem;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-border-strong, #cbd5e1);
+  background: var(--color-surface, #fff);
+}
+
+.interview-outline-section label {
+  font-size: 0.875rem;
+}
+
+.interview-outline-input {
+  min-height: 4rem;
+}
+
+.interview-reveal-wrap {
+  margin: 1rem 0;
+}
+
+.interview-reveal-btn {
+  width: 100%;
+  max-width: 320px;
+}
+
+.interview-reveal-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted, #64748b);
+}
+
+.confidence-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--color-primary-muted, #dbeafe);
+  border-radius: var(--radius-md, 10px);
+  border: 1px solid var(--color-border, #e2e8f0);
+}
+
+.confidence-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text, #0f172a);
+  width: 100%;
+}
+
+@media (min-width: 560px) {
+  .confidence-label { width: auto; }
+}
+
+.confidence-btn {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.875rem;
+  font-family: var(--font-sans, inherit);
+  font-weight: 500;
+  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-border-strong, #cbd5e1);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #0f172a);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.confidence-btn:hover {
+  background: var(--color-bg, #f1f5f9);
+  border-color: var(--color-primary, #2563eb);
+}
+
+.confidence-btn.active {
+  border-color: var(--color-text, #0f172a);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+}
+
+.confidence-strong.active {
+  background: var(--color-success-muted, #d1fae5);
+  border-color: var(--color-success, #059669);
+}
+
+.confidence-partial.active {
+  background: var(--color-warning-muted, #fef3c7);
+  border-color: var(--color-warning, #d97706);
+}
+
+.confidence-weak.active {
+  background: var(--color-error-muted, #fee2e2);
+  border-color: var(--color-error, #dc2626);
+}
+
+.question-list-item.rated-weak { border-left: 3px solid var(--color-error, #dc2626); }
+.question-list-item.rated-partial { border-left: 3px solid var(--color-warning, #d97706); }
+.question-list-item.rated-strong { border-left: 3px solid var(--color-success, #059669); }
+
 .answer-reference {
   margin-top: 1.5rem;
   padding: 1rem 1.25rem 1.25rem;

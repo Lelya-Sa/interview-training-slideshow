@@ -13,9 +13,32 @@
    This shows questions for a specific day's topics.
 */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import './QuestionsView.css';
+
+const CONF_STORAGE_PREFIX = 'cognyteConfidence:v1';
+
+function questionStorageKey(dayNumber, q, idx) {
+  const id = q && q.questionId ? String(q.questionId) : `day${dayNumber}-i${idx}`;
+  return `${CONF_STORAGE_PREFIX}:${dayNumber}:${id}`;
+}
+
+function shuffleQuestionsInPlace(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function formatMmSs(totalSeconds) {
+  const s = Math.max(0, Math.floor(totalSeconds));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r.toString().padStart(2, '0')}`;
+}
 
 function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   // ============================================
@@ -34,6 +57,59 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   const [searchQuery, setSearchQuery] = useState('');
   // Multiselect: Set of topic names. Empty = show all topics (day's topics).
   const [selectedTopics, setSelectedTopics] = useState(new Set());
+  // Cognyte interview prep: active recall + confidence tracking (localStorage).
+  const [interviewMode, setInterviewMode] = useState(true);
+  const [confidenceByKey, setConfidenceByKey] = useState({});
+  const [revealedKeys, setRevealedKeys] = useState({});
+  const [timerBudget, setTimerBudget] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(180);
+  const [timerRunning, setTimerRunning] = useState(false);
+
+  const getQKey = useCallback(
+    (q, idx) => (q && q.questionId ? String(q.questionId) : `day${dayNumber}-i${idx}`),
+    [dayNumber]
+  );
+
+  const isInterviewQuestionDone = useCallback(
+    (q, idx) => !!confidenceByKey[getQKey(q, idx)],
+    [confidenceByKey, getQKey]
+  );
+
+  useEffect(() => {
+    if (cognyteMode) setInterviewMode(true);
+  }, [cognyteMode, dayNumber]);
+
+  useEffect(() => {
+    if (!cognyteMode || questions.length === 0) return;
+    const next = {};
+    questions.forEach((q, idx) => {
+      const key = getQKey(q, idx);
+      try {
+        const raw = localStorage.getItem(questionStorageKey(dayNumber, q, idx));
+        if (raw === 'strong' || raw === 'partial' || raw === 'weak') next[key] = raw;
+      } catch (_) {
+        /* ignore */
+      }
+    });
+    setConfidenceByKey(next);
+  }, [cognyteMode, dayNumber, questions, getQKey]);
+
+  useEffect(() => {
+    setTimeLeft(timerBudget);
+    setTimerRunning(false);
+  }, [currentQuestionIndex, timerBudget]);
+
+  useEffect(() => {
+    if (!cognyteMode || !interviewMode || !timerRunning) return undefined;
+    const id = window.setInterval(() => {
+      setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, [cognyteMode, interviewMode, timerRunning]);
+
+  useEffect(() => {
+    if (timeLeft === 0 && timerRunning) setTimerRunning(false);
+  }, [timeLeft, timerRunning]);
 
   // ============================================
   // FETCH QUESTIONS FOR DAY
@@ -316,10 +392,83 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   const isTopicSelected = (name) => selectedTopics.size === 0 || selectedTopics.has(name);
   const isFilterActive = selectedTopics.size > 0;
 
+  const answeredCount = Object.keys(submitted).length;
+  const doneCount =
+    cognyteMode && interviewMode
+      ? questions.reduce((n, q, i) => n + (isInterviewQuestionDone(q, i) ? 1 : 0), 0)
+      : answeredCount;
+  const progress = questions.length > 0 ? Math.round((doneCount / questions.length) * 100) : 0;
+  const reviewCount =
+    cognyteMode && interviewMode
+      ? questions.reduce((n, q, i) => {
+          const v = confidenceByKey[getQKey(q, i)];
+          return n + (v === 'weak' || v === 'partial' ? 1 : 0);
+        }, 0)
+      : 0;
+
+  const currentQ = questions.length ? questions[currentQuestionIndex] : null;
+  const currentKey = currentQ ? getQKey(currentQ, currentQuestionIndex) : '';
+  const showModelAnswerCognyte =
+    cognyteMode &&
+    interviewMode &&
+    !!(revealedKeys[currentKey] || confidenceByKey[currentKey]);
+
+  const handleRevealModelAnswer = () => {
+    const q = questions[currentQuestionIndex];
+    const key = getQKey(q, currentQuestionIndex);
+    setRevealedKeys((prev) => ({ ...prev, [key]: true }));
+  };
+
+  const handleSetConfidence = (level) => {
+    const q = questions[currentQuestionIndex];
+    const idx = currentQuestionIndex;
+    const key = getQKey(q, idx);
+    const had = confidenceByKey[key];
+    try {
+      localStorage.setItem(questionStorageKey(dayNumber, q, idx), level);
+    } catch (_) {
+      /* ignore */
+    }
+    setConfidenceByKey((prev) => ({ ...prev, [key]: level }));
+    if (!had) {
+      setPoints((p) => p + (level === 'strong' ? 15 : level === 'partial' ? 10 : 5));
+      setStreak((s) => s + 1);
+    }
+  };
+
+  const handleShuffleQuestions = () => {
+    setQuestions((prev) => shuffleQuestionsInPlace(prev));
+    setCurrentQuestionIndex(0);
+    setRevealedKeys({});
+    setSubmitted({});
+    setUserAnswers({});
+  };
+
+  const clearConfidenceForDay = () => {
+    if (!window.confirm('Clear all confidence ratings saved for this day on this device?')) return;
+    questions.forEach((q, idx) => {
+      try {
+        localStorage.removeItem(questionStorageKey(dayNumber, q, idx));
+      } catch (_) {
+        /* ignore */
+      }
+    });
+    setConfidenceByKey({});
+  };
+
   // ============================================
   // NEXT QUESTION (within filtered set)
   // ============================================
   const handleNextQuestion = () => {
+    if (cognyteMode && interviewMode) {
+      const q = questions[currentQuestionIndex];
+      const key = getQKey(q, currentQuestionIndex);
+      if (!confidenceByKey[key]) {
+        window.alert('Pick Strong, Partial, or Weak after you compare with the model answer. That pacing trains interview recall.');
+        return;
+      }
+    }
+
     const filtered = getFilteredQuestions();
     const currentInFiltered = filtered.findIndex(q => {
       const originalIndex = questions.indexOf(q);
@@ -333,10 +482,10 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       setCurrentQuestionIndex(nextIndex);
     } else if (isFilterActive && filtered.length > 0) {
       // Reached end of filtered set
-      alert(`🎉 All questions in selected topic(s) completed!\n\nPoints: ${points}\nStreak: ${streak}`);
+      window.alert(`All questions in selected topic(s) completed.\n\nRated: ${doneCount}/${questions.length}${cognyteMode && interviewMode ? `\nRevisit Weak/Partial tomorrow.` : ''}\n\nPoints: ${points}`);
     } else {
       // Quiz complete
-      alert(`🎉 Quiz Complete!\n\nPoints: ${points}\nStreak: ${streak}`);
+      window.alert(`${cognyteMode && interviewMode ? 'Day complete. Export weak list from the sidebar counts and redo those first tomorrow.' : `Quiz complete!`}\n\nPoints: ${points}\nStreak: ${streak}`);
       onClose();
     }
   };
@@ -361,12 +510,6 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
-
-  // ============================================
-  // CALCULATE PROGRESS
-  // ============================================
-  const answeredCount = Object.keys(submitted).length;
-  const progress = questions.length > 0 ? Math.round((answeredCount / questions.length) * 100) : 0;
 
   // ============================================
   // RENDER LOADING
@@ -399,6 +542,8 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const isAnswered = submitted[currentQuestionIndex];
+  const cognyteInterviewFlow = cognyteMode && interviewMode;
+  const canAdvanceInterview = !cognyteInterviewFlow || !!confidenceByKey[currentKey];
 
   // ============================================
   // RENDER QUESTIONS VIEW
@@ -408,17 +553,29 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       <div className="questions-header">
         <div className="questions-title">
           <h1>📋 Daily Questions - Day {dayNumber}</h1>
-          <p>Answer all questions to complete the day</p>
+          <p>
+            {cognyteInterviewFlow
+              ? 'Interview prep: answer out loud first (or jot bullets), then reveal the model answer and rate honesty.'
+              : 'Answer all questions to complete the day'}
+          </p>
         </div>
-        <button onClick={onClose} className="close-button">✕</button>
+        <button type="button" onClick={onClose} className="close-button">✕</button>
       </div>
 
       <div className="questions-progress">
         <div className="progress-info">
           <div className="stat">
-            <span className="label">Progress</span>
-            <span className="value">{answeredCount}/{questions.length}</span>
+            <span className="label">{cognyteInterviewFlow ? 'Rated' : 'Progress'}</span>
+            <span className="value">
+              {cognyteInterviewFlow ? `${doneCount}/${questions.length}` : `${answeredCount}/${questions.length}`}
+            </span>
           </div>
+          {cognyteInterviewFlow && (
+            <div className="stat">
+              <span className="label">Weak / partial</span>
+              <span className="value">{reviewCount}</span>
+            </div>
+          )}
           <div className="stat">
             <span className="label">Points</span>
             <span className="value">{points}</span>
@@ -442,6 +599,57 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
           )}
         </div>
       </div>
+
+      {cognyteMode && (
+        <div className="interview-prep-toolbar quick-navigation">
+          <div className="interview-prep-row">
+            <label className="interview-mode-label">
+              <input
+                type="checkbox"
+                checked={interviewMode}
+                onChange={(e) => setInterviewMode(e.target.checked)}
+              />
+              <span>Interview mode (hide model answer until you reveal it)</span>
+            </label>
+            <button type="button" className="topics-action-btn" onClick={handleShuffleQuestions}>
+              Shuffle order
+            </button>
+            <button type="button" className="topics-action-btn interview-clear-btn" onClick={clearConfidenceForDay}>
+              Clear saved ratings
+            </button>
+          </div>
+          {interviewMode && (
+            <>
+              <p className="interview-verbal-hint">
+                <strong>Verbal outline:</strong> one sentence theory → your answer → short code or example → one trade-off or pitfall.
+              </p>
+              <div className="interview-timer-row">
+                <span className={`interview-timer-display ${timeLeft === 0 ? 'interview-timer-done' : ''}`} aria-live="polite">
+                  {formatMmSs(timeLeft)}
+                </span>
+                <button type="button" className="topics-action-btn" onClick={() => setTimerRunning((r) => !r)}>
+                  {timerRunning ? 'Pause' : 'Start'} timer
+                </button>
+                <button type="button" className="topics-action-btn" onClick={() => setTimeLeft((t) => t + 60)}>
+                  +1 min
+                </button>
+                <label className="interview-timer-budget">
+                  Budget
+                  <select
+                    value={timerBudget}
+                    onChange={(e) => setTimerBudget(Number(e.target.value))}
+                  >
+                    <option value={90}>1:30</option>
+                    <option value={120}>2:00</option>
+                    <option value={180}>3:00</option>
+                    <option value={240}>4:00</option>
+                  </select>
+                </label>
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Topics for Day X – multiselect (show questions from selected topics only) */}
       <div className="quick-navigation topics-multiselect-section">
@@ -584,7 +792,11 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
             
             // Calculate progress per topic
             const getTopicProgress = (topicQuestions) => {
-              const answered = topicQuestions.filter(q => submitted[q.globalIndex]).length;
+              const answered = topicQuestions.filter((q) => {
+                const idx = q.globalIndex;
+                if (cognyteMode && interviewMode) return isInterviewQuestionDone(q, idx);
+                return submitted[idx];
+              }).length;
               return { answered, total: topicQuestions.length, percentage: Math.round((answered / topicQuestions.length) * 100) };
             };
             
@@ -637,15 +849,17 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
                             {topicQuestions.map((q) => {
                               const idx = q.globalIndex;
                               const isCurrent = idx === currentQuestionIndex;
-                              const isAnswered = submitted[idx];
-                              
+                              const rowDone = cognyteMode && interviewMode
+                                ? isInterviewQuestionDone(q, idx)
+                                : submitted[idx];
+                              const conf = cognyteMode && interviewMode ? confidenceByKey[getQKey(q, idx)] : null;
+
                               return (
                                 <div
                                   key={q.questionId || idx}
-                                  className={`question-list-item ${isCurrent ? 'active' : ''} ${isAnswered ? 'answered' : ''}`}
+                                  className={`question-list-item ${isCurrent ? 'active' : ''} ${rowDone ? 'answered' : ''} ${conf ? `rated rated-${conf}` : ''}`}
                                   onClick={() => {
                                     setCurrentQuestionIndex(idx);
-                                    // Scroll to top of question card
                                     document.querySelector('.question-card')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                                   }}
                                 >
@@ -656,7 +870,11 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
                                       {(typeof q.question === 'string' ? q.question : q.question || String(q)).length > 50 ? '...' : ''}
                                     </div>
                                   </div>
-                                  {isAnswered && <span className="check-mark">✓</span>}
+                                  {rowDone && (
+                                    <span className="check-mark" title={conf || 'done'}>
+                                      {conf === 'weak' ? '↓' : conf === 'partial' ? '~' : '✓'}
+                                    </span>
+                                  )}
                                 </div>
                               );
                             })}
@@ -690,31 +908,83 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
             <h2>{currentQuestion.question || currentQuestion}</h2>
           </div>
 
-          <div className="answer-section">
-            <label htmlFor="answer-input">Your Answer:</label>
-            <textarea
-              id="answer-input"
-              className="answer-input"
-              placeholder="Type your answer here... (at least 20 characters)"
-              value={userAnswers[currentQuestionIndex] || ''}
-              onChange={handleAnswerChange}
-              disabled={isAnswered}
-            />
-          </div>
-
-          {isAnswered && (
-            <div className="answer-feedback">
-              <div className="feedback-title">✓ Answer Submitted</div>
-              <div className="feedback-text">
-                {(userAnswers[currentQuestionIndex] || '').length > 20
-                  ? '+25 Points! 🎉'
-                  : 'Try to write more details!'}
+          {cognyteInterviewFlow ? (
+            <>
+              <div className="answer-section interview-outline-section">
+                <label htmlFor="answer-input">Optional notes (keywords only — speak the real answer)</label>
+                <textarea
+                  id="answer-input"
+                  className="answer-input interview-outline-input"
+                  placeholder="e.g. closure, stale deps, AbortController…"
+                  value={userAnswers[currentQuestionIndex] || ''}
+                  onChange={handleAnswerChange}
+                />
               </div>
-            </div>
+              {!showModelAnswerCognyte && (
+                <div className="interview-reveal-wrap">
+                  <button type="button" className="submit-button interview-reveal-btn" onClick={handleRevealModelAnswer}>
+                    Reveal model answer
+                  </button>
+                  <p className="interview-reveal-hint">Only open after you have said your version out loud.</p>
+                </div>
+              )}
+              {showModelAnswerCognyte && (
+                <div className="confidence-row" role="group" aria-label="How well did you answer compared to the model?">
+                  <span className="confidence-label">Compared to the model, this was:</span>
+                  <button
+                    type="button"
+                    className={`confidence-btn confidence-strong ${confidenceByKey[currentKey] === 'strong' ? 'active' : ''}`}
+                    onClick={() => handleSetConfidence('strong')}
+                  >
+                    Strong
+                  </button>
+                  <button
+                    type="button"
+                    className={`confidence-btn confidence-partial ${confidenceByKey[currentKey] === 'partial' ? 'active' : ''}`}
+                    onClick={() => handleSetConfidence('partial')}
+                  >
+                    Partial
+                  </button>
+                  <button
+                    type="button"
+                    className={`confidence-btn confidence-weak ${confidenceByKey[currentKey] === 'weak' ? 'active' : ''}`}
+                    onClick={() => handleSetConfidence('weak')}
+                  >
+                    Weak
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <div className="answer-section">
+                <label htmlFor="answer-input">Your Answer:</label>
+                <textarea
+                  id="answer-input"
+                  className="answer-input"
+                  placeholder="Type your answer here... (at least 20 characters)"
+                  value={userAnswers[currentQuestionIndex] || ''}
+                  onChange={handleAnswerChange}
+                  disabled={isAnswered}
+                />
+              </div>
+
+              {isAnswered && (
+                <div className="answer-feedback">
+                  <div className="feedback-title">✓ Answer Submitted</div>
+                  <div className="feedback-text">
+                    {(userAnswers[currentQuestionIndex] || '').length > 20
+                      ? '+25 Points!'
+                      : 'Try to write more details!'}
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           <div className="button-group">
             <button
+              type="button"
               onClick={handlePrevQuestion}
               disabled={currentQuestionIndex === 0}
               className="nav-button"
@@ -722,29 +992,30 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
               ← Previous
             </button>
 
-            {!isAnswered ? (
+            {cognyteInterviewFlow ? (
               <button
-                onClick={handleSubmitAnswer}
-                className="submit-button"
+                type="button"
+                onClick={handleNextQuestion}
+                className="next-button"
+                disabled={!canAdvanceInterview}
+                title={!canAdvanceInterview ? 'Rate Strong / Partial / Weak first' : ''}
               >
+                {currentQuestionIndex === questions.length - 1 ? 'Finish day' : 'Next question'}
+              </button>
+            ) : !isAnswered ? (
+              <button type="button" onClick={handleSubmitAnswer} className="submit-button">
                 Submit Answer
               </button>
             ) : (
-              <button
-                onClick={handleNextQuestion}
-                className="next-button"
-              >
-                {currentQuestionIndex === questions.length - 1
-                  ? 'Complete Quiz'
-                  : 'Next Question'}
+              <button type="button" onClick={handleNextQuestion} className="next-button">
+                {currentQuestionIndex === questions.length - 1 ? 'Complete Quiz' : 'Next Question'}
               </button>
             )}
           </div>
 
-          {/* Answer Reference – inside card so it stacks below, no overlap */}
-          {isAnswered && currentQuestion.answer && (
+          {((cognyteInterviewFlow && showModelAnswerCognyte) || (!cognyteInterviewFlow && isAnswered)) && currentQuestion.answer && (
             <div className="answer-reference">
-              <h3>📚 Expected Answer:</h3>
+              <h3>📚 Model answer</h3>
               <div className="reference-text">
                 {currentQuestion.answer}
               </div>
