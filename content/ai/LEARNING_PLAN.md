@@ -1,6 +1,6 @@
 # LangChain & AI Agents — Learning Plan (2–3 Days)
 
-Use this plan with the question banks in `ai/langchain/questions.md` and `ai/ai-agents/questions.md`. Total: **about 6–8 hours** of focused time over 2–3 days.
+Use this plan with the question banks in `content/ai/langchain/questions.md` and `content/ai/ai-agents/questions.md`. Total: **about 6–8 hours** of focused time over 2–3 days.
 
 ---
 

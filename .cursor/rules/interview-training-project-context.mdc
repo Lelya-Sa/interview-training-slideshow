@@ -22,7 +22,8 @@ Read project structure before coding:
 - Client: `apps/web/client/src/App.js`, `apps/web/client/src/components/QuestionsView.js`
 - API: `apps/web/api/roadmap/summary.js`, `apps/web/api/roadmap/days.js`, `apps/web/api/questions.js`
 - Railway backend: `services/backend/src/server.js`
-- Content: `apps/web/api/daily-schedule/day-NN/topics.md`, question banks under `apps/web/api/**/questions.md`
+- Canonical content: `content/**` (edit source here)
+- Runtime content: `apps/web/api/**` (generated via sync, do not edit manually)
 
 Ask the user what they want to add or improve before implementing.
 At prompt/chat initialization, if the user asks for a topic or learning path, first create a 3-month (12-week) job-ready schedule for that topic.

@@ -122,7 +122,7 @@ function App() {
             <li>Prepare a short STAR story for interview practice.</li>
           </ul>
           <p className="side-quest-note">
-            Full checklist: <code>ai/SIDE_QUEST_CHECKLIST.md</code>
+            Full checklist: <code>content/ai/SIDE_QUEST_CHECKLIST.md</code>
           </p>
         </section>
       )}

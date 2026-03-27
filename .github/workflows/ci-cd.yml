@@ -1,0 +1,81 @@
+name: CI-CD
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  ci-content-and-build:
+    name: CI - Content + Web Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: |
+            apps/web/package-lock.json
+            apps/web/client/package-lock.json
+            services/backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm run install-all
+
+      - name: Validate canonical content workflow
+        run: npm run content:check
+
+      - name: Build web app
+        run: npm run build:web
+
+  ci-backend-smoke:
+    name: CI - Backend Smoke
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: services/backend/package-lock.json
+
+      - name: Install backend dependencies
+        run: npm --prefix services/backend install
+
+      - name: Backend start smoke test
+        run: node -e "process.env.PORT='4011'; require('./services/backend/src/server.js'); setTimeout(() => process.exit(0), 1200);"
+
+  cd-deployment-verification:
+    name: CD - Deployment Verification
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs:
+      - ci-content-and-build
+      - ci-backend-smoke
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_URL: https://interview-training-slideshow.vercel.app
+      RAILWAY_URL: https://interview-training-slideshow-production.up.railway.app
+    steps:
+      - name: Verify Vercel roadmap endpoint
+        run: |
+          curl --fail --silent --show-error "$VERCEL_URL/api/roadmap/summary" > /tmp/roadmap.json
+          test -s /tmp/roadmap.json
+
+      - name: Verify Railway backend health
+        run: |
+          curl --fail --silent --show-error "$RAILWAY_URL/health" > /tmp/railway-health.json
+          test -s /tmp/railway-health.json
+
+      - name: Verify Vercel proxy to Railway
+        run: |
+          curl --fail --silent --show-error "$VERCEL_URL/api/railway/health" > /tmp/proxy-health.json
+          test -s /tmp/proxy-health.json

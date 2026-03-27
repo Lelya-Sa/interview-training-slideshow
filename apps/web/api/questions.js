@@ -11,11 +11,11 @@ function parseQuestionsMd(content) {
   const questions = [];
   const blocks = content.split(/(?=###\s+)/).filter(Boolean);
   for (const block of blocks) {
-    const firstLine = block.split('\n')[0] || '';
+    const firstLine = (block.split('\n')[0] || '').replace(/\r$/, '');
     const titleMatch = firstLine.match(/^###\s+(?:\d+\.\s*)?(.+)$/);
     if (!titleMatch) continue;
     const title = titleMatch[1].trim();
-    const answerMatch = block.match(/\*\*Answer:\*\*\s*([\s\S]*?)(?=\n###|$)/);
+    const answerMatch = block.match(/\*\*Answer:\*\*\s*([\s\S]*?)(?=\r?\n###|$)/);
     const answer = answerMatch ? answerMatch[1].trim() : '';
     if (!title) continue;
     questions.push({ question: title, answer });
