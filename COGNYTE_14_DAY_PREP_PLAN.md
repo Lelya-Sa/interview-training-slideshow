@@ -170,6 +170,7 @@ Goal: Convert knowledge into high interview performance.
 
 ### Day 14 - Final Polish + Readiness Test
 
+- [ ] Cognyte question queue: **Q141–Q150** and **Q494–Q529** (final polish & readiness); see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] React/Angular rapid revision (top weak topics only).
 - [ ] Final timed coding block (4 tasks in 90 minutes).
 - [ ] Project storytelling rehearsal (challenge -> action -> result).

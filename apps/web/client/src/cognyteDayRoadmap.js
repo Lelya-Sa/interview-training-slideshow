@@ -169,11 +169,35 @@ const DAYS = {
     ]
   },
   14: {
-    headline: 'Day 14 · Final Polish',
-    intro: 'Weak topics, rehearsal, storytelling.',
+    headline: 'Day 14 · Final Polish + Readiness Test',
+    intro:
+      'Matches the 14-day plan: targeted React/Angular revision (weak topics only), 4 tasks in 90 minutes, project storytelling (challenge → action → result), behavioral final pass, and a one-page interview cheat sheet. Question sprint: Q141–Q150 (logic set 4) plus Q494–Q529—sleep vs cram, 90-minute block structure, portfolio checks, anxiety resets, Big O triggers, logistics (remote, onsite, time zones), Final Verification rubric, and when to stop studying.',
     tracks: [
-      { label: 'Roadmap', items: ['4 tasks in 90m', 'Project storytelling', 'Interview opening'] },
-      { label: 'Verify', items: ['~80% core questions without notes.'] }
+      {
+        label: 'Question tracks',
+        items: ['Logic / LeetCode: Q141–Q150', 'Final polish & readiness: Q494–Q529']
+      },
+      {
+        label: 'Prep plan checklist',
+        items: [
+          'Rapid revision: top weak topics only (no new frameworks)',
+          'Timed block: 4 tasks in 90 minutes with debriefs',
+          'Rehearse project storytelling and one strong “tell me about yourself”',
+          'Behavioral stories: 6–10 at 90 seconds each',
+          'Build one-page cheat sheet + interview-day schedule',
+          'Sleep and cut off cramming the night before'
+        ]
+      },
+      {
+        label: 'Final Verification (end of Day 14)',
+        items: [
+          'Two mocks with measurable improvement on a written rubric',
+          '45–55 logic tasks cumulative (directional; quality over panic-counting)',
+          '~80% of core React/Angular junior questions explainable without notes',
+          'One project end-to-end with technical decisions',
+          'Stamina: 2 easy + 1 medium under interview time pressure'
+        ]
+      }
     ]
   }
 };

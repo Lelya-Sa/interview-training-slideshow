@@ -2274,6 +2274,300 @@ Calm execution + documented gaps + fluent stories = Day 14 ready
 
 ---
 
+## Final polish & readiness (Day 14, Q494–Q529)
+
+Aligned with **Day 14 – Final Polish + Readiness Test** in `COGNYTE_14_DAY_PREP_PLAN.md`: targeted React/Angular revision, **4 tasks in 90 minutes**, **project storytelling** (challenge → action → result), behavioral final pass, **one-page interview cheat sheet**, sleep, anxiety, interview-day logistics, and **Final Verification** (two mocks, logic volume, ~80% core recall, one end-to-end project story, timed coding). Pair with logic set **Q141–Q150** in the app.
+
+### 494) On the **last prep day**, how do you **prioritize weak topics** without drowning?
+**Theory:** Pareto applies—few topics dominate interview signal.
+**Answer:** List **top 5–8 gaps** from mocks; **rank** by frequency and impact; **2–3 deep** reviews + **spaced** flashcards for the rest; **stop** adding new frameworks—consolidate what you can explain cleanly.
+**Explanation:** Final polish is **confidence consolidation**, not breadth expansion.
+```txt
+High-frequency gaps first; one deep story beats ten shallow tabs
+```
+
+### 495) **Cramming vs sleep**—what is the evidence-based trade-off the night before?
+**Theory:** Sleep consolidates memory; all-nighters hurt performance under pressure.
+**Answer:** Prefer **sleep** over a 3am new topic; **light** review of cheat sheet + one timed problem max; **trust** prior weeks—interview cognition needs rest.
+**Explanation:** Honest junior answer: “I’d rather arrive sharp than exhausted with one more fact.”
+```txt
+Sleep > marginal new content; rehearse wake-up time
+```
+
+### 496) How do you **structure a 90-minute block** with **4 coding tasks**?
+**Theory:** Mimics final verification: sustained focus under fatigue.
+**Answer:** **~20 min/task** with **2 min buffer**; **hard stop** per task; **5 min** recap between tasks; **note** pattern failures (not just bugs)—same rubric as mock interviews.
+**Explanation:** Builds stamina for “2 easy + 1 medium under pressure” readiness.
+```txt
+Timer discipline + short debrief after each task
+```
+
+### 497) **Project storytelling**: how does **challenge → action → result** differ from pure STAR?
+**Theory:** Portfolio stories emphasize **system impact** and **technical choices**, not only interpersonal conflict.
+**Answer:** **Challenge** = business/user constraint; **Action** = what you built/changed (stack, tests, trade-offs); **Result** = metric, reliability, or learning—**metrics optional** but honest.
+**Explanation:** Use for “walk me through a project” and “hardest technical problem.”
+```txt
+Tie business pain to your code decisions and measurable outcome
+```
+
+### 498) How do you script **“Tell me about yourself”** in **60–90 seconds**?
+**Theory:** First impression sets tone—concise arc beats biography.
+**Answer:** **Present** role + stack → **1–2 shipped outcomes** → **what you want next** (role/team fit); **no** life story; **practice** aloud with timer.
+**Explanation:** Interviewers want trajectory and relevance, not every job since 2015.
+```txt
+Role + proof + direction; end with curiosity about their team
+```
+
+### 499) How do you **close an interview** strongly in the last 5 minutes?
+**Theory:** Recency bias—finish with clarity and enthusiasm.
+**Answer:** **Summarize** mutual fit in one sentence, **thank** for specifics, **ask** one sharp question you saved, **confirm** next steps—**no** new controversial topics.
+**Explanation:** Avoid awkward silence or desperate pleading—professional warmth.
+```txt
+Gratitude + one smart question + clear next-step curiosity
+```
+
+### 500) What belongs on a **one-page interview cheat sheet**?
+**Theory:** Retrieval cues, not a second brain—must fit in quick glances.
+**Answer:** **Your stories** (titles only), **Big O** patterns you use, **HTTP/TS/React/Angular** one-liners, **questions for them**, **salary range** (if negotiated), **company mission** line—**large font**, **white space**.
+**Explanation:** If it needs paragraphs, it won’t help under stress.
+```txt
+Triggers, not essays; test-glance readability in 10 seconds
+```
+
+### 501) What should you **not** put on a cheat sheet?
+**Theory:** Noise increases panic; illegal/unethical content is disqualifying.
+**Answer:** **No** full code dumps you’ll read robotically, **no** passwords/tokens, **no** confidential ex-employer secrets, **no** lies—**no** 6pt font wall of text.
+**Explanation:** Cheat sheet supports memory—doesn’t replace it.
+```txt
+Cues you trust; nothing you’d be ashamed to show if asked
+```
+
+### 502) **Rapid React revision**: what **five hooks** are highest ROI to rehearse?
+**Theory:** Most interviews still orbit state and effects.
+**Answer:** **`useState`**, **`useEffect`** (deps discipline), **`useMemo`/`useCallback`** (when/when not), **`useRef`**, **`useContext`** or **`useReducer`**—pick **one** data-fetching pattern (e.g. TanStack Query) if you use it.
+**Explanation:** Depth on fewer hooks beats shallow list of every API.
+```txt
+Five hooks + one sentence each on failure modes
+```
+
+### 503) **Rapid Angular revision**: what three pillars get **30 minutes** well spent?
+**Theory:** Angular interviews reward **module mental model** and **RxJS**.
+**Answer:** **DI** + lifecycle (**`ngOnInit`/`OnDestroy`**), **routing/guards/lazy** basics, **RxJS** operators you actually use (**`switchMap`**, **`takeUntil`**, error handling)—**standalone/signals** if on your version.
+**Explanation:** Match revision to **your** CV—don’t fake expert RxJS marble diagrams.
+```txt
+DI + routing + RxJS slice you shipped; honesty > buzzwords
+```
+
+### 504) **Behavioral final pass**: how many **stories** should feel **fluent** cold?
+**Theory:** Coverage without memorizing a novel.
+**Answer:** **6–10** STAR/CAR stories with **labels** (conflict, failure, leadership, deadline, bug, learning); each **90 seconds** spoken; **2–3** “deep” for follow-ups.
+**Explanation:** Final Verification includes behavioral readiness—fluency beats count.
+```txt
+90-second versions + optional 30-second deep dive on prompt
+```
+
+### 505) Practical techniques for **interview anxiety** (same week)?
+**Theory:** Skills-based anxiety management—no magic, but evidence for basics.
+**Answer:** **Simulation** (timed mocks), **exposure** (practice aloud), **box breathing** or **4-7-8** for 60s, **avoid** catastrophic rehearsal—**plan B** if you freeze (“I’ll write examples first”).
+**Explanation:** Normalize nerves—signal is preparation, not pathology.
+```txt
+Breathing + simulation + written plan if mind blanks
+```
+
+### 506) **Day-of** food and hydration—junior-safe guidance?
+**Theory:** Avoid glucose crash and dehydration during long loops.
+**Answer:** **Eat** familiar foods, **light** if nervous; **water**; **limit** excessive caffeine if it spikes anxiety; **schedule** bio breaks before calls.
+**Explanation:** Not medical advice—practical comfort for cognitive performance.
+```txt
+Familiar meals; steady hydration; no experimental spicy lunch
+```
+
+### 507) **Timing**: how early should you be “ready” for a remote interview?
+**Theory:** Friction tax is real—pay it upfront.
+**Answer:** **15–20 min** early: link works, IDE clean, **notifications off**, water, **test audio** once; **5 min** breathing—not new content.
+**Explanation:** Rushing in is how people lose the first question.
+```txt
+Ready early; last 5 min calm, not cramming
+```
+
+### 508) If you **blank** on a technical question, what is the **recovery script**?
+**Theory:** Recovery is a skill—interviewers notice resilience.
+**Answer:** **Pause**, **restate** what you understood, **offer** partial knowledge + **how you’d find out** (“I’d check MDN/docs, experiment in 5 min”), **ask** one clarifying question—**don’t** ramble to fill silence.
+**Explanation:** Maps to honest “I don’t know” from Day 13—now under time pressure.
+```txt
+Pause → clarify → partial answer → learning plan
+```
+
+### 509) **Portfolio / GitHub** review: what should you verify **the day before**?
+**Theory:** Interviewers click links—broken READMEs hurt.
+**Answer:** **README** runs, **demo** if any, **pin** best repos, **remove** dead projects or mark WIP honestly, **fix** obvious typos; **match** CV links.
+**Explanation:** Consistency signals professionalism on final polish day.
+```txt
+Click every link you’ll mention; pin repos that tell your story
+```
+
+### 510) How do you answer **“What’s your biggest weakness?”** on Day 14 polish?
+**Theory:** Mature answer: real weakness + mitigation—avoid humble-brag clichés only.
+**Answer:** Pick **one** **real** skill gap you’re improving, **show** concrete steps (courses, drills, PR feedback), **avoid** “I’m a perfectionist” unless you make it credible.
+**Explanation:** Final pass should sound **rehearsed but human**, not robotic.
+```txt
+Real gap + active mitigation + measurable progress
+```
+
+### 511) **“Why this company?”** without sounding **generic**?
+**Theory:** Specificity signals research—copy-paste hurts.
+**Answer:** Tie **product** you used, **engineering blog** talk, **tech stack** alignment, **values** with evidence—**one** sentence each; **avoid** flattery without substance.
+**Explanation:** Day 14 is polish—this answer should be **custom per company** if possible.
+```txt
+Product + tech + values + one concrete detail only they have
+```
+
+### 512) **Questions** you should **not** ask at the end?
+**Theory:** Signals matter—some questions imply misalignment.
+**Answer:** Avoid **only** vacation/perks if zero technical curiosity; avoid **“did I get the job?”** pressure; avoid **bad-mouthing** previous employers; **don’t** ask things clearly on website **without** acknowledging you read it.
+**Explanation:** Polish includes **social awareness**—not just technical.
+```txt
+Balance human questions with team/engineering substance
+```
+
+### 513) **Notifications** and **focus**: what setup reduces derailment?
+**Theory:** Context switches kill interview performance.
+**Answer:** **Do Not Disturb**, **close** Slack/email tabs, **second monitor** plan, **phone** in another room; **tell** household/roommates you’re unavailable.
+**Explanation:** Final rehearsal should practice **same environment** as interview day.
+```txt
+Same DND ritual in mock #2 and real day
+```
+
+### 514) **Backup plan** if **video** or **IDE share** fails mid-round?
+**Theory:** Calm troubleshooting impresses—panic does not.
+**Answer:** **Ask** for phone/audio fallback, **offer** to paste code in doc, **rejoin** link once—**communicate** rather than silent panic; **know** recruiter contact if provided.
+**Explanation:** Operational resilience is a soft skill signal.
+```txt
+Narrate what you’re trying; offer alternate channel calmly
+```
+
+### 515) **Remote** interview **dress and camera**—safe defaults?
+**Theory:** Reduce cognitive load for interviewer—professional frame.
+**Answer:** **Plain** top, **neutral** background or blur, **face** lit from front, **camera** at eye level; **match** company norm (many are casual—still avoid pajamas on camera).
+**Explanation:** Polish includes **visual clarity**—not fashion show.
+```txt
+Clean frame, face visible, align with researched company norm
+```
+
+### 516) How do you project **confidence without arrogance**?
+**Theory:** Interviewers hire teachable collaborators.
+**Answer:** **Own** contributions with **data**, **credit** teammates, **invite** feedback—**avoid** interrupting, **avoid** “I know everything” tone; **curiosity** reads as strength.
+**Explanation:** Final polish includes **tone** rehearsal—not only facts.
+```txt
+Facts + humility + curiosity about their constraints
+```
+
+### 517) **Last-minute bug** in a take-home—do you disclose before interview?
+**Theory:** Integrity and communication beat hiding defects.
+**Answer:** If you **noticed** post-submit, **email** brief note with **fix** or **impact assessment**—if interview references it, **open** with honest scope; **don’t** fabricate completeness.
+**Explanation:** Teams value **honesty** on shipped artifacts.
+```txt
+Disclose with fix path; don’t hope they won’t notice
+```
+
+### 518) **Big O** last-minute: which **patterns** are highest yield?
+**Theory:** Junior interviews repeat the same families.
+**Answer:** **Hash map** `O(n)`, **two pointers** `O(n)`, **binary search** `O(log n)`, **BFS/DFS** basics, **sorting** costs—**one** sentence each **when** you’d pick them.
+**Explanation:** Cheat sheet triggers—**not** proving mastery of proofs.
+```txt
+Five patterns + “when I reach for it” one-liner each
+```
+
+### 519) A **30-second reset** between hard interview rounds—what works?
+**Theory:** Autonomic reset—simple, repeatable.
+**Answer:** **Box breathing** (4-4-4-4), **shoulders down**, **sip water**, **one** line self-talk (“next question, fresh start”), **avoid** spiraling review of mistakes.
+**Explanation:** Day 14 rehearsal should **practice** the reset—don’t improvise only on game day.
+```txt
+Breath + water + forward-looking cue; no rumination loop
+```
+
+### 520) **End-of-day reflection** after prep: what do you write in **5 minutes**?
+**Theory:** Close the loop—spaced improvement without rumination.
+**Answer:** **3 bullets**: what went well, **one** gap, **one** tomorrow micro-drill; **avoid** harsh self-attack—**actionable** next step only.
+**Explanation:** Supports Final Verification without burnout narrative.
+```txt
+Win + gap + one next action; keep it kind and specific
+```
+
+### 521) **Onsite** interview day: what is on a **simple packing list**?
+**Theory:** Reduce forgotten-ID stress—logistics are part of polish.
+**Answer:** **ID**, **water**, **notebook** (if allowed), **pen**, **charger**, **layers** for cold rooms, **printed** resume optional—**confirm** what’s allowed (some ban phones).
+**Explanation:** If you never go onsite, still answer credibly for hybrid companies.
+```txt
+ID + power + comfort + confirm device rules
+```
+
+### 522) **Global** interviews: what **time zone** habit prevents mistakes?
+**Theory:** DST and calendar bugs cause no-shows—final polish includes logistics.
+**Answer:** Store **one** canonical calendar in **UTC** or **local** with **offset** label; **triple-check** **daylight saving** transitions; **arrive** to link **2 min** after verifying **timezone** in invite.
+**Explanation:** Junior credibility includes **operational reliability**.
+```txt
+Convert once, label offset, alarm in local wake time
+```
+
+### 523) Walk through **Final Verification** from the 14-day plan—what does **“measurable improvement”** on mocks mean?
+**Theory:** Concrete rubric—same as Day 13 comparison.
+**Answer:** **Pick** 3–5 dimensions (clarity, bugs, speed, depth); **score** mock #1 vs #2; **improvement** = higher on **≥1** dimension + **no regression** on **must-haves** (honesty, communication).
+**Explanation:** Makes “ready” falsifiable—not vibes-only.
+```txt
+Written scores; improvement on at least one tracked axis
+```
+
+### 524) **45–55 logic tasks** cumulative: how do you **track** without obsession?
+**Theory:** Volume target is directional—avoid anxiety if you’re close.
+**Answer:** **Spreadsheet** or **checklist** of solved IDs; **count** **easy+medium** you can explain; **if** short, **prioritize** patterns over raw count—**quality** gates readiness.
+**Explanation:** Final Verification is **holistic**—logic count is one signal.
+```txt
+Track honestly; adjust if mocks show strong pattern mastery
+```
+
+### 525) **“Why frontend?”** or **“Why engineering?”**—short polish answer?
+**Theory:** Motivation questions reward authentic narrative.
+**Answer:** **One** personal spark (problem you liked solving), **one** proof (project, job), **one** forward goal (user impact, craft)—**60 seconds** max.
+**Explanation:** Tie to **user-facing** outcomes if true—avoid cliché only if you substitute **specifics**.
+```txt
+Spark + proof + direction; specifics beat slogans
+```
+
+### 526) **Interview opening** anxiety: first **30 seconds** on the call?
+**Theory:** Set tone—warmth and competence.
+**Answer:** **Greet** by name, **confirm** audio, **thank** for time, **small** human line (timezone/weather) **optional**—**then** listen for their agenda.
+**Explanation:** Polish includes **rapport**—not jumping into technical defense.
+```txt
+Name + audio check + gratitude; match their energy
+```
+
+### 527) When do you **stop studying** on Day 14?
+**Theory:** Closure ritual prevents infinite prep anxiety.
+**Answer:** **Set** a hard **cutoff** (e.g. evening before); **after** cutoff: **cheat sheet** only, **sleep** priority; **trust** the plan—**no** new topics.
+**Explanation:** Readiness includes **rest** as a deliberate choice.
+```txt
+Hard stop + trust the backlog you already built
+```
+
+### 528) **One-page** “interview day” **schedule**—what’s on it?
+**Theory:** Reduce decision fatigue hour-by-hour.
+**Answer:** **Wake**, **meal**, **review** time (short), **link** time, **buffer**, **post-interview** note slot; **include** **recruiter** name and **timezone**—**not** minute-by-minute cram.
+**Explanation:** Logistics sheet complements technical cheat sheet.
+```txt
+Times + links + buffers + who to email after
+```
+
+### 529) **Day 14 complete**: what **three checks** mean you’re **ready** for real interviews?
+**Theory:** Aligns with **Final Verification** in `COGNYTE_14_DAY_PREP_PLAN.md`.
+**Answer:** (1) **Mock** improvement documented; (2) **~80%** of your **core** question list **explainable** without notes; (3) **One** project story **end-to-end** with **technical decisions** + **one** **90m** coding block completed—**bonus**: cheat sheet fits **one page** and **you’ve slept**.
+**Explanation:** Gate before job search—**holistic**, not perfectionism.
+```txt
+Mocks + core recall + project narrative + stamina = go
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).
@@ -2281,3 +2575,4 @@ Calm execution + documented gaps + fluent stories = Day 14 ready
 - [ ] For mixed questions, explain both implementation and trade-offs out loud.
 - [ ] Mark weak patterns and repeat them next day first (spaced repetition).
 - [ ] For **Day 13** (Q458–Q493): deliver at least two **90-second STAR** stories out loud and one **timed** live-coding walkthrough with think-aloud.
+- [ ] For **Day 14** (Q494–Q529): build a **one-page cheat sheet** + run **one 90-minute / 4-task** coding block; rehearse **one project story** (challenge → action → result) in ≤ 3 minutes.

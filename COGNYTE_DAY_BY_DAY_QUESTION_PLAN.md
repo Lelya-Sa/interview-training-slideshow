@@ -68,9 +68,9 @@ How to run each day:
 - Questions: Q131-Q140, Q458-Q493
 - Focus: **Q131-Q140** coin change, debounce/throttle, heaps, trees, React/Angular practicals; **Q458-Q493** structured technical deep dive, live coding timeboxing, STAR behavioral, comparing mocks, 48-hour fix list, think-aloud, remote setup, take-home vs live, frontend system design lite, AI integrity norms, TypeScript/React/Angular interview sound bites, pair programming, estimation, CI gates, post-interview follow-up—matches **Day 13 – Mock Interview #2 (Full Loop)** in `COGNYTE_14_DAY_PREP_PLAN.md`
 
-## Day 14 - Final mixed interview prep
-- Questions: Q141-Q150
-- Focus: reliability, forms, communication, testing, performance, live coding flow
+## Day 14 - Logic set 4 + final polish & readiness
+- Questions: Q141-Q150, Q494-Q529
+- Focus: **Q141-Q150** retries, graphs, heaps, live-coding-under-pressure patterns; **Q494-Q529** last-day prioritization, sleep vs cram, 90m/4-task structure, CAR/project storytelling, “tell me about yourself,” cheat sheet design, rapid React/Angular revision, behavioral story bank, anxiety resets, portfolio hygiene, weakness/company-fit answers, logistics (remote/onsite/time zones), Final Verification rubric—matches **Day 14 – Final Polish + Readiness Test** in `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ---
 

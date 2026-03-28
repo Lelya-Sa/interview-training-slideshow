@@ -100,7 +100,13 @@ const DAY_TO_IDS = {
     474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489,
     490, 491, 492, 493
   ],
-  14: [141, 142, 143, 144, 145, 146, 147, 148, 149, 150]
+  // Day 14: LeetCode set 4 (Q141–Q150) + final polish & readiness (Q494–Q529).
+  14: [
+    141, 142, 143, 144, 145, 146, 147, 148, 149, 150,
+    494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509,
+    510, 511, 512, 513, 514, 515, 516, 517, 518, 519, 520, 521, 522, 523, 524, 525,
+    526, 527, 528, 529
+  ]
 };
 
 function topicFromId(id) {
@@ -111,6 +117,7 @@ function topicFromId(id) {
   if (id >= 386 && id <= 421) return 'Performance & Security';
   if (id >= 422 && id <= 457) return 'Fullstack & API Integration';
   if (id >= 458 && id <= 493) return 'Mock Interview & Interview Skills';
+  if (id >= 494 && id <= 529) return 'Final Polish & Readiness';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

@@ -378,6 +378,47 @@ Use:
 
 ---
 
+## Q494-Q529 (Final polish & readiness — Day 14)
+
+- Q494: must-know-for-junior
+- Q495: must-know-for-junior
+- Q496: must-know-for-junior
+- Q497: must-know-for-junior
+- Q498: must-know-for-junior
+- Q499: must-know-for-junior
+- Q500: must-know-for-junior
+- Q501: medium
+- Q502: must-know-for-junior
+- Q503: must-know-for-junior
+- Q504: must-know-for-junior
+- Q505: medium
+- Q506: easy
+- Q507: medium
+- Q508: must-know-for-junior
+- Q509: medium
+- Q510: must-know-for-junior
+- Q511: must-know-for-junior
+- Q512: medium
+- Q513: medium
+- Q514: medium
+- Q515: easy
+- Q516: must-know-for-junior
+- Q517: medium
+- Q518: must-know-for-junior
+- Q519: medium
+- Q520: easy
+- Q521: easy
+- Q522: medium
+- Q523: must-know-for-junior
+- Q524: medium
+- Q525: must-know-for-junior
+- Q526: must-know-for-junior
+- Q527: must-know-for-junior
+- Q528: medium
+- Q529: must-know-for-junior
+
+---
+
 ## Q358-Q385 (Architecture & clean code — Day 10)
 
 - Q358: must-know-for-junior
