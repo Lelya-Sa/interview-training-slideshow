@@ -86,7 +86,13 @@ const DAY_TO_IDS = {
     398, 399, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409,
     410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421
   ],
-  12: [121, 122, 123, 124, 125, 126, 127, 128, 129, 130],
+  // Day 12: LeetCode set 2 (Q121–Q130) + fullstack / API integration (Q422–Q457).
+  12: [
+    121, 122, 123, 124, 125, 126, 127, 128, 129, 130,
+    422, 423, 424, 425, 426, 427, 428, 429, 430, 431, 432, 433, 434, 435, 436, 437,
+    438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453,
+    454, 455, 456, 457
+  ],
   13: [131, 132, 133, 134, 135, 136, 137, 138, 139, 140],
   14: [141, 142, 143, 144, 145, 146, 147, 148, 149, 150]
 };
@@ -97,6 +103,7 @@ function topicFromId(id) {
   if (id >= 333 && id <= 357) return 'Angular (Intermediate)';
   if (id >= 358 && id <= 385) return 'Architecture & Clean Code';
   if (id >= 386 && id <= 421) return 'Performance & Security';
+  if (id >= 422 && id <= 457) return 'Fullstack & API Integration';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

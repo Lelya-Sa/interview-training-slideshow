@@ -115,10 +115,30 @@ const DAYS = {
     ]
   },
   12: {
-    headline: 'Day 12 · Fullstack Integration',
-    intro: 'Contracts, status codes, end-to-end reasoning.',
+    headline: 'Day 12 · Fullstack Frontend Integration',
+    intro:
+      'Phase 4 sprint: Q121–Q130 (linked lists, trees, frequency / top-k, prefix and product patterns) plus Q422–Q457—contract-first APIs (OpenAPI), ETag / 304, Cache-Control, Idempotency-Key, Problem Details, BFF, GraphQL vs REST, webhooks, multipart, versioning, pagination (cursor vs offset), 429 / Retry-After, optimistic concurrency, SSE / streaming, structured errors, public env pitfalls, tracing, AbortController, and CI smoke checks.',
     tracks: [
-      { label: 'Roadmap', items: ['OA-style timed set', 'Debug walkthrough', 'Integration explanation'] }
+      {
+        label: 'Question tracks',
+        items: ['Logic / LeetCode: Q121–Q130', 'Fullstack & API integration: Q422–Q457']
+      },
+      {
+        label: 'Prep plan checklist',
+        items: [
+          'REST contracts, status codes, validation, error shapes (Problem Details / stable codes)',
+          'Explain frontend ↔ backend from one UI event through API response to UI state',
+          'OA-style timed set (3 tasks)',
+          'Interview drill: debug-through—how you tell client bug vs server bug vs network'
+        ]
+      },
+      {
+        label: 'Verify',
+        items: [
+          'Can walk an integration path without hand-waving auth, caching, or errors',
+          'Named at least one contract artifact (e.g. OpenAPI) and one failure signal (status, problem body, trace id)'
+        ]
+      }
     ]
   },
   13: {

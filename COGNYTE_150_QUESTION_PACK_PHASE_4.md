@@ -1686,6 +1686,300 @@ wss + auth on server after handshake; never secrets in query strings ideally
 
 ---
 
+## Fullstack & API integration (Day 12 interview set, Q422-Q457)
+
+Aligned with **Day 12 – Fullstack Frontend Integration** in `COGNYTE_14_DAY_PREP_PLAN.md`: contracts before code (**OpenAPI**), HTTP semantics juniors actually ship—**ETag** / **304**, **Cache-Control**, **Idempotency-Key**, **Problem Details** (RFC 7807-style), **BFF**, **GraphQL vs REST**, **webhooks** + verification, uploads and pagination, **429** / **Retry-After**, **SSE** / streams, **`AbortController`**, env safety, tracing, and a minimal **CI smoke** story. Pair with logic set **Q121–Q130** in the app.
+
+### 422) What is **contract-first** API design (OpenAPI) in a junior interview?
+**Theory:** You agree on shapes and status codes before UI ships—fewer surprise `undefined` fields.
+**Answer:** Teams publish an **OpenAPI** (Swagger) spec describing paths, schemas, errors, and auth; clients may generate types or mock servers from it; changes go through review like any contract.
+**Explanation:** Contrast “UI first, `/api/data` grows organically”—contract-first helps parallel frontend + backend work and catches breaking changes early.
+```txt
+OpenAPI as single source of truth; breaking change = version bump or coordination
+```
+
+### 423) What is an **ETag** and when does **`304 Not Modified`** help?
+**Theory:** ETag is an opaque fingerprint of a representation; conditional requests save bandwidth.
+**Answer:** Client sends `If-None-Match: "<etag>"` on repeat GET; if unchanged, server returns **304** with no body—great for polling dashboards or cached reads.
+**Explanation:** Pair with `Cache-Control`—ETags also support optimistic locking (`If-Match`) on writes.
+```txt
+304 = "your cache is still valid"; must revalidate with server headers, not guess
+```
+
+### 424) How does **`Cache-Control`** differ for **JSON APIs** vs **static assets**?
+**Theory:** CDNs and browsers cache aggressively by default unless told otherwise.
+**Answer:** Immutable hashed assets (`max-age=31536000, immutable`) vs **private, no-store** for sensitive JSON or short-lived lists; `stale-while-revalidate` can fit semi-static reads.
+**Explanation:** Wrong caching on authenticated JSON leaks data across users—use `private` and respect cookie sessions.
+```txt
+Rule of thumb: User-specific JSON → private/no-store unless you really know intermediaries
+```
+
+### 425) What is an **`Idempotency-Key`** header and why use it?
+**Theory:** Networks retry—your API must not double-charge or double-create.
+**Answer:** Client sends a unique key per logical operation (UUID); server stores result for that key and replays the same response on duplicate submits within a TTL.
+**Explanation:** Essential for **POST** payments or creates where HTTP idempotency is not assumed.
+```txt
+Same key + same body → same outcome; document TTL and scope (per user)
+```
+
+### 426) What are **Problem Details** style errors (e.g. **RFC 7807**)?
+**Theory:** `{ "title", "status", "detail", "type" }` gives machines and humans a consistent shape.
+**Answer:** Instead of bare strings, return structured JSON (often `application/problem+json`) so the UI maps to toasts, field errors, or i18n keys.
+**Explanation:** Juniors should tie this to **logging**: include a `traceId` / instance URI, never stack traces to browsers in prod.
+```txt
+Consistent error type URLs help support; never leak secrets in `detail`
+```
+
+### 427) What is a **BFF (Backend for Frontend)**?
+**Theory:** One generic API rarely fits web, mobile, and admin UX at once.
+**Answer:** A **server owned by the frontend team** shapes endpoints for a specific client: aggregates calls, trims payloads, handles auth/session cookies close to the UI.
+**Explanation:** Junior contrast: not mandatory for tiny apps—helps when microservices sprawl and web needs stable screens.
+```txt
+BFF = tailor API to one client; still not a place to skip authz rules
+```
+
+### 428) When would you pick **GraphQL** vs **REST** (fair junior answer)?
+**Theory:** REST = resources + verbs; GraphQL = single endpoint + client-selected fields.
+**Answer:** GraphQL fits flexible UIs, nested graphs, and mobile bandwidth savings; REST fits caching/CDN-friendly reads, file uploads, simple CRUD, and teams that want fewer moving parts.
+**Explanation:** Mention N+1 problem in GraphQL (DataLoader) vs over-fetching in REST—no dogma.
+```txt
+Junior line: "Choose based on client variance, caching needs, and team maturity."
+```
+
+### 429) What is a **webhook** and how do you **verify** it?
+**Theory:** Server-to-server push when events happen—no polling.
+**Answer:** Provider POSTs signed payload to your URL; you verify **HMAC** with a shared secret/timestamp, reject replays, and respond `2xx` fast; heavy work goes async queue.
+**Explanation:** Must use **HTTPS**, rotate secrets, and log verification failures (possible spoofing).
+```txt
+Verify signature + timestamp; idempotent handler for duplicate deliveries
+```
+
+### 430) **`multipart/form-data`** vs **JSON** for uploads—what do you say?
+**Theory:** Browsers and servers stream parts; JSON holds base64 but bloats bytes.
+**Answer:** Use **multipart** (or presigned URL to blob storage) for files; JSON for metadata-only APIs; `FormData` in `fetch` for mixed fields + file.
+**Explanation:** Large JSON uploads hurt memory—prefer direct-to-S3 patterns when interview expects scale.
+```txt
+multipart = files + fields; pair progress events and size limits
+```
+
+### 431) What is **content negotiation** with **`Accept`** and **`Accept-Language`**?
+**Theory:** Client announces what representations it can handle.
+**Answer:** Server may return `406` if it cannot satisfy `Accept: application/json`; i18n sometimes uses `Accept-Language` or explicit `?locale=`—pick one product convention.
+**Explanation:** juniors link to **API versioning**: major format breaks may need `Accept` header versioning.
+```txt
+Negotiation fail → 406; document supported media types in OpenAPI
+```
+
+### 432) **API versioning**: URL path vs header—trade-offs?
+**Theory:** Visibility vs cache purity.
+**Answer:** `/v2/users` is obvious in logs and curl; header versioning keeps URLs stable but is easier to misconfigure in clients/CDNs—both work if documented.
+**Explanation:** Deprecate old versions with sunset headers and monitoring before removal.
+```txt
+Breaking change needs coordinated rollout—migrations not "silent edits"
+```
+
+### 433) **Breaking change** vs **additive** change?
+**Theory:** Additive = safe for old clients; breaking = old clients misbehave.
+**Answer:** Removing fields, renaming, tightening validation, or changing status semantics = **breaking**; adding optional fields or new endpoints = additive.
+**Explanation:** Schema registries and consumer tests catch accidental breaks—junior ties to semver for public APIs.
+```txt
+Prefer additive evolution; deprecate then remove with telemetry
+```
+
+### 434) What is a **correlation ID** / **trace ID** across UI → API?
+**Theory:** Distributed tracing helps debug "which request failed for user X".
+**Answer:** Generate/propagate a UUID (`X-Request-Id`) from first client hop; log it in browser (devtools), BFF, and services; surface masked id in Problem Details for support.
+**Explanation:** Not a substitute for **PII** logging rules—hash user ids when required.
+```txt
+One ID per user action; pass through outbound calls
+```
+
+### 435) **Client timeouts** and **retries** — how do you avoid thundering herds?
+**Theory:** Unbounded waits freeze UI; blind retries amplify outages.
+**Answer:** Set `fetch`/axios timeouts, exponential backoff + jitter on **safe** retries (`GET`, idempotent `PUT`), cap attempts, surface circuit-breaker UX ("try later").
+**Explanation:** Never silently retry non-idempotent POST without idempotency keys.
+```txt
+Timeout + bounded retries + user-visible degraded mode
+```
+
+### 436) How do you **cancel** an in-flight request (`AbortController`)?
+**Theory:** Leaving requests running wastes bandwidth and can apply stale responses.
+**Answer:** Create `AbortController`, pass `signal` to `fetch`; on route change/unmount or new search, `abort()`; handle `DOMException` name `AbortError` quietly.
+**Explanation:** Axios uses `CancelToken` legacy—modern fetch + `AbortController` is standard.
+```txt
+Abort on dependency change—pair with `switchMap` pattern in RxJS
+```
+
+### 437) **Double-clicks** and duplicate creates — what stops them in the UI + API?
+**Theory:** Users mash buttons; networks duplicate packets.
+**Answer:** Disable button while pending, debounce entry once, plus server **idempotency** and UI dedupe keys; optimistic UI needs rollback on failure.
+**Explanation:** Interview ties together **loading state**, **mutation keys** (TanStack Query), and backend keys.
+```txt
+UX guard is not enough—server must enforce single effect
+```
+
+### 438) **`HEAD`** vs **`GET`**—when mention `HEAD`?
+**Theory:** HEAD returns headers only—same metadata as GET without body cost.
+**Answer:** Check existence/size/`Last-Modified` before download; crawlers and caches use it; not all servers implement it correctly—verify.
+**Explanation:** Junior: avoid inventing APIs that rely on `HEAD` unless backend guarantees parity.
+```txt
+HEAD for metadata probes; beware inconsistent server implementations
+```
+
+### 439) **`400` vs `422` vs `409`**—junior framing?
+**Theory:** 400 malformed, 422 semantically invalid (validation), 409 state conflict.
+**Answer:** Malformed JSON → **400**; field-level schema errors → often **422 Unprocessable Entity** (style varies); duplicate email or version clash → **409 Conflict**.
+**Explanation:** Teams argue 400 vs 422—consistency inside one API matters more than dogma.
+```txt
+Map to form errors + global banner; log exact code server-side
+```
+
+### 440) **Cursor** vs **offset** pagination—when cursor wins?
+**Theory:** Offset `LIMIT/OFFSET` skips rows—expensive and unstable if rows shift while paging.
+**Answer:** **Cursor** (after last seen stable key) fits live feeds and large tables; offset ok for admin tables with fixed sort and modest size.
+**Explanation:** Document opaque cursor encoding; beware leaky sort keys.
+```txt
+Never expose raw SQL offsets in public APIs without stability story
+```
+
+### 441) How do you use **`429 Too Many Requests`** and **`Retry-After`**?
+**Theory:** Back-pressure signal—clients must slow down.
+**Answer:** Server returns 429 with **`Retry-After`** seconds or HTTP-date; client honors backoff; UI shows rate-limit message; differentiate per-user vs global limits.
+**Explanation:** Pair with **idempotency**—retries after 429 still need keys for writes.
+```txt
+Respect Retry-After; add jitter when many tabs share token bucket
+```
+
+### 442) What is **optimistic concurrency** with **`If-Match`** / ETag on **PATCH**?
+**Theory:** Two editors overwrite each other—ETag detects lost updates.
+**Answer:** Client sends `If-Match: "<etag>"`; server rejects with **412 Precondition Failed** if resource changed—UI prompts refresh/merge.
+**Explanation:** Junior alternative: version integer field—same idea, clearer for some teams.
+```txt
+412 = someone else moved first—refresh and retry
+```
+
+### 443) When do **streaming** or **chunked** responses matter?
+**Theory:** Memory-friendly for large downloads or incremental JSON (NDJSON).
+**Answer:** Use when TTFB must be low (LLM tokens, CSV export) or memory on server is tight; HTTP/1.1 chunked encoding; know proxy timeouts may kill long streams.
+**Explanation:** Contrast with **Server-Sent Events** for one-way push to browser.
+```txt
+Streams need flush discipline and timeout budgets in gateways
+```
+
+### 444) Why return a **structured error envelope** (`code`, `message`, `fieldErrors`)?
+**Theory:** Strings alone break localization and machine handling.
+**Answer:** Stable **`code`** (`USER_EMAIL_TAKEN`) maps to UI + analytics; `fieldErrors` aligns with form controls; message is human fallback.
+**Explanation:** Align with Problem Details—pick one house style per API surface.
+```txt
+Never expose internal exception class names to browsers
+```
+
+### 445) **Public env vars** in Vite/Next—what is actually secret?
+**Theory:** Anything bundled to the browser is visible—`process.env.NEXT_PUBLIC_*` / `VITE_*`.
+**Answer:** **API URLs and feature flags** are often public; **API keys with spend/data power** must stay server-side or use short-lived tokens via BFF; rotate keys leaked in repos.
+**Explanation:** Junior ties to **CORS**—secrets in browser enable abuse.
+```txt
+If it’s in the bundle, assume attackers have it
+```
+
+### 446) What are **consumer-driven contract tests** (e.g. Pact) in one sentence?
+**Theory:** Client publishes expected interactions; provider verifies without full E2E flakiness.
+**Answer:** **Contract tests** encode "when I call `/users` I need fields `{ id, name }`"; CI fails if provider breaks that shape—complements not replaces integration tests.
+**Explanation:** Useful when many SPAs hit one API—reduces integration thrash.
+```txt
+Contracts catch breaking JSON before deploy—not a replacement for authz tests
+```
+
+### 447) **Feature flags** that call the backend—safe pattern?
+**Theory:** Flag state should not become a secret security gate alone.
+**Answer:** Fetch flag config from a **controlled endpoint**; cache with ETag; default safe/off on failure; still enforce permissions **server-side**.
+**Explanation:** Mention **boot flicker**—avoid layout shift; respect GDPR for flag targeting if PII involved.
+```txt
+Flags toggle UX paths—not authorization by themselves
+```
+
+### 448) What is an **API gateway** (junior one-liner)?
+**Theory:** Edge layer before many microservices.
+**Answer:** Central TLS termination, authn/authz, rate limits, routing, request logging, sometimes WAF—frontends often hit one gateway host.
+**Explanation:** Junior: not same as BFF—gateway is cross-cutting infra; BFF is app-specific.
+```txt
+Gateway = shared edge concerns; BFF = client-shaped responses
+```
+
+### 449) **gRPC** vs **REST**—what might a junior say fairly?
+**Theory:** gRPC = HTTP/2 + protobuf contracts, strong typing, great service-to-service; browsers lack native gRPC-web without tooling.
+**Answer:** Common pattern: **browser → REST/GraphQL/BFF → internal gRPC microservices**; choose gRPC when latency and typed streaming matter internally.
+**Explanation:** Don't claim "gRPC replaces REST for SPAs" without grpc-web story.
+```txt
+Public web still HTTP JSON usually; gRPC shines service mesh to service mesh
+```
+
+### 450) **`EventSource` (SSE)** vs **long polling** vs **WebSocket**—integration recap?
+**Theory:** Directionality and infra differ.
+**Answer:** SSE = server→browser one-way over HTTP, simple auto-reconnect; long polling = periodic GET wait; WebSocket = full duplex, stateful—pick by need + proxies.
+**Explanation:** SSE blocked by some strict corporate proxies—have fallback polling story.
+```txt
+SSE for live notifications; WebSocket for chat/gaming bidirectional
+```
+
+### 451) **File downloads** — what is **`Content-Disposition: attachment`**?
+**Theory:** Tells browser "save as file" vs inline render.
+**Answer:** Pair with correct **`Content-Type`**, **`filename*`** (UTF-8), length if known; for huge exports use presigned URLs or async job + link.
+**Explanation:** Remember **CORS** does not apply same as XHR for direct navigation downloads—auth may use cookie or signed token.
+```txt
+Correct headers + virus scan story for user uploads in serious systems
+```
+
+### 452) Why **validate API responses** with **Zod**/JSON Schema after `fetch`?
+**Theory:** Runtime is not TypeScript—backend drifts, proxies mutate, outages return HTML.
+**Answer:** Parse + schema at boundary; narrow types; throw mapped errors to UI empty/error states; log schema mismatch with correlation id.
+**Explanation:** Aligns with **contract-first**—generated types from OpenAPI optional but runtime guard still helps juniors sleep.
+```txt
+Trust boundary at the wire—validate once per response
+```
+
+### 453) What is **eventual consistency** and how does the UI react?
+**Theory:** Reads may lag writes across replicas/queues.
+**Answer:** Show **pending/optimistic** state, refresh after mutation, use **poll** or **SSE** for status; never assume immediate read-your-writes globally without API guarantee.
+**Explanation:** E-commerce inventory and search indexes are classic examples.
+```txt
+Design for stale reads—surface timestamps or "syncing…" honestly
+```
+
+### 454) What is the **outbox pattern** (very high level)?
+**Theory:** DB commit and message dispatch must be atomic-ish.
+**Answer:** Write business row + outbox event in one transaction; background worker publishes to queue—avoids "saved order but forgot to emit" split brain.
+**Explanation:** Junior ties to **webhook retries** and idempotent consumers.
+```txt
+Outbox = reliable side effects after DB success
+```
+
+### 455) **`Accept-Language`** vs explicit **locale query**—API i18n?
+**Theory:** Header is standard; explicit param is easier to cache/CDN.
+**Answer:** Pick one style; document it; never mix silently; return translated strings or message keys—client chooses rendering policy.
+**Explanation:** GDPR/locale detection cautions—user profile locale may override browser default.
+```txt
+Stable contract: either keys (`error.codes.*`) or translated strings—be consistent
+```
+
+### 456) **Time zones** — how should APIs store and return time?
+**Theory:** Local wall clocks are ambiguous—DST edges break reporting.
+**Answer:** Store **UTC** (`Instant`), return **ISO-8601 with offset** or Z; let UI format local; never silently drop offset.
+**Explanation:** Juniors mention `Temporal`/`date-fns-tz` on client; server owns canonical instant.
+```txt
+UTC storage + explicit offsets in wire format—no locale-only timestamps in APIs
+```
+
+### 457) **Smoke-test** an API in CI—what is the junior-level goal?
+**Theory:** Fast confidence that deploy wired env and routes—slower than unit tests, faster than full E2E.
+**Answer:** After deploy to staging, hit `/health`, one authenticated happy-path, and critical read—fail pipeline on non-2xx; keep secrets in CI vault.
+**Explanation:** Not a substitute for load tests—catches "forgot env var" classes of bugs.
+```txt
+Thin happy-path probes + synthetic checks; alert on burn rate not single blip
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).

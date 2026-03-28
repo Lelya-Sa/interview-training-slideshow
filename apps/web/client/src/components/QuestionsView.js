@@ -605,7 +605,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       {cognyteMode && cognyteRoadmap && (
         <details
           className="cognyte-roadmap-details"
-          defaultOpen={Number(dayNumber) === 11}
+          defaultOpen={Number(dayNumber) === 12}
         >
           <summary className="cognyte-roadmap-summary">{cognyteRoadmap.headline}</summary>
           <div className="cognyte-roadmap-body">

@@ -60,9 +60,9 @@ How to run each day:
 - Questions: Q111-Q120, Q386-Q421
 - Focus: **Q111-Q120** DP/sliding window/maps/stack-queue patterns; **Q386-Q421** rendering + **Core Web Vitals (LCP, INP, CLS)**, debounce/throttle, rAF, bundles/leaks; **XSS/CSRF**, cookies, CORS, **CSP**, **Trusted Types**, nonces/hashes, **HSTS**, **Permissions-Policy**, **COOP**, open redirects, server-side validation, prototype pollution, **`wss://`**; SRI & npm hygiene—matches roadmap **Day 11 – Performance + Security** and Checkpoint C in `COGNYTE_14_DAY_PREP_PLAN.md`
 
-## Day 12 - Logic/LeetCode pattern set 2
-- Questions: Q121-Q130
-- Focus: linked list, tree traversal, frequency/top-k, prefix/product
+## Day 12 - Logic set 2 + fullstack / API integration
+- Questions: Q121-Q130, Q422-Q457
+- Focus: **Q121-Q130** linked lists, trees, frequency/top-k, prefix/product; **Q422-Q457** contract-first (OpenAPI), ETag/304, Cache-Control, idempotency keys, Problem Details, BFF, GraphQL vs REST, webhooks, multipart uploads, versioning, pagination (cursor vs offset), 429/Retry-After, optimistic concurrency, streaming/SSE, structured errors, public env pitfalls, tracing, `AbortController`, and CI smoke checks—matches **Day 12 – Fullstack Frontend Integration** in `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ## Day 13 - Logic + mixed frontend scenarios
 - Questions: Q131-Q140

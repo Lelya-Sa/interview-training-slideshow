@@ -153,7 +153,8 @@ Goal: Convert knowledge into high interview performance.
 
 ### Day 12 - Fullstack Frontend Integration
 
-- [ ] REST contracts, status codes, validation, error shapes.
+- [ ] Cognyte question queue: Q121–Q130 and Q422–Q457; see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
+- [ ] REST contracts, status codes, validation, error shapes (Problem Details / stable error codes).
 - [ ] Explain frontend-backend interaction from UI event to API response.
 - [ ] Coding: OA-style set (3 tasks timed).
 - [ ] Interview drill: debug-through scenario explanation.

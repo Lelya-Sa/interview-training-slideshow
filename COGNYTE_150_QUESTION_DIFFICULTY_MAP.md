@@ -296,6 +296,47 @@ Use:
 
 ---
 
+## Q422-Q457 (Fullstack & API integration — Day 12)
+
+- Q422: must-know-for-junior
+- Q423: must-know-for-junior
+- Q424: must-know-for-junior
+- Q425: medium
+- Q426: must-know-for-junior
+- Q427: medium
+- Q428: must-know-for-junior
+- Q429: medium
+- Q430: must-know-for-junior
+- Q431: medium
+- Q432: must-know-for-junior
+- Q433: must-know-for-junior
+- Q434: must-know-for-junior
+- Q435: must-know-for-junior
+- Q436: must-know-for-junior
+- Q437: must-know-for-junior
+- Q438: medium
+- Q439: must-know-for-junior
+- Q440: must-know-for-junior
+- Q441: must-know-for-junior
+- Q442: medium
+- Q443: medium
+- Q444: must-know-for-junior
+- Q445: must-know-for-junior
+- Q446: medium
+- Q447: medium
+- Q448: medium
+- Q449: medium
+- Q450: must-know-for-junior
+- Q451: medium
+- Q452: must-know-for-junior
+- Q453: medium
+- Q454: medium
+- Q455: medium
+- Q456: must-know-for-junior
+- Q457: medium
+
+---
+
 ## Q358-Q385 (Architecture & clean code — Day 10)
 
 - Q358: must-know-for-junior
