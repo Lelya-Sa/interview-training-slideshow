@@ -64,9 +64,9 @@ How to run each day:
 - Questions: Q121-Q130, Q422-Q457
 - Focus: **Q121-Q130** linked lists, trees, frequency/top-k, prefix/product; **Q422-Q457** contract-first (OpenAPI), ETag/304, Cache-Control, idempotency keys, Problem Details, BFF, GraphQL vs REST, webhooks, multipart uploads, versioning, pagination (cursor vs offset), 429/Retry-After, optimistic concurrency, streaming/SSE, structured errors, public env pitfalls, tracing, `AbortController`, and CI smoke checks—matches **Day 12 – Fullstack Frontend Integration** in `COGNYTE_14_DAY_PREP_PLAN.md`
 
-## Day 13 - Logic + mixed frontend scenarios
-- Questions: Q131-Q140
-- Focus: coin change, debounce/throttle, React/Angular practical scenarios
+## Day 13 - Logic set 3 + mock interview #2 (full loop)
+- Questions: Q131-Q140, Q458-Q493
+- Focus: **Q131-Q140** coin change, debounce/throttle, heaps, trees, React/Angular practicals; **Q458-Q493** structured technical deep dive, live coding timeboxing, STAR behavioral, comparing mocks, 48-hour fix list, think-aloud, remote setup, take-home vs live, frontend system design lite, AI integrity norms, TypeScript/React/Angular interview sound bites, pair programming, estimation, CI gates, post-interview follow-up—matches **Day 13 – Mock Interview #2 (Full Loop)** in `COGNYTE_14_DAY_PREP_PLAN.md`
 
 ## Day 14 - Final mixed interview prep
 - Questions: Q141-Q150

@@ -93,7 +93,13 @@ const DAY_TO_IDS = {
     438, 439, 440, 441, 442, 443, 444, 445, 446, 447, 448, 449, 450, 451, 452, 453,
     454, 455, 456, 457
   ],
-  13: [131, 132, 133, 134, 135, 136, 137, 138, 139, 140],
+  // Day 13: LeetCode set 3 (Q131–Q140) + mock interview #2 & meta-skills (Q458–Q493).
+  13: [
+    131, 132, 133, 134, 135, 136, 137, 138, 139, 140,
+    458, 459, 460, 461, 462, 463, 464, 465, 466, 467, 468, 469, 470, 471, 472, 473,
+    474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 484, 485, 486, 487, 488, 489,
+    490, 491, 492, 493
+  ],
   14: [141, 142, 143, 144, 145, 146, 147, 148, 149, 150]
 };
 
@@ -104,6 +110,7 @@ function topicFromId(id) {
   if (id >= 358 && id <= 385) return 'Architecture & Clean Code';
   if (id >= 386 && id <= 421) return 'Performance & Security';
   if (id >= 422 && id <= 457) return 'Fullstack & API Integration';
+  if (id >= 458 && id <= 493) return 'Mock Interview & Interview Skills';
   if (id >= 308 && id <= 332) return 'React (Performance & Forms)';
   if (id >= 249 && id <= 263) return 'React (Interview supplement)';
   if (id >= 237 && id <= 248) return 'Angular (Testing)';

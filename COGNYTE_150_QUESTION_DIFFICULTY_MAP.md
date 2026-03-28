@@ -337,6 +337,47 @@ Use:
 
 ---
 
+## Q458-Q493 (Mock interview & interview skills — Day 13)
+
+- Q458: must-know-for-junior
+- Q459: must-know-for-junior
+- Q460: must-know-for-junior
+- Q461: must-know-for-junior
+- Q462: must-know-for-junior
+- Q463: must-know-for-junior
+- Q464: must-know-for-junior
+- Q465: must-know-for-junior
+- Q466: medium
+- Q467: medium
+- Q468: must-know-for-junior
+- Q469: must-know-for-junior
+- Q470: medium
+- Q471: medium
+- Q472: must-know-for-junior
+- Q473: must-know-for-junior
+- Q474: must-know-for-junior
+- Q475: must-know-for-junior
+- Q476: must-know-for-junior
+- Q477: medium
+- Q478: medium
+- Q479: must-know-for-junior
+- Q480: must-know-for-junior
+- Q481: medium
+- Q482: must-know-for-junior
+- Q483: must-know-for-junior
+- Q484: must-know-for-junior
+- Q485: must-know-for-junior
+- Q486: must-know-for-junior
+- Q487: must-know-for-junior
+- Q488: must-know-for-junior
+- Q489: must-know-for-junior
+- Q490: medium
+- Q491: medium
+- Q492: easy
+- Q493: must-know-for-junior
+
+---
+
 ## Q358-Q385 (Architecture & clean code — Day 10)
 
 - Q358: must-know-for-junior

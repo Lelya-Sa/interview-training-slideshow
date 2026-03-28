@@ -161,6 +161,7 @@ Goal: Convert knowledge into high interview performance.
 
 ### Day 13 - Mock Interview #2 (Full Loop)
 
+- [ ] Cognyte question queue: **Q131–Q140** and **Q458–Q493** (mock interview & meta-skills); see `COGNYTE_DAY_BY_DAY_QUESTION_PLAN.md`.
 - [ ] 60 min technical deep dive.
 - [ ] 40 min live coding.
 - [ ] 20 min behavioral.

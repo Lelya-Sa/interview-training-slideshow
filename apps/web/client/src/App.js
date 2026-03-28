@@ -70,7 +70,7 @@ function App() {
     { dayNumber: 10, title: 'Architecture + Refactor', focus: 'Feature structure and clean code', tasks: ['Day 10 question set (Q100-Q110, Q358-Q385)', 'Refactor one feature', '3 logic tasks', 'trade-offs explanation'], verify: 'Can justify architectural decisions clearly.' },
     { dayNumber: 11, title: 'Performance + Security', focus: 'Debounce/throttle, rendering, XSS/auth basics', tasks: ['Day 11 question set (Q111-Q120, Q386-Q421)', 'Add one perf and one reliability improvement', 'timed mixed set', 'security Q&A'], verify: 'Can discuss optimization and frontend security basics.' },
     { dayNumber: 12, title: 'Fullstack Integration', focus: 'API contracts/status codes/error handling', tasks: ['Day 12 question set (Q121-Q130, Q422-Q457)', 'OA-style timed set', 'debug scenario walkthrough', 'integration explanation'], verify: 'Can explain UI-event-to-API-response end-to-end.' },
-    { dayNumber: 13, title: 'Mock Interview #2', focus: 'Full simulation under pressure', tasks: ['60m technical', '40m live coding', '20m behavioral'], verify: 'Score improved vs Mock #1.' },
+    { dayNumber: 13, title: 'Mock Interview #2', focus: 'Full simulation under pressure', tasks: ['Day 13 question set (Q131-Q140, Q458-Q493)', '60m technical', '40m live coding', '20m behavioral', 'compare to Mock #1; 48h fix list'], verify: 'Score improved vs Mock #1; gaps documented with drills.' },
     { dayNumber: 14, title: 'Final Polish', focus: 'Weak topics + final rehearsal', tasks: ['4 tasks in 90m', 'project storytelling', 'interview opening'], verify: 'Ready to answer ~80% core questions without notes.' }
   ];
   const dayByDayQuestionPlan = [
@@ -86,7 +86,7 @@ function App() {
     { day: 10, focus: 'Logic + architecture & clean code', questions: 'Q100-Q110, Q358-Q385' },
     { day: 11, focus: 'Logic + performance & security', questions: 'Q111-Q120, Q386-Q421' },
     { day: 12, focus: 'Logic + fullstack / API integration', questions: 'Q121-Q130, Q422-Q457' },
-    { day: 13, focus: 'Logic + mixed frontend scenarios', questions: 'Q131-Q140' },
+    { day: 13, focus: 'Logic + mock interview #2 (technical, live coding, behavioral)', questions: 'Q131-Q140, Q458-Q493' },
     { day: 14, focus: 'Final mixed interview prep', questions: 'Q141-Q150' }
   ];
 

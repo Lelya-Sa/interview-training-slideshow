@@ -1980,9 +1980,304 @@ Thin happy-path probes + synthetic checks; alert on burn rate not single blip
 
 ---
 
+## Mock interview #2 & interview meta-skills (Day 13, Q458–Q493)
+
+Aligned with **Day 13 – Mock Interview #2 (Full Loop)** in `COGNYTE_14_DAY_PREP_PLAN.md` (60m technical, 40m live coding, 20m behavioral, compare to mock #1, 48-hour fix list). Topics reflect common **2025–2026** practice: collaborative live coding, thinking aloud, remote setup, AI-assisted workflows **outside** the interview room, and concise technical/behavioral framing—see e.g. [Practical Tips for Live Coding Interviews](https://blog.imocha.io/practical-tips-for-live-coding-interviews) and current hiring discussions on structured behavioral answers (STAR). Pair with logic set **Q131–Q140** in the app.
+
+### 458) How do you **structure a 60-minute technical** deep-dive as a candidate?
+**Theory:** Interviewers want signal on depth, communication, and honest trade-offs—not a monologue.
+**Answer:** Open with **agenda check** (“Happy to go deep on X—where should we start?”); spend blocks on **2–3 themes** (e.g. React data flow, one perf story, one testing story); end with **summary + what you’d improve**; ask clarifying questions when scope is vague.
+**Explanation:** Mirrors real senior conversations; shows you don’t ramble—critical for “full loop” mock #2.
+```txt
+2–3 deep stories > 10 shallow buzzwords; end with recap + learnings
+```
+
+### 459) What is a sensible **time split** for **~40 minutes of live coding**?
+**Theory:** Timeboxed interviews reward visible progress and explicit trade-offs.
+**Answer:** Rough guide: **5–8 min** clarifications + examples, **20–25 min** core solution (happy path first), **8–12 min** tests + edge cases + refactor, **2–5 min** recap; adjust if interviewer steers.
+**Explanation:** Juniors who skip clarification often build the wrong API; those who never test leave bugs on the board.
+```txt
+Clarify → small working slice → harden → summarize; say “I’ll defer X unless you want it now”
+```
+
+### 460) How do you use **STAR** in behavioral answers as a frontend engineer?
+**Theory:** **S**ituation, **T**ask, **A**ction, **R**esult—structured without sounding robotic.
+**Answer:** Pick one real incident (production bug, conflict, deadline); **Situation** in one sentence; **Task** = your responsibility; **Action** = what *you* did (code, review, comms); **Result** = metric or team outcome, plus **what you’d do differently**.
+**Explanation:** Interviewers score for ownership and reflection—avoid “we we we” with no individual actions.
+```txt
+One story, your verbs, measurable or qualitative outcome, one lesson learned
+```
+
+### 461) After **Mock #2**, what should you **compare** against **Mock #1**?
+**Theory:** Improvement needs concrete dimensions, not vibes.
+**Answer:** Track **clarity** (did you state assumptions?), **speed to first working code**, **bug count**, **communication** (think-aloud), **depth** on follow-ups); note where anxiety spiked; compare **same question types** if possible.
+**Explanation:** Feeds your **48-hour fix list** and Day 14 polish priorities.
+```txt
+Written rubric beats “felt better”; same categories for both mocks
+```
+
+### 462) What belongs on a **48-hour fix list** before a real interview?
+**Theory:** Short horizon forces prioritization—fix what moves the needle.
+**Answer:** Top **3–5 gaps**: e.g. one **algorithm pattern**, one **system explanation** (caching/auth), one **debugging narrative**, one **a11y/perf** sound bite; each item has a **drill** (30–60 min) and **success criterion**.
+**Explanation:** Ties directly to the roadmap’s “final fix list” after mock #2.
+```txt
+Specific drills, not “study React more”
+```
+
+### 463) Why do interviewers ask you to **think aloud** during coding?
+**Theory:** They evaluate problem-solving process, not just the final snippet.
+**Answer:** Narrate **assumptions**, **options considered**, **why you picked one**, and **when you’re stuck** (what you’d try next); it simulates collaboration and reduces silent mis-builds.
+**Explanation:** Aligns with modern live-coding guidance emphasizing communication alongside code.
+```txt
+Process visibility = trust; silence = unknown risk
+```
+
+### 464) When should you **ask clarifying questions** before you type?
+**Theory:** Ambiguous specs are intentional—clarification is a positive signal.
+**Answer:** Ask about **inputs/outputs**, **constraints** (size, offline, a11y), **API shape**, **error handling**, and **what “done” means**; timebox questions so you start coding within ~5–8 minutes unless told otherwise.
+**Explanation:** Junior strength is catching bad assumptions early—shows professional habits.
+```txt
+“Can I assume sorted input?” beats guessing wrong for 20 minutes
+```
+
+### 465) How do you answer **“I don’t know”** without sinking the interview?
+**Theory:** Honesty + recovery path beats bluffing—especially in 2025+ stacks that change fast.
+**Answer:** **Acknowledge** the gap, **say what you do know** adjacent, **propose how you’d learn** (docs, experiment, ask mentor)—offer to implement a **small related piece** if time allows.
+**Explanation:** Interviewers often reward intellectual honesty and learning velocity.
+```txt
+“I haven’t used X in prod—here’s how I’d validate it in 15 minutes…”
+```
+
+### 466) **Remote interview setup**: what should you verify **15 minutes before**?
+**Theory:** Friction kills focus—treat the call like production.
+**Answer:** **Stable network** (wired if possible), **camera/mic** test, **quiet space**, **IDE font size** for screen share, **second monitor** plan if allowed, **browser tab** cleanup, **phone on silent**; have **backup hotspot** if possible.
+**Explanation:** Reduces “sorry, can you repeat?” loops that eat coding time.
+```txt
+Rehearse share-screen + IDE once the day before
+```
+
+### 467) **Take-home** vs **live coding**: what is a fair **junior-level trade-off** to mention?
+**Theory:** Both formats have bias and cost—show you understand the industry.
+**Answer:** Take-homes can show **realistic** quality but take **candidate time**; live coding tests **communication under pressure** but may feel **artificial**; some companies blend **timeboxed take-home** or **pairing**—fair answer is non-dogmatic.
+**Explanation:** Signals maturity without complaining about the process in the interview itself.
+```txt
+“Each measures different things—I prepare for the format they use.”
+```
+
+### 468) What is **“frontend system design lite”** in a junior interview?
+**Theory:** Not a full distributed systems exam—bounded scope.
+**Answer:** Sketch **users**, **client modules**, **data flow**, **API contract**, **caching**, **auth**, **error states**, **basic perf** (bundle splits), **a11y** touchpoints—often on a **whiteboard or Excalidraw** in 20–35 minutes.
+**Explanation:** Clarity and trade-offs beat fancy diagrams—name bottlenecks you’d measure.
+```txt
+Who uses it → what calls what → what breaks → how you’d observe it
+```
+
+### 469) How do you use **~20 minutes of behavioral** time effectively?
+**Theory:** Short behavioral slots reward **prepared stories**, not improvisation.
+**Answer:** Have **4–6 STAR stories** (conflict, failure, leadership, tight deadline, bug, learning); listen for **which competency** they probe; **answer then stop**—don’t fill time with fluff.
+**Explanation:** Practice 90-second versions—long rambles get cut off.
+```txt
+Story bank + listen for the cue word (ownership, conflict, impact)
+```
+
+### 470) How do you handle **long silences** or a **stressed interviewer**?
+**Theory:** Stay calm; don’t assume hostility—sometimes they’re thinking or multitasking.
+**Answer:** **Pause** politely, **offer a checkpoint** (“I’ll implement the happy path next unless you want a different approach”), **ask if they want more detail** on a specific area; keep your tone steady.
+**Explanation:** Emotional regulation is a soft skill companies screen for in full-loop rounds.
+```txt
+Narrate next step; don’t fill silence with panic refactors
+```
+
+### 471) **Whiteboard** vs **shared IDE**: how does your **approach** change?
+**Theory:** Whiteboard = no compiler; IDE = syntax help but time pressure to run tests.
+**Answer:** On whiteboard, **pseudo-code + interfaces first**, verbalize edge cases; in IDE, **small steps, run often**, use **debugger** if allowed—always **state** when you’re skipping details for time.
+**Explanation:** Adapting to the medium is senior-adjacent behavior even for juniors.
+```txt
+Match fidelity to environment—don’t fake runnable code on a whiteboard
+```
+
+### 472) How much **automated testing** should you write in a **timed** interview?
+**Theory:** Signal > coverage—one meaningful test beats ten boilerplate tests.
+**Answer:** If tests are expected, add **1–2 key cases** (happy path + one edge); **mention** what else you’d add; if time is tight, **describe** test matrix verbally and implement one.
+**Explanation:** Shows you value quality without getting stuck in Jest config.
+```txt
+One good test + verbal list of edge cases often wins
+```
+
+### 473) Name **three accessibility checks** you can mention in **any** UI interview.
+**Theory:** A11y is table stakes in mature front-end hiring.
+**Answer:** **Keyboard** path and focus order, **labels** for inputs, **contrast** (and zoom); optionally **semantic HTML** and **live regions** for dynamic updates.
+**Explanation:** Pair with “I’d run axe or Lighthouse in a real PR” for credibility.
+```txt
+Keyboard, labels, contrast—quick wins interviewers recognize
+```
+
+### 474) How do you structure a **performance** answer without **premature optimization**?
+**Theory:** Measure-first narratives are standard in modern web interviews.
+**Answer:** **Clarify** user pain (LCP/INP/CLS), **profile** (Lighthouse, DevTools), **hypothesis**, **change**, **verify**—mention **when** you’d cache vs fix render churn; cite **Core Web Vitals** at high level.
+**Explanation:** Ties to [web.dev Vitals](https://web.dev/articles/vitals) expectations without claiming expert SRE skills.
+```txt
+Measure → change one variable → verify; don’t guess in the dark
+```
+
+### 475) How do you give a **concise security** answer (**XSS/CSRF**) under time pressure?
+**Theory:** Interviewers want correct primitives, not PhD crypto.
+**Answer:** **XSS**: untrusted input → context; **sanitize/escape**, **CSP**, avoid `dangerouslySetInnerHTML`; **CSRF**: **SameSite cookies**, **anti-forgery tokens** for cookie sessions; always **HTTPS** in prod.
+**Explanation:** 60–90 seconds—then invite deeper follow-up if they want.
+```txt
+Two threats, two mitigations each, stop unless they probe deeper
+```
+
+### 476) **TypeScript** in interviews: what do **`unknown`** and **narrowing** signal to an interviewer?
+**Theory:** Soundness beats `any` in 2025–2026 TS-heavy teams.
+**Answer:** **`unknown`** forces you to **narrow** before use; narrowing shows **discriminated unions**, **typeof/instanceof**, and **type guards**—safer boundaries at API edges.
+**Explanation:** Shows you align TS with runtime validation (Zod) when relevant.
+```txt
+unknown at boundaries; narrow before use—no any escape hatch by default
+```
+
+### 477) **React 18/19**: what **Concurrent** features are fair to **mention in passing**?
+**Theory:** Don’t overclaim—show awareness of scheduling and rendering models.
+**Answer:** **Transitions** (`useTransition`) for non-urgent updates, **Suspense** for async UI, **streaming server components** in some stacks—tie to “keeping UI responsive under load.”
+**Explanation:** Depth optional; honesty about what you’ve shipped matters more.
+```txt
+“Concurrent features help prioritize urgent vs deferrable updates”
+```
+
+### 478) **Angular**: **standalone APIs** and **signals**—one **sentence** each for interviews?
+**Theory:** Hiring teams on Angular 15+ expect vocabulary recognition.
+**Answer:** **Standalone**: components/bootstrap **without NgModules** for leaner imports; **Signals**: fine-grained **reactive state** with explicit reads/writes—often paired with change detection strategy.
+**Explanation:** If you haven’t shipped them, say so and contrast with what you used (modules, RxJS).
+```txt
+Standalone = less boilerplate modules; Signals = explicit reactive primitives
+```
+
+### 479) Are **AI coding assistants** allowed in interviews—how do you handle this in **2025–2026**?
+**Theory:** Policies vary; integrity matters more than tooling hot takes.
+**Answer:** **Ask the recruiter** or read instructions; **assume closed-book** unless told otherwise; if allowed, **narrate** what you’re generating vs understanding; **never** use hidden assistance in ethical interviews—it’s fraud and reputational risk.
+**Explanation:** Many companies treat interview AI like exam proctoring—when in doubt, clarify.
+```txt
+Default: no AI unless explicit; transparency if pair-programming with tools allowed
+```
+
+### 480) How is **using AI to practice** different from **using AI during** a live interview?
+**Theory:** Prep is ethical; substituting judgment in a closed interview is not.
+**Answer:** Practice: **drill explanations**, **generate edge cases**, **review your answers**; live: **your reasoning** must be authentic unless rules allow tools—**misrepresenting** ability fails on the job.
+**Explanation:** Frame AI as **flashcards and feedback**, not a hidden co-pilot.
+```txt
+Practice = accelerate learning; cheating = hidden dependency in assessment
+```
+
+### 481) When is it appropriate to discuss **compensation** in the process?
+**Theory:** Stage and culture matter—avoid derailing technical rounds.
+**Answer:** Often **recruiter/HR screen** or **after** mutual interest; **not** in the middle of a technical deep-dive unless they open it; **ranges** can be exchanged early to avoid waste.
+**Explanation:** Junior-safe: “Happy to discuss with recruiting—excited about the role fit first.”
+```txt
+Technical round = technical signal; comp with recruiter or late stage
+```
+
+### 482) What **good questions** do you ask **the interviewer** at the end?
+**Theory:** Shows curiosity and filters bad fits—prepare **3–5**.
+**Answer:** **Team workflow** (PRs, design reviews), **on-call expectations**, **quality bar** (testing, a11y), **growth** (mentorship), **stack roadmap**—avoid questions answered on the website.
+**Explanation:** Signals you think like a future teammate, not a desperate applicant.
+```txt
+Specific > generic; one question about how they help juniors grow
+```
+
+### 483) **Production bug** story: how do you frame it with **STAR** for frontend?
+**Theory:** They want debugging discipline and customer impact awareness.
+**Answer:** **Situation**: outage/symptom; **Task**: your role; **Action**: **repro**, **bisect**, **fix**, **communication**; **Result**: metrics restored, **postmortem**, **guardrail** (test, monitor, feature flag).
+**Explanation:** Blameless tone—focus on systems, not pointing fingers.
+```txt
+Repro → isolate → fix → prevent recurrence; show telemetry
+```
+
+### 484) How do you answer **conflict** or **disagreeing with a senior**?
+**Theory:** Maturity = disagree and commit with respect.
+**Answer:** **Assume good intent**; **share data** (user impact, perf numbers); **propose experiment** or small POC; **escalate** with manager if stuck; **document** decision for the team.
+**Explanation:** Avoid “they were wrong” energy—show collaborative resolution.
+```txt
+Data + small experiment + respectful escalation path
+```
+
+### 485) How do you answer **“Tell me about a failure”** constructively?
+**Theory:** They want **resilience**, not drama.
+**Answer:** Pick a **real** miss; **own** your part; describe **detection**, **response**, **user communication**, and **what you changed** (process, tests, monitoring); end with **humility + growth**.
+**Explanation:** Failure without learning reads as excuse-making.
+```txt
+Failure + ownership + concrete prevention + lesson
+```
+
+### 486) **Pair programming** interview: what behaviors do reviewers **reward**?
+**Theory:** Collaboration mirrors real work—talk, don’t dominate.
+**Answer:** **Ask** for preferences, **explain** small steps, **invite** navigation when stuck, **accept hints** gracefully, **summarize** state often; **clean up** before time ends.
+**Explanation:** Same signals as good async PR collaboration—sync edition.
+```txt
+Two-way radio, not monologue; incorporate feedback quickly
+```
+
+### 487) How do you **refactor under time pressure** without freezing?
+**Theory:** Safe refactors are incremental—extract, rename, test, repeat.
+**Answer:** **Make green** first; then **extract function/component**, **rename for clarity**, **delete duplication**; **avoid big-bang** rewrites; say “I’d split this next if we had more time.”
+**Explanation:** Shows judgment—interviewers fear reckless rewrites.
+```txt
+Green → small extractions → verbalize next steps you’re deferring
+```
+
+### 488) **Unfamiliar codebase** exercise: what is your **first 5-minute plan**?
+**Theory:** Navigation skill is a hire signal for legacy codebases.
+**Answer:** Read **README**, **package.json**, **entrypoint**, **routing**, **one vertical slice**; **search** for feature name; **note** test folders; **don’t** read every file—**map** then **deep dive**.
+**Explanation:** Mirrors how seniors onboard—breadth first.
+```txt
+Map the terrain before spelunking random files
+```
+
+### 489) **Estimation**: how do you break down **“How long would this feature take?”**
+**Theory:** They want **structured thinking**, not a magic number.
+**Answer:** Clarify **scope** and **definition of done**; split into **unknowns** vs **known** work; give **range** with **assumptions**; mention **dependencies** (design, API, QA); offer **milestones**.
+**Explanation:** Juniors who give ranges + assumptions beat false precision.
+```txt
+Range + assumptions + unknowns; invite collaboration on scope
+```
+
+### 490) **Git** in interviews: what is a safe **one-liner** about **rebase vs merge**?
+**Theory:** Many teams prefer linear history—know the team norm.
+**Answer:** **Merge** preserves branch topology; **rebase** replays commits for **linear history**—can rewrite if you haven’t pushed shared branches; **never force-push** shared main.
+**Explanation:** Don’t debate religion—show you know **collaboration hazards**.
+```txt
+Rebase for clean history; avoid rewriting shared branches; ask team convention
+```
+
+### 491) **CI/CD** for frontends: what is one **quality gate** you are proud to mention?
+**Theory:** “Shift left” quality is a standard talking point.
+**Answer:** Examples: **lint + typecheck + unit tests** on PR, **Lighthouse** budget or bundle size check, **preview deploys** for review, **a11y** checks in pipeline—pick **one** you’ve actually touched.
+**Explanation:** Specificity beats listing every possible tool.
+```txt
+One gate you’ve seen fail and fix a real bug
+```
+
+### 492) **Post-interview**: what is appropriate **follow-up** (and what is noisy)?
+**Theory:** Professional courtesy—brief and grateful.
+**Answer:** **Thank-you email** within 24–48h: **one specific** topic you enjoyed, **reiterate interest**, **no** pressure for decision; avoid **multiple** pings or **novel-length** essays.
+**Explanation:** Some companies ignore; still doesn’t hurt to be polite.
+```txt
+Short, specific, gracious—no stalking
+```
+
+### 493) **Mock Interview #2 checklist**: what **three signals** mean you are ready for **Day 14** polish?
+**Theory:** Day 13 is the gate before final rehearsal—tie to the roadmap.
+**Answer:** (1) You can **complete** a timed loop without panic shutdown; (2) you have a **written** gap list with drills; (3) **behavioral** stories feel **fluent** at 90 seconds; bonus: **mock #2** beats **mock #1** on at least one rubric dimension.
+**Explanation:** Sets up the **Final Verification** bullets in the 14-day plan (two mocks, improvement, readiness).
+```txt
+Calm execution + documented gaps + fluent stories = Day 14 ready
+```
+
+---
+
 ## Self-Verification for Phase 4
 
 - [ ] Solve 20/35 logic questions from memory (without reading answer first).
 - [ ] Re-code at least 10 solutions from scratch in <= 35 minutes.
 - [ ] For mixed questions, explain both implementation and trade-offs out loud.
 - [ ] Mark weak patterns and repeat them next day first (spaced repetition).
+- [ ] For **Day 13** (Q458–Q493): deliver at least two **90-second STAR** stories out loud and one **timed** live-coding walkthrough with think-aloud.

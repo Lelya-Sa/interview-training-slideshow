@@ -142,11 +142,30 @@ const DAYS = {
     ]
   },
   13: {
-    headline: 'Day 13 · Mock Interview #2',
-    intro: 'Full loop under pressure.',
+    headline: 'Day 13 · Mock Interview #2 (Full Loop)',
+    intro:
+      'Matches the 14-day plan: full mock (60m technical deep dive, 40m live coding, 20m behavioral), compare results to Mock #1, and write a 48-hour fix list. Question sprint: Q131–Q140 (logic set 3) plus Q458–Q493—STAR stories, think-aloud coding, remote setup, AI/integrity norms, frontend “system design lite,” TypeScript/React/Angular sound bites, pair programming, estimation, CI gates, and post-interview etiquette—grounded in current hiring practice (2025–2026).',
     tracks: [
-      { label: 'Roadmap', items: ['60m technical', '40m live coding', '20m behavioral'] },
-      { label: 'Verify', items: ['Score improved vs mock #1.'] }
+      {
+        label: 'Question tracks',
+        items: ['Logic / LeetCode: Q131–Q140', 'Mock interview & meta-skills: Q458–Q493']
+      },
+      {
+        label: 'Prep plan checklist',
+        items: [
+          'Run the full loop: 60m technical, 40m live coding, 20m behavioral',
+          'Compare Mock #2 to Mock #1 on a simple rubric (clarity, speed, bugs, communication)',
+          'Write a 48-hour fix list: 3–5 drills with success criteria',
+          'Review Q458–Q493 for gaps (behavioral bank, live coding timeboxing, remote setup)'
+        ]
+      },
+      {
+        label: 'Verify',
+        items: [
+          'You improved on at least one dimension vs Mock #1',
+          'Fix list is specific (not “study more”) and feeds Day 14 polish'
+        ]
+      }
     ]
   },
   14: {
