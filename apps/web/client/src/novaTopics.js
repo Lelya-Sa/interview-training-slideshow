@@ -21,14 +21,14 @@ export const NOVA_TOPICS = [
     title: 'Logic',
     headline: 'Logic · puzzles & reasoning',
     intro:
-      'Control flow (FizzBuzz), bit tricks (XOR, popcount), number theory (primes, GCD/LCM), palindrome, Fibonacci DP, hash sets, Boyer-Moore, array rotation, grid DP, prefix sums, binary search, two pointers, stack brackets, merge sorted, and rate-limit logic — with step-by-step reasoning and complexity.',
+      'Control flow, bit tricks, number theory, two pointers, binary search, prefix sums, stack, sliding window, greedy (Kadane, jump game), string anagrams, peak-finding, puzzles, and rate limits — 30 questions with complexity and edge cases.',
     bestPractices: [
       'Restate the problem and list constraints before guessing.',
       'Watch off-by-one, overflow (use long/checked), empty input.',
       'For puzzles, name invariants or use contradiction.',
       'State complexity even for non-leetcode logic.'
     ],
-    verify: 'Solve 3 problems on paper with reasoning written out.'
+    verify: 'Solve 3 problems on paper with reasoning written out; explain Kadane and one binary-search variant without notes.'
   },
   {
     slug: 'code',

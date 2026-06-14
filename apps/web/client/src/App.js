@@ -272,7 +272,7 @@ function App() {
             </button>
           </div>
           <p className="cognyte-roadmap-description">
-            LeetCode · Logic · Code (C#) · SDLC · Threading — <strong>22+ questions per topic</strong> (110 total). Use Interview mode: answer out loud, reveal, rate Strong/Partial/Weak.
+            LeetCode · Logic · Code (C#) · SDLC · Threading — <strong>22–30 questions per topic</strong> (118 total). Use Interview mode: answer out loud, reveal, rate Strong/Partial/Weak.
           </p>
           <details className="cognyte-roadmap-details" open>
             <summary className="cognyte-roadmap-summary">Tonight&apos;s study order (recommended)</summary>

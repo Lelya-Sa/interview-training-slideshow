@@ -1,13 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 
-/** Global question ID → topic slug (22 per topic). */
+/** Global question ID → topic slug. */
 const TOPIC_RANGES = {
   leetcode: { min: 1, max: 22, label: 'LeetCode (C#)' },
-  logic: { min: 23, max: 44, label: 'Logic' },
-  code: { min: 45, max: 66, label: 'Code (C#)' },
-  sdlc: { min: 67, max: 88, label: 'SDLC' },
-  threading: { min: 89, max: 110, label: 'Threading & Processes (C#)' }
+  logic: { min: 23, max: 52, label: 'Logic' },
+  code: { min: 53, max: 74, label: 'Code (C#)' },
+  sdlc: { min: 75, max: 96, label: 'SDLC' },
+  threading: { min: 97, max: 118, label: 'Threading & Processes (C#)' }
 };
 
 const PACK_FILES = [

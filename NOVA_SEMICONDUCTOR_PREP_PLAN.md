@@ -7,7 +7,7 @@
 | Block | Time | Topic | Web action | Done |
 |-------|------|-------|------------|------|
 | 1 | 45–60m | **LeetCode (C#)** | Open **Nova Prep → LeetCode** — 22 Q; interview mode on | [ ] |
-| 2 | 30–40m | **Logic** | Open **Nova Prep → Logic** — 22 Q | [ ] |
+| 2 | 35–45m | **Logic** | Open **Nova Prep → Logic** — 30 Q | [ ] |
 | 3 | 45–60m | **Code (C#)** | Open **Nova Prep → Code** — 22 Q; re-type 5 snippets | [ ] |
 | 4 | 30–40m | **SDLC** | Open **Nova Prep → SDLC** — 22 Q | [ ] |
 | 5 | 35–45m | **Threading & Processes (C#)** | Open **Nova Prep → Threading** — 22 Q; lock, Task, deadlock | [ ] |
@@ -25,7 +25,7 @@
 
 ### Logic
 - Think aloud: restate → brute force → optimize → verify with tiny example; state **time/space** complexity.
-- Types covered: **FizzBuzz/state machine**, **XOR/bit tricks**, **primes/sieve/GCD**, **palindrome/Fibonacci**, **hash set**, **Boyer-Moore**, **rotation**, **grid DP**, **prefix sum**, **binary search**, **two pointers/merge**, **stack brackets**, **sliding window & token bucket** rate limits.
+- Types covered: **FizzBuzz/state machine**, **XOR/bit tricks**, **primes/sieve/GCD**, **palindrome/Fibonacci**, **hash set**, **Boyer-Moore**, **rotation**, **grid DP**, **prefix sum**, **binary search**, **two pointers/merge**, **stack brackets**, **sliding window** (numeric + strings), **greedy** (Kadane, jump game), **anagrams**, **peak binary search**, **balance-scale puzzle**, **rate limits**.
 - Watch **off-by-one**, **overflow** (`long`/`checked`), and **empty input**.
 
 ### Code (C#)

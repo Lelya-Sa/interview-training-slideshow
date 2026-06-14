@@ -323,3 +323,116 @@ public static bool TryConsumeToken(ref double tokens, double capacity, double re
     return true;
 }
 ```
+
+### 45) **Maximum subarray sum** — Kadane's algorithm
+**Theory:** Find the contiguous subarray with largest sum—classic **greedy/DP** hybrid asked in logic and coding screens.
+**Answer:** Track `currentMax` (best ending here) and `globalMax`. For each `n`: `currentMax = Max(n, currentMax + n)`; update `globalMax`.
+**Explanation:** O(n) time, O(1) space. All-negative array: Kadane still works (`globalMax` becomes max element). Follow-up: return indices, or count of such subarrays.
+```csharp
+public static int MaxSubArray(int[] nums) {
+    int cur = nums[0], best = nums[0];
+    for (int i = 1; i < nums.Length; i++) {
+        cur = Math.Max(nums[i], cur + nums[i]);
+        best = Math.Max(best, cur);
+    }
+    return best;
+}
+```
+
+### 46) **Power of two** — O(1) bit trick
+**Theory:** Powers of two have exactly one set bit; `n & (n-1)` clears lowest set bit.
+**Answer:** `n > 0 && (n & (n - 1)) == 0` means power of two. Alternative: `n > 0 && (n & -n) == n`.
+**Explanation:** Also used for sizing buffers (align to power of 2). Edge: `n=0` is false, `n=1` is true.
+```csharp
+public static bool IsPowerOfTwo(int n) => n > 0 && (n & (n - 1)) == 0;
+```
+
+### 47) **Reverse integer** with overflow safety
+**Theory:** Build reversed digits digit-by-digit; must detect **32-bit overflow** before it happens.
+**Answer:** While `x != 0`, `pop = x % 10`, `x /= 10`. If `rev > int.MaxValue/10` or `(rev == Max/10 && pop > 7)` overflow → return 0. Else `rev = rev*10 + pop`.
+**Explanation:** Negative `x` handled by sign. Interviewers want explicit overflow check, not try/catch.
+```csharp
+public static int Reverse(int x) {
+    int rev = 0;
+    while (x != 0) {
+        int pop = x % 10; x /= 10;
+        if (rev > int.MaxValue / 10 || (rev == int.MaxValue / 10 && pop > 7)) return 0;
+        rev = rev * 10 + pop;
+    }
+    return rev;
+}
+```
+
+### 48) **Anagram check** — frequency counting
+**Theory:** Two strings are anagrams if character counts match—**string logic** without sorting.
+**Answer:** If lengths differ → false. Count chars in first string; decrement using second; any negative count → false.
+**Explanation:** O(n) time, O(1) space for ASCII (26 or 128 array). Unicode: use `Dictionary<char,int>`. Follow-up: grouped anagrams uses hash of count key.
+```csharp
+public static bool IsAnagram(string s, string t) {
+    if (s.Length != t.Length) return false;
+    var count = new int[26];
+    for (int i = 0; i < s.Length; i++) {
+        count[s[i] - 'a']++;
+        count[t[i] - 'a']--;
+    }
+    return count.All(c => c == 0);
+}
+```
+
+### 49) **Longest substring without repeating** characters — sliding window
+**Theory:** Expand window right; on duplicate, shrink left until duplicate removed—track max length.
+**Answer:** `Dictionary<char,int> lastIndex`, `start` of window. For each `i`, if char seen and index >= start, move `start`. Update max and store index.
+**Explanation:** O(n) time typical. Classic **sliding window on strings**—distinct from numeric sliding window rate limiter.
+```csharp
+public static int LengthOfLongestSubstring(string s) {
+    var last = new Dictionary<char, int>();
+    int start = 0, best = 0;
+    for (int i = 0; i < s.Length; i++) {
+        if (last.TryGetValue(s[i], out int prev) && prev >= start) start = prev + 1;
+        last[s[i]] = i;
+        best = Math.Max(best, i - start + 1);
+    }
+    return best;
+}
+```
+
+### 50) **Jump game** — greedy reachability
+**Theory:** Can you reach last index if `nums[i]` is max jump from `i`? Greedy tracks farthest reachable index.
+**Answer:** `reach = 0`. For `i` from 0 to n-1: if `i > reach` return false; `reach = Max(reach, i + nums[i])`. Return true if `reach >= n-1`.
+**Explanation:** O(n) time, O(1) space. Different from DP path counting—this is **feasibility greedy**. Minimum jumps is DP/BFS follow-up.
+```csharp
+public static bool CanJump(int[] nums) {
+    int reach = 0;
+    for (int i = 0; i < nums.Length; i++) {
+        if (i > reach) return false;
+        reach = Math.Max(reach, i + nums[i]);
+    }
+    return true;
+}
+```
+
+### 51) **Find peak element** — binary search on unsorted array
+**Theory:** Peak where `nums[i] > nums[i±1]` must exist (ends treated as -∞). Binary search on **which half must contain a peak**.
+**Answer:** `lo`, `hi`. `mid = lo + (hi-lo)/2`. If `nums[mid] < nums[mid+1]`, peak is right (`lo=mid+1`); else peak is left including mid (`hi=mid`).
+**Explanation:** O(log n)—interviewers test binary search beyond sorted arrays. Clarify boundary conditions for `mid == n-1`.
+```csharp
+public static int FindPeakElement(int[] nums) {
+    int lo = 0, hi = nums.Length - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] < nums[mid + 1]) lo = mid + 1;
+        else hi = mid;
+    }
+    return lo;
+}
+```
+
+### 52) **Balance scale puzzle** — find one heavy coin among eight
+**Theory:** Classic **logic puzzle**: 8 coins, one heavier; 2 weighings on balance scale—divide and conquer.
+**Answer:** Weigh 3 vs 3. Equal → heavy is in remaining 2 (weigh them). Unequal → heavy in heavier trio; weigh 1 vs 1 from that trio (third is heavy if equal).
+**Explanation:** Generalizes to 12 coins / 3 weighings. Interview tests structured reasoning, not code speed—state invariants after each weighing.
+```txt
+Weigh A: coin1-3 vs coin4-6
+  balanced -> heavy in {7,8} -> second weigh 7 vs 8
+  left heavy -> heavy in {1,2,3} -> weigh 1 vs 2 (3 if equal)
+```
