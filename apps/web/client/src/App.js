@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QuestionsView from './components/QuestionsView';
+import { NOVA_TOPICS } from './novaTopics';
 
 const TOTAL_DAYS = 34;
 
@@ -9,6 +10,8 @@ function App() {
   const [showSideQuest, setShowSideQuest] = useState(false);
   const [showCognyteRoadmap, setShowCognyteRoadmap] = useState(false);
   const [showDayByDayPlan, setShowDayByDayPlan] = useState(false);
+  const [showNovaPrep, setShowNovaPrep] = useState(false);
+  const [selectedNovaTopic, setSelectedNovaTopic] = useState(null);
   const [useCognyteAsMain, setUseCognyteAsMain] = useState(true);
   const [roadmap, setRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -108,7 +111,7 @@ function App() {
 
   return (
     <div className="app">
-      {selectedDay == null && !showSideQuest && !showCognyteRoadmap && !showDayByDayPlan ? (
+      {selectedDay == null && selectedNovaTopic == null && !showSideQuest && !showCognyteRoadmap && !showDayByDayPlan && !showNovaPrep ? (
         <>
           <header className="app-header">
             <h1 className="app-title">Interview Training</h1>
@@ -137,6 +140,13 @@ function App() {
                 onClick={() => setUseCognyteAsMain((prev) => !prev)}
               >
                 {useCognyteAsMain ? 'Using Cognyte 14-day plan' : 'Switch to Cognyte 14-day plan'}
+              </button>
+              <button
+                type="button"
+                className="day-btn nova-prep-btn"
+                onClick={() => setShowNovaPrep(true)}
+              >
+                Nova Semiconductor Prep
               </button>
               <button
                 type="button"
@@ -237,12 +247,73 @@ function App() {
             </div>
           )}
         </>
+      ) : selectedNovaTopic != null ? (
+        <QuestionsView
+          novaMode
+          novaTopic={selectedNovaTopic}
+          onClose={() => setSelectedNovaTopic(null)}
+        />
       ) : selectedDay != null ? (
         <QuestionsView
           dayNumber={selectedDay}
           cognyteMode={useCognyteAsMain && selectedDay >= 1 && selectedDay <= 14}
           onClose={() => setSelectedDay(null)}
         />
+      ) : showNovaPrep ? (
+        <section className="cognyte-roadmap-panel nova-prep-panel" aria-live="polite">
+          <div className="cognyte-roadmap-header">
+            <h2 className="cognyte-roadmap-title">Nova Semiconductor — Interview Tomorrow</h2>
+            <button
+              type="button"
+              className="day-btn"
+              onClick={() => setShowNovaPrep(false)}
+            >
+              Back to roadmap
+            </button>
+          </div>
+          <p className="cognyte-roadmap-description">
+            LeetCode · Logic · Code (C#) · SDLC — <strong>22+ questions per topic</strong> (88 total). Use Interview mode: answer out loud, reveal, rate Strong/Partial/Weak.
+          </p>
+          <details className="cognyte-roadmap-details" open>
+            <summary className="cognyte-roadmap-summary">Tonight&apos;s study order (recommended)</summary>
+            <div className="cognyte-roadmap-body">
+              <ol className="interview-howto-list">
+                <li><strong>45–60m</strong> LeetCode (C#) — patterns + Big O</li>
+                <li><strong>30–40m</strong> Logic — puzzles, invariants, edge cases</li>
+                <li><strong>45–60m</strong> Code (C#) — async, LINQ, IDisposable, DI</li>
+                <li><strong>30–40m</strong> SDLC — Agile, testing, quality/traceability</li>
+                <li><strong>20m</strong> Mixed timed drill + one-page cheat sheet</li>
+              </ol>
+              <p className="cognyte-roadmap-intro">
+                Full plan: <code>NOVA_SEMICONDUCTOR_PREP_PLAN.md</code>
+              </p>
+            </div>
+          </details>
+          <div className="roadmap-list nova-topic-grid">
+            {NOVA_TOPICS.map((topic) => (
+              <article key={topic.slug} className="roadmap-day-card prep-day-card">
+                <div className="roadmap-day-header">
+                  <span className="roadmap-day-title">{topic.title}</span>
+                  <button
+                    type="button"
+                    className="day-btn open-questions-btn"
+                    onClick={() => setSelectedNovaTopic(topic.slug)}
+                  >
+                    Open questions
+                  </button>
+                </div>
+                <p className="prep-day-focus">{topic.intro}</p>
+                <p className="prep-day-focus"><strong>Best practices:</strong></p>
+                <ul className="roadmap-day-topics">
+                  {topic.bestPractices.map((tip) => (
+                    <li key={tip}>{tip}</li>
+                  ))}
+                </ul>
+                <p className="prep-day-verify"><strong>Verify:</strong> {topic.verify}</p>
+              </article>
+            ))}
+          </div>
+        </section>
       ) : showDayByDayPlan ? (
         <section className="cognyte-roadmap-panel" aria-live="polite">
           <div className="cognyte-roadmap-header">

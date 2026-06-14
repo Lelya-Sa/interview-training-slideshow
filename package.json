@@ -7,6 +7,7 @@
     "content:sync": "node scripts/sync-content.js",
     "content:validate": "node scripts/validate-content.js",
     "content:check": "npm run content:sync && npm run content:validate",
+    "nova:validate": "node scripts/validate-nova-pack.js",
     "build:web": "npm --prefix apps/web run build",
     "start:web": "npm --prefix apps/web run start",
     "start:backend": "npm --prefix services/backend run start",

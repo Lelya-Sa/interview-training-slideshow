@@ -16,13 +16,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { getCognyteDayRoadmap } from '../cognyteDayRoadmap';
+import { getNovaTopic } from '../novaTopics';
 import './QuestionsView.css';
 
 const CONF_STORAGE_PREFIX = 'cognyteConfidence:v1';
+const NOVA_CONF_STORAGE_PREFIX = 'novaConfidence:v1';
 
-function questionStorageKey(dayNumber, q, idx) {
-  const id = q && q.questionId ? String(q.questionId) : `day${dayNumber}-i${idx}`;
-  return `${CONF_STORAGE_PREFIX}:${dayNumber}:${id}`;
+function questionStorageKey(scope, q, idx, isNova = false) {
+  const id = q && q.questionId ? String(q.questionId) : `${scope}-i${idx}`;
+  const prefix = isNova ? NOVA_CONF_STORAGE_PREFIX : CONF_STORAGE_PREFIX;
+  return `${prefix}:${scope}:${id}`;
 }
 
 function shuffleQuestionsInPlace(arr) {
@@ -41,7 +44,9 @@ function formatMmSs(totalSeconds) {
   return `${m}:${r.toString().padStart(2, '0')}`;
 }
 
-function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
+function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = false, novaTopic = '' }) {
+  const scopeKey = novaMode ? novaTopic : dayNumber;
+  const interviewPrepMode = cognyteMode || novaMode;
   // ============================================
   // STATE MANAGEMENT
   // ============================================
@@ -67,8 +72,8 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   const [timerRunning, setTimerRunning] = useState(false);
 
   const getQKey = useCallback(
-    (q, idx) => (q && q.questionId ? String(q.questionId) : `day${dayNumber}-i${idx}`),
-    [dayNumber]
+    (q, idx) => (q && q.questionId ? String(q.questionId) : `${scopeKey}-i${idx}`),
+    [scopeKey]
   );
 
   const isInterviewQuestionDone = useCallback(
@@ -77,23 +82,23 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   );
 
   useEffect(() => {
-    if (cognyteMode) setInterviewMode(true);
-  }, [cognyteMode, dayNumber]);
+    if (interviewPrepMode) setInterviewMode(true);
+  }, [interviewPrepMode, scopeKey]);
 
   useEffect(() => {
-    if (!cognyteMode || questions.length === 0) return;
+    if (!interviewPrepMode || questions.length === 0) return;
     const next = {};
     questions.forEach((q, idx) => {
       const key = getQKey(q, idx);
       try {
-        const raw = localStorage.getItem(questionStorageKey(dayNumber, q, idx));
+        const raw = localStorage.getItem(questionStorageKey(scopeKey, q, idx, novaMode));
         if (raw === 'strong' || raw === 'partial' || raw === 'weak') next[key] = raw;
       } catch (_) {
         /* ignore */
       }
     });
     setConfidenceByKey(next);
-  }, [cognyteMode, dayNumber, questions, getQKey]);
+  }, [interviewPrepMode, scopeKey, questions, getQKey, novaMode]);
 
   useEffect(() => {
     setTimeLeft(timerBudget);
@@ -101,12 +106,12 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   }, [currentQuestionIndex, timerBudget]);
 
   useEffect(() => {
-    if (!cognyteMode || !interviewMode || !timerRunning) return undefined;
+    if (!interviewPrepMode || !interviewMode || !timerRunning) return undefined;
     const id = window.setInterval(() => {
       setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
     }, 1000);
     return () => window.clearInterval(id);
-  }, [cognyteMode, interviewMode, timerRunning]);
+  }, [interviewPrepMode, interviewMode, timerRunning]);
 
   useEffect(() => {
     if (timeLeft === 0 && timerRunning) setTimerRunning(false);
@@ -119,6 +124,25 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
     async function fetchQuestions() {
       try {
         setLoading(true);
+        if (novaMode) {
+          const novaRes = await axios.get('/api/nova/questions', {
+            params: { topic: novaTopic }
+          });
+          if (novaRes.data && novaRes.data.success) {
+            const loaded = (novaRes.data.questions || []).map((q, idx) => ({
+              ...q,
+              originalIndex: idx
+            }));
+            setQuestions(loaded);
+            setError(null);
+            const topicsSet = new Set();
+            loaded.forEach((q) => { if (q.topicName) topicsSet.add(q.topicName); });
+            setExpandedTopics(topicsSet);
+          } else {
+            setError('Failed to load Nova Semiconductor questions.');
+          }
+          return;
+        }
         if (cognyteMode) {
           const cognyteRes = await axios.get('/api/cognyte/questions', {
             params: { dayNumber }
@@ -324,7 +348,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
     }
     
     fetchQuestions();
-  }, [dayNumber, cognyteMode]);
+  }, [dayNumber, cognyteMode, novaMode, novaTopic]);
 
   // ============================================
   // HANDLE ANSWER CHANGE
@@ -395,12 +419,12 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
 
   const answeredCount = Object.keys(submitted).length;
   const doneCount =
-    cognyteMode && interviewMode
+    interviewPrepMode && interviewMode
       ? questions.reduce((n, q, i) => n + (isInterviewQuestionDone(q, i) ? 1 : 0), 0)
       : answeredCount;
   const progress = questions.length > 0 ? Math.round((doneCount / questions.length) * 100) : 0;
   const reviewCount =
-    cognyteMode && interviewMode
+    interviewPrepMode && interviewMode
       ? questions.reduce((n, q, i) => {
           const v = confidenceByKey[getQKey(q, i)];
           return n + (v === 'weak' || v === 'partial' ? 1 : 0);
@@ -409,8 +433,8 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
 
   const currentQ = questions.length ? questions[currentQuestionIndex] : null;
   const currentKey = currentQ ? getQKey(currentQ, currentQuestionIndex) : '';
-  const showModelAnswerCognyte =
-    cognyteMode &&
+  const showModelAnswerPrep =
+    interviewPrepMode &&
     interviewMode &&
     !!(revealedKeys[currentKey] || confidenceByKey[currentKey]);
 
@@ -426,7 +450,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
     const key = getQKey(q, idx);
     const had = confidenceByKey[key];
     try {
-      localStorage.setItem(questionStorageKey(dayNumber, q, idx), level);
+      localStorage.setItem(questionStorageKey(scopeKey, q, idx, novaMode), level);
     } catch (_) {
       /* ignore */
     }
@@ -449,7 +473,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
     if (!window.confirm('Clear all confidence ratings saved for this day on this device?')) return;
     questions.forEach((q, idx) => {
       try {
-        localStorage.removeItem(questionStorageKey(dayNumber, q, idx));
+        localStorage.removeItem(questionStorageKey(scopeKey, q, idx, novaMode));
       } catch (_) {
         /* ignore */
       }
@@ -461,7 +485,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
   // NEXT QUESTION (within filtered set)
   // ============================================
   const handleNextQuestion = () => {
-    if (cognyteMode && interviewMode) {
+    if (interviewPrepMode && interviewMode) {
       const q = questions[currentQuestionIndex];
       const key = getQKey(q, currentQuestionIndex);
       if (!confidenceByKey[key]) {
@@ -483,10 +507,10 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       setCurrentQuestionIndex(nextIndex);
     } else if (isFilterActive && filtered.length > 0) {
       // Reached end of filtered set
-      window.alert(`All questions in selected topic(s) completed.\n\nRated: ${doneCount}/${questions.length}${cognyteMode && interviewMode ? `\nRevisit Weak/Partial tomorrow.` : ''}\n\nPoints: ${points}`);
+      window.alert(`All questions in selected topic(s) completed.\n\nRated: ${doneCount}/${questions.length}${interviewPrepMode && interviewMode ? `\nRevisit Weak/Partial before your interview.` : ''}\n\nPoints: ${points}`);
     } else {
       // Quiz complete
-      window.alert(`${cognyteMode && interviewMode ? 'Day complete. Export weak list from the sidebar counts and redo those first tomorrow.' : `Quiz complete!`}\n\nPoints: ${points}\nStreak: ${streak}`);
+      window.alert(`${interviewPrepMode && interviewMode ? (novaMode ? 'Topic complete. Revisit Weak/Partial before your interview.' : 'Day complete. Export weak list from the sidebar counts and redo those first tomorrow.') : 'Quiz complete!'}\n\nPoints: ${points}\nStreak: ${streak}`);
       onClose();
     }
   };
@@ -543,9 +567,10 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
 
   const currentQuestion = questions[currentQuestionIndex];
   const isAnswered = submitted[currentQuestionIndex];
-  const cognyteInterviewFlow = cognyteMode && interviewMode;
-  const canAdvanceInterview = !cognyteInterviewFlow || !!confidenceByKey[currentKey];
+  const interviewPrepFlow = interviewPrepMode && interviewMode;
+  const canAdvanceInterview = !interviewPrepFlow || !!confidenceByKey[currentKey];
   const cognyteRoadmap = cognyteMode ? getCognyteDayRoadmap(dayNumber) : null;
+  const novaMeta = novaMode ? getNovaTopic(novaTopic) : null;
 
   // ============================================
   // RENDER QUESTIONS VIEW
@@ -554,9 +579,9 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
     <div className="questions-view">
       <div className="questions-header">
         <div className="questions-title">
-          <h1>📋 Daily Questions - Day {dayNumber}</h1>
+          <h1>📋 {novaMode && novaMeta ? `Nova Semiconductor — ${novaMeta.title}` : `Daily Questions - Day ${dayNumber}`}</h1>
           <p>
-            {cognyteInterviewFlow
+            {interviewPrepFlow
               ? 'Interview prep: answer out loud first (or jot bullets), then reveal the model answer and rate honesty.'
               : 'Answer all questions to complete the day'}
           </p>
@@ -567,12 +592,12 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       <div className="questions-progress">
         <div className="progress-info">
           <div className="stat">
-            <span className="label">{cognyteInterviewFlow ? 'Rated' : 'Progress'}</span>
+            <span className="label">{interviewPrepFlow ? 'Rated' : 'Progress'}</span>
             <span className="value">
-              {cognyteInterviewFlow ? `${doneCount}/${questions.length}` : `${answeredCount}/${questions.length}`}
+              {interviewPrepFlow ? `${doneCount}/${questions.length}` : `${answeredCount}/${questions.length}`}
             </span>
           </div>
-          {cognyteInterviewFlow && (
+          {interviewPrepFlow && (
             <div className="stat">
               <span className="label">Weak / partial</span>
               <span className="value">{reviewCount}</span>
@@ -602,6 +627,27 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
         </div>
       </div>
 
+      {novaMode && novaMeta && (
+        <details className="cognyte-roadmap-details" defaultOpen>
+          <summary className="cognyte-roadmap-summary">{novaMeta.headline}</summary>
+          <div className="cognyte-roadmap-body">
+            <p className="cognyte-roadmap-intro">{novaMeta.intro}</p>
+            <div className="cognyte-roadmap-track">
+              <div className="cognyte-roadmap-track-label">Best practices</div>
+              <ul className="cognyte-roadmap-track-list">
+                {novaMeta.bestPractices.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="cognyte-roadmap-track">
+              <div className="cognyte-roadmap-track-label">Verify tonight</div>
+              <p className="cognyte-roadmap-intro">{novaMeta.verify}</p>
+            </div>
+          </div>
+        </details>
+      )}
+
       {cognyteMode && cognyteRoadmap && (
         <details
           className="cognyte-roadmap-details"
@@ -624,7 +670,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
         </details>
       )}
 
-      {cognyteMode && (
+      {interviewPrepMode && (
         <div className="interview-prep-toolbar quick-navigation">
           <div className="interview-prep-row">
             <label className="interview-mode-label">
@@ -678,7 +724,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
       {/* Topics for Day X – multiselect (show questions from selected topics only) */}
       <div className="quick-navigation topics-multiselect-section">
         <div className="topics-multiselect-header">
-          <label className="topics-label">📚 Topics for Day {dayNumber}</label>
+          <label className="topics-label">📚 {novaMode ? 'Topic' : `Topics for Day ${dayNumber}`}</label>
           <span className="topics-hint">
             {selectedTopics.size === 0
               ? `Showing all ${questions.length} questions`
@@ -818,7 +864,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
             const getTopicProgress = (topicQuestions) => {
               const answered = topicQuestions.filter((q) => {
                 const idx = q.globalIndex;
-                if (cognyteMode && interviewMode) return isInterviewQuestionDone(q, idx);
+                if (interviewPrepMode && interviewMode) return isInterviewQuestionDone(q, idx);
                 return submitted[idx];
               }).length;
               return { answered, total: topicQuestions.length, percentage: Math.round((answered / topicQuestions.length) * 100) };
@@ -873,10 +919,10 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
                             {topicQuestions.map((q) => {
                               const idx = q.globalIndex;
                               const isCurrent = idx === currentQuestionIndex;
-                              const rowDone = cognyteMode && interviewMode
+                              const rowDone = interviewPrepMode && interviewMode
                                 ? isInterviewQuestionDone(q, idx)
                                 : submitted[idx];
-                              const conf = cognyteMode && interviewMode ? confidenceByKey[getQKey(q, idx)] : null;
+                              const conf = interviewPrepMode && interviewMode ? confidenceByKey[getQKey(q, idx)] : null;
 
                               return (
                                 <div
@@ -932,7 +978,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
             <h2>{currentQuestion.question || currentQuestion}</h2>
           </div>
 
-          {cognyteInterviewFlow ? (
+          {interviewPrepFlow ? (
             <>
               <div className="answer-section interview-outline-section">
                 <label htmlFor="answer-input">Optional notes (keywords only — speak the real answer)</label>
@@ -944,7 +990,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
                   onChange={handleAnswerChange}
                 />
               </div>
-              {!showModelAnswerCognyte && (
+              {!showModelAnswerPrep && (
                 <div className="interview-reveal-wrap">
                   <button type="button" className="submit-button interview-reveal-btn" onClick={handleRevealModelAnswer}>
                     Reveal model answer
@@ -952,7 +998,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
                   <p className="interview-reveal-hint">Only open after you have said your version out loud.</p>
                 </div>
               )}
-              {showModelAnswerCognyte && (
+              {showModelAnswerPrep && (
                 <div className="confidence-row" role="group" aria-label="How well did you answer compared to the model?">
                   <span className="confidence-label">Compared to the model, this was:</span>
                   <button
@@ -1016,7 +1062,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
               ← Previous
             </button>
 
-            {cognyteInterviewFlow ? (
+            {interviewPrepFlow ? (
               <button
                 type="button"
                 onClick={handleNextQuestion}
@@ -1037,7 +1083,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false }) {
             )}
           </div>
 
-          {((cognyteInterviewFlow && showModelAnswerCognyte) || (!cognyteInterviewFlow && isAnswered)) && currentQuestion.answer && (
+          {((interviewPrepFlow && showModelAnswerPrep) || (!interviewPrepFlow && isAnswered)) && currentQuestion.answer && (
             <div className="answer-reference">
               <h3>📚 Model answer</h3>
               <div className="reference-text">
