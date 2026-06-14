@@ -17,11 +17,9 @@
 ## Best practices (C# interview)
 
 ### LeetCode / live coding
-- Clarify input size, duplicates, negatives, and expected complexity before coding.
-- State **pattern** (hash map, two pointers, BFS, DP) then write **happy path** first.
-- Use **`List<T>`**, **`Dictionary<TKey,TValue>`**, **`HashSet<T>`** — know amortized costs.
-- Prefer **iterative** solutions unless recursion is clearly cleaner; mention stack depth.
-- After coding: walk **one edge case** and state **time/space** complexity.
+- Clarify input size, duplicates, negatives, sorted vs unsorted, and expected **time/space** before coding.
+- Patterns in pack: **hash map**, **stack**, **linked list**, **binary search**, **two pointers**, **sliding window**, **greedy**, **1D DP**, **heap**, **tree DFS/BFS**, **backtracking**, **grid DFS**, **merge intervals**.
+- State pattern name aloud; happy path first; one edge case; Big O at the end.
 
 ### Logic
 - Think aloud: restate → brute force → optimize → verify with tiny example; state **time/space** complexity.

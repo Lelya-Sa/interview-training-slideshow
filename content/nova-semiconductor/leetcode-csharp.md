@@ -1,262 +1,390 @@
-### 1) Two Sum with Dictionary
-**Theory:** The fastest approach stores visited values in a hash map so each lookup is O(1) average time.
-**Answer:** Iterate once, compute `target - nums[i]`, and check whether that complement is already in the dictionary.
-**Explanation:** This avoids nested loops and gives O(n) time with O(n) extra space.
+# Nova Semiconductor — LeetCode Patterns (C#)
+
+Covers: **hash map**, **stack**, **linked list**, **binary search**, **two pointers**, **sliding window**, **greedy**, **1D DP**, **heap**, **trees (DFS/BFS)**, **backtracking**, **graphs**, **intervals** — interview-depth Theory / Answer / Explanation / code.
+
 ```csharp
-public int[] TwoSum(int[] nums, int target) {
-    var seen = new Dictionary<int,int>();
-    for (int i = 0; i < nums.Length; i++) { int need = target - nums[i]; if (seen.ContainsKey(need)) return new[] { seen[need], i }; seen[nums[i]] = i; }
+// Shared LeetCode node types (declare once in interview if needed)
+public class ListNode { public int val; public ListNode next; public ListNode(int v = 0, ListNode n = null) { val = v; next = n; } }
+public class TreeNode { public int val; public TreeNode left, right; public TreeNode(int v = 0, TreeNode l = null, TreeNode r = null) { val = v; left = l; right = r; } }
+```
+
+### 1) **Two Sum** — hash map complement
+**Theory:** Classic **hash map** pattern: trade O(n) memory for O(n) time instead of O(n²) nested loops.
+**Answer:** One pass: for each `nums[i]`, check if `target - nums[i]` is already in `Dictionary<value, index>`. If yes, return both indices. Else store current value and index.
+**Explanation:** O(n) time, O(n) space. Clarify: unique solution? can you use same element twice? duplicates handled because you check before insert. Follow-up: sorted array → two pointers (Q7).
+```csharp
+public static int[] TwoSum(int[] nums, int target) {
+    var seen = new Dictionary<int, int>();
+    for (int i = 0; i < nums.Length; i++) {
+        int need = target - nums[i];
+        if (seen.TryGetValue(need, out int j)) return new[] { j, i };
+        seen[nums[i]] = i;
+    }
     return Array.Empty<int>();
 }
 ```
 
-### 2) Valid Parentheses via Stack
-**Theory:** Balanced bracket problems map directly to stack behavior: push openings, pop on matching closing.
-**Answer:** Push `(`, `[`, `{`; for each closing symbol, pop and verify expected pair.
-**Explanation:** Any mismatch, empty-stack pop, or leftover stack content means invalid input.
+### 2) **Valid Parentheses** — stack
+**Theory:** Nested structure + LIFO matching → **stack**. Maps directly to parsing and compiler-style problems.
+**Answer:** Push opening brackets `()[]{}`. On closing, pop and verify matching pair. Empty stack before pop → invalid. End with empty stack.
+**Explanation:** O(n) time, O(n) space. Map closers to openers. Edge: empty string → true; `"(]"` → false.
 ```csharp
-public bool IsValid(string s) {
-    var st = new Stack<char>(); var map = new Dictionary<char,char>{{')','('},{']','['},{'}','{'}};
-    foreach (var c in s) { if (map.ContainsValue(c)) st.Push(c); else if (!map.ContainsKey(c) || st.Count == 0 || st.Pop() != map[c]) return false; }
-    return st.Count == 0;
+public static bool IsValid(string s) {
+    var stack = new Stack<char>();
+    var pairs = new Dictionary<char, char> { [')'] = '(', [']'] = '[', ['}'] = '{' };
+    foreach (char c in s) {
+        if (c is '(' or '[' or '{') stack.Push(c);
+        else if (pairs.TryGetValue(c, out char open)) {
+            if (stack.Count == 0 || stack.Pop() != open) return false;
+        }
+    }
+    return stack.Count == 0;
 }
 ```
 
-### 3) Reverse Linked List Iteratively
-**Theory:** Pointer re-linking can reverse a singly linked list in one pass.
-**Answer:** Track `prev`, `curr`, and `next`; reverse each `curr.next` to `prev`.
-**Explanation:** The technique is O(n) time and O(1) space because no extra list is built.
+### 3) **Reverse Linked List** — iterative pointers
+**Theory:** Singly linked list reversal is a **pointer rewire** in one pass—foundational for many list problems.
+**Answer:** `prev = null`, `curr = head`. While `curr != null`: save `next`, set `curr.next = prev`, advance `prev` and `curr`. Return `prev` as new head.
+**Explanation:** O(n) time, O(1) space. Recursive version is O(n) stack space—prefer iterative in interviews unless asked.
 ```csharp
-public ListNode ReverseList(ListNode head) {
+public static ListNode ReverseList(ListNode head) {
     ListNode prev = null, curr = head;
-    while (curr != null) { var next = curr.next; curr.next = prev; prev = curr; curr = next; }
+    while (curr != null) {
+        var next = curr.next;
+        curr.next = prev;
+        prev = curr;
+        curr = next;
+    }
     return prev;
 }
 ```
 
-### 4) Merge Two Sorted Lists
-**Theory:** Two-pointer merge is identical to merge-step from merge sort.
-**Answer:** Use a dummy head and always attach the smaller current node.
-**Explanation:** Since each node is processed once, complexity is O(m+n).
+### 4) **Merge Two Sorted Lists** — linked-list two pointers
+**Theory:** Same merge step as merge sort—exploit **sorted order** with two pointers.
+**Answer:** Dummy head node; while both lists non-null, attach smaller node and advance; attach remainder; return `dummy.next`.
+**Explanation:** O(m+n) time, O(1) extra space (ignoring output). Watch null tails and equal values (`<=` vs `<`).
 ```csharp
-public ListNode MergeTwoLists(ListNode a, ListNode b) {
-    var d = new ListNode(0); var t = d;
-    while (a != null && b != null) { if (a.val <= b.val) { t.next = a; a = a.next; } else { t.next = b; b = b.next; } t = t.next; }
-    t.next = a ?? b; return d.next;
+public static ListNode MergeTwoLists(ListNode a, ListNode b) {
+    var dummy = new ListNode();
+    var tail = dummy;
+    while (a != null && b != null) {
+        if (a.val <= b.val) { tail.next = a; a = a.next; }
+        else { tail.next = b; b = b.next; }
+        tail = tail.next;
+    }
+    tail.next = a ?? b;
+    return dummy.next;
 }
 ```
 
-### 5) Binary Search on Sorted Array
-**Theory:** Divide-and-conquer on sorted data halves search space each step.
-**Answer:** Compare target with middle value and adjust low/high bounds accordingly.
-**Explanation:** Runtime is O(log n), making it ideal for large sorted arrays.
+### 5) **Binary Search** on sorted array
+**Theory:** Monotonic sorted array → halve search space each step: **O(log n)**.
+**Answer:** `lo=0`, `hi=n-1`. While `lo<=hi`: `mid = lo + (hi-lo)/2`. Compare `nums[mid]` to target; shrink left or right. Return -1 if missing.
+**Explanation:** Use `lo + (hi-lo)/2` to avoid overflow. Follow-up: first/last occurrence, rotated array, search insert position.
 ```csharp
-public int Search(int[] nums, int target) {
-    int l = 0, r = nums.Length - 1;
-    while (l <= r) { int m = l + (r - l) / 2; if (nums[m] == target) return m; if (nums[m] < target) l = m + 1; else r = m - 1; }
+public static int Search(int[] nums, int target) {
+    int lo = 0, hi = nums.Length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (nums[mid] == target) return mid;
+        if (nums[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
     return -1;
 }
 ```
 
-### 6) Maximum Subarray (Kadane)
-**Theory:** Dynamic programming tracks best subarray ending at each index.
-**Answer:** At each element, either start new subarray or extend previous best-ending sum.
-**Explanation:** Kadane's algorithm runs in O(n) time with O(1) space.
+### 6) **Maximum Subarray** — Kadane (DP / greedy)
+**Theory:** Best contiguous subarray sum—**Kadane**: at each index, extend previous subarray or start fresh.
+**Answer:** `cur = max(nums[i], cur + nums[i])`, `best = max(best, cur)`.
+**Explanation:** O(n) time, O(1) space. All-negative: `best` becomes max element. Follow-up: return indices, circular array variant.
 ```csharp
-public int MaxSubArray(int[] nums) {
-    int curr = nums[0], best = nums[0];
-    for (int i = 1; i < nums.Length; i++) { curr = Math.Max(nums[i], curr + nums[i]); best = Math.Max(best, curr); }
+public static int MaxSubArray(int[] nums) {
+    int cur = nums[0], best = nums[0];
+    for (int i = 1; i < nums.Length; i++) {
+        cur = Math.Max(nums[i], cur + nums[i]);
+        best = Math.Max(best, cur);
+    }
     return best;
 }
 ```
 
-### 7) Contains Duplicate
-**Theory:** Duplicates can be detected by checking repeated insertion into a hash set.
-**Answer:** Add each number to a `HashSet<int>`; if `Add` returns false, duplicate exists.
-**Explanation:** This provides O(n) average time and O(n) space.
+### 7) **Two Sum II** — two pointers on sorted array
+**Theory:** With **sorted** input, opposite pointers eliminate candidates without a hash map—classic **two pointers** pattern.
+**Answer:** `l=0`, `r=n-1`. If `nums[l]+nums[r]==target` return 1-based indices; if sum too small `l++`, else `r--`.
+**Explanation:** O(n) time, O(1) space after sort (input already sorted in problem). Contrast unsorted Two Sum (hash map).
 ```csharp
-public bool ContainsDuplicate(int[] nums) {
-    var set = new HashSet<int>();
-    foreach (var n in nums) if (!set.Add(n)) return true;
-    return false;
+public static int[] TwoSumSorted(int[] nums, int target) {
+    int l = 0, r = nums.Length - 1;
+    while (l < r) {
+        int sum = nums[l] + nums[r];
+        if (sum == target) return new[] { l + 1, r + 1 };
+        if (sum < target) l++;
+        else r--;
+    }
+    return Array.Empty<int>();
 }
 ```
 
-### 8) Best Time to Buy and Sell Stock
-**Theory:** Greedy approach keeps the minimum seen price and max possible profit.
-**Answer:** Scan once, update min price, and compute candidate profit at each day.
-**Explanation:** One pass is enough because each sell day only needs the best prior buy day.
+### 8) **Best Time to Buy and Sell Stock** — one-pass greedy
+**Theory:** Single transaction max profit = max over days of `price[i] - minPriceSoFar`.
+**Answer:** Track `minPrice` and `maxProfit` in one scan.
+**Explanation:** O(n) time, O(1) space. Follow-up: unlimited transactions, cooldown, fee—state-machine DP.
 ```csharp
-public int MaxProfit(int[] prices) {
-    int min = int.MaxValue, ans = 0;
-    foreach (var p in prices) { min = Math.Min(min, p); ans = Math.Max(ans, p - min); }
-    return ans;
+public static int MaxProfit(int[] prices) {
+    int min = int.MaxValue, profit = 0;
+    foreach (int p in prices) {
+        min = Math.Min(min, p);
+        profit = Math.Max(profit, p - min);
+    }
+    return profit;
 }
 ```
 
-### 9) Valid Anagram
-**Theory:** Anagrams have identical character frequency counts.
-**Answer:** Count each letter from first string and decrement using second string.
-**Explanation:** If all counts end at zero, the strings are anagrams.
+### 9) **Subsets** — backtracking
+**Theory:** Generate all subsets = **backtracking** with include/exclude choice at each index—foundation for permutations/combinations.
+**Answer:** DFS `index`: at each step, push current path to result; for `i` from `index` to end, add `nums[i]`, recurse `i+1`, remove (backtrack).
+**Explanation:** O(n·2^n) output size. Sort input first if you need duplicate handling (duplicate subset problem). Say “choose / not choose” or “start index” template aloud.
 ```csharp
-public bool IsAnagram(string s, string t) {
-    if (s.Length != t.Length) return false; var count = new int[26];
-    foreach (var c in s) count[c - 'a']++;
-    foreach (var c in t) if (--count[c - 'a'] < 0) return false;
-    return true;
-}
-```
-
-### 10) Group Anagrams
-**Theory:** Canonical keying lets all equivalent anagrams map to same bucket.
-**Answer:** Sort each word's characters to build key and group in dictionary.
-**Explanation:** Grouping by normalized form is simpler than pairwise comparison.
-```csharp
-public IList<IList<string>> GroupAnagrams(string[] strs) {
-    var map = new Dictionary<string,List<string>>();
-    foreach (var s in strs) { var a = s.ToCharArray(); Array.Sort(a); var k = new string(a); if (!map.ContainsKey(k)) map[k] = new List<string>(); map[k].Add(s); }
-    return map.Values.Select(v => (IList<string>)v).ToList();
-}
-```
-
-### 11) Product of Array Except Self
-**Theory:** Prefix and suffix products avoid division and handle zeros safely.
-**Answer:** Build left products in output, then multiply with running right product.
-**Explanation:** This is O(n) time and O(1) extra space if output array is excluded.
-```csharp
-public int[] ProductExceptSelf(int[] nums) {
-    int n = nums.Length; var res = new int[n]; res[0] = 1;
-    for (int i = 1; i < n; i++) res[i] = res[i - 1] * nums[i - 1];
-    int right = 1; for (int i = n - 1; i >= 0; i--) { res[i] *= right; right *= nums[i]; }
+public static IList<IList<int>> Subsets(int[] nums) {
+    var res = new List<IList<int>>();
+    var path = new List<int>();
+    void Dfs(int start) {
+        res.Add(new List<int>(path));
+        for (int i = start; i < nums.Length; i++) {
+            path.Add(nums[i]);
+            Dfs(i + 1);
+            path.RemoveAt(path.Count - 1);
+        }
+    }
+    Dfs(0);
     return res;
 }
 ```
 
-### 12) Move Zeroes In-Place
-**Theory:** Stable compaction keeps non-zero order while moving zeros to the end.
-**Answer:** Write non-zero values forward, then fill remaining positions with zero.
-**Explanation:** Two-pointer write index gives O(n) time and O(1) space.
+### 10) **Group Anagrams** — hash map with canonical key
+**Theory:** Anagrams share the same **frequency signature** or sorted character key—bucket in hash map.
+**Answer:** For each string, key = sorted chars (or 26-count array as string). Append to `Dictionary<key, List<string>>`.
+**Explanation:** O(n · k log k) with sort per word; O(n · k) with count key. Interview: prefer count key for long strings.
 ```csharp
-public void MoveZeroes(int[] nums) {
-    int w = 0; for (int i = 0; i < nums.Length; i++) if (nums[i] != 0) nums[w++] = nums[i];
-    while (w < nums.Length) nums[w++] = 0;
+public static IList<IList<string>> GroupAnagrams(string[] strs) {
+    var map = new Dictionary<string, List<string>>();
+    foreach (var s in strs) {
+        var a = s.ToCharArray();
+        Array.Sort(a);
+        var key = new string(a);
+        if (!map.ContainsKey(key)) map[key] = new List<string>();
+        map[key].Add(s);
+    }
+    return map.Values.Select(v => (IList<string>)v).ToList();
 }
 ```
 
-### 13) Climbing Stairs DP
-**Theory:** Number of ways to reach step `n` equals ways to `n-1` plus `n-2`.
-**Answer:** Use iterative Fibonacci-style state transition.
-**Explanation:** This turns exponential recursion into linear time and constant space.
+### 11) **Product of Array Except Self** — prefix / suffix
+**Theory:** Output[i] = product of all except `nums[i]` without division—**prefix** left products, then multiply **suffix** walking right.
+**Answer:** First pass fill `res[i]` with product of left side; second pass multiply by running right product.
+**Explanation:** O(n) time, O(1) extra if output array excluded. Handles zeros naturally (one zero → many zeros in output).
 ```csharp
-public int ClimbStairs(int n) {
-    if (n <= 2) return n; int a = 1, b = 2;
-    for (int i = 3; i <= n; i++) { int c = a + b; a = b; b = c; }
+public static int[] ProductExceptSelf(int[] nums) {
+    int n = nums.Length;
+    var res = new int[n];
+    res[0] = 1;
+    for (int i = 1; i < n; i++) res[i] = res[i - 1] * nums[i - 1];
+    int right = 1;
+    for (int i = n - 1; i >= 0; i--) {
+        res[i] *= right;
+        right *= nums[i];
+    }
+    return res;
+}
+```
+
+### 12) **Longest Substring Without Repeating Characters** — sliding window
+**Theory:** **Sliding window** on strings: expand right, shrink left when duplicate—track max window size.
+**Answer:** `Dictionary<char,lastIndex>`, window `[start, i]`. If char seen inside window, move `start`. Update max length.
+**Explanation:** O(n) time typical. Distinct from numeric two pointers—window size varies. Follow-up: minimum window substring (harder).
+```csharp
+public static int LengthOfLongestSubstring(string s) {
+    var last = new Dictionary<char, int>();
+    int start = 0, best = 0;
+    for (int i = 0; i < s.Length; i++) {
+        if (last.TryGetValue(s[i], out int prev) && prev >= start) start = prev + 1;
+        last[s[i]] = i;
+        best = Math.Max(best, i - start + 1);
+    }
+    return best;
+}
+```
+
+### 13) **Climbing Stairs** — 1D DP (Fibonacci)
+**Theory:** Ways to reach step `n` = ways to `n-1` + ways to `n-2` — linear **DP** recurrence.
+**Answer:** Iterative: `a=1, b=2` for `n>=2`, update like Fibonacci.
+**Explanation:** O(n) time, O(1) space. Naive recursion is exponential without memo. `n=1` → 1 way.
+```csharp
+public static int ClimbStairs(int n) {
+    if (n <= 2) return n;
+    int a = 1, b = 2;
+    for (int i = 3; i <= n; i++) {
+        int c = a + b;
+        a = b;
+        b = c;
+    }
     return b;
 }
 ```
 
-### 14) House Robber Linear DP
-**Theory:** At each house choose between robbing current plus `i-2`, or skipping and keeping `i-1`.
-**Answer:** Track two rolling values: best until previous and best until two previous.
-**Explanation:** DP captures non-adjacent constraint in O(n) time and O(1) space.
+### 14) **House Robber** — 1D DP with constraint
+**Theory:** Cannot rob adjacent houses—**DP**: `dp[i] = max(dp[i-1], dp[i-2] + nums[i])`.
+**Answer:** Rolling variables `prev2`, `prev1` updated each house.
+**Explanation:** O(n) time, O(1) space. Circular street / tree variants are follow-ups.
 ```csharp
-public int Rob(int[] nums) {
+public static int Rob(int[] nums) {
     int prev2 = 0, prev1 = 0;
-    foreach (var n in nums) { int cur = Math.Max(prev1, prev2 + n); prev2 = prev1; prev1 = cur; }
+    foreach (int n in nums) {
+        int cur = Math.Max(prev1, prev2 + n);
+        prev2 = prev1;
+        prev1 = cur;
+    }
     return prev1;
 }
 ```
 
-### 15) Detect Cycle in Linked List
-**Theory:** Floyd's tortoise-hare uses different speeds to detect loops without extra memory.
-**Answer:** Advance slow by one and fast by two; if they meet, cycle exists.
-**Explanation:** If fast reaches null, the list is acyclic.
+### 15) **Linked List Cycle** — Floyd tortoise & hare
+**Theory:** Cycle detection without extra memory—**fast** moves 2, **slow** moves 1; meeting implies cycle.
+**Answer:** If `fast` or `fast.next` null → no cycle. Else if `slow == fast` → cycle.
+**Explanation:** O(n) time, O(1) space. Follow-up: find cycle start node (reset slow to head).
 ```csharp
-public bool HasCycle(ListNode head) {
-    var slow = head; var fast = head;
-    while (fast != null && fast.next != null) { slow = slow.next; fast = fast.next.next; if (slow == fast) return true; }
+public static bool HasCycle(ListNode head) {
+    var slow = head;
+    var fast = head;
+    while (fast != null && fast.next != null) {
+        slow = slow.next;
+        fast = fast.next.next;
+        if (slow == fast) return true;
+    }
     return false;
 }
 ```
 
-### 16) Invert Binary Tree
-**Theory:** Tree inversion swaps left and right subtrees recursively or iteratively.
-**Answer:** Swap child pointers at each node and recurse.
-**Explanation:** Every node is visited once, so complexity is O(n).
+### 16) **Maximum Depth of Binary Tree** — tree DFS
+**Theory:** Tree height = 1 + max(left depth, right depth)—simple **DFS** recursion.
+**Answer:** Base: null → 0. Else `1 + Max(MaxDepth(left), MaxDepth(right))`.
+**Explanation:** O(n) nodes visited. BFS level count (Q17) is alternative. Follow-up: balanced check, diameter.
 ```csharp
-public TreeNode InvertTree(TreeNode root) {
-    if (root == null) return null;
-    var tmp = root.left; root.left = InvertTree(root.right); root.right = InvertTree(tmp);
-    return root;
+public static int MaxDepth(TreeNode root) {
+    if (root == null) return 0;
+    return 1 + Math.Max(MaxDepth(root.left), MaxDepth(root.right));
 }
 ```
 
-### 17) Binary Tree Level Order Traversal
-**Theory:** Breadth-first traversal processes nodes by depth using a queue.
-**Answer:** For each level, dequeue fixed count and enqueue children.
-**Explanation:** This naturally returns grouped levels in interview-friendly form.
+### 17) **Binary Tree Level Order Traversal** — BFS with queue
+**Theory:** Process tree **level by level** using queue—breadth-first search (BFS).
+**Answer:** Enqueue root. While queue not empty: snapshot `size`, dequeue `size` nodes, collect values, enqueue children.
+**Explanation:** O(n) time, O(n) queue space. Variants: zigzag level order, right-side view (last per level).
 ```csharp
-public IList<IList<int>> LevelOrder(TreeNode root) {
-    var ans = new List<IList<int>>(); if (root == null) return ans; var q = new Queue<TreeNode>(); q.Enqueue(root);
-    while (q.Count > 0) { int sz = q.Count; var lvl = new List<int>(); for (int i = 0; i < sz; i++) { var n = q.Dequeue(); lvl.Add(n.val); if (n.left != null) q.Enqueue(n.left); if (n.right != null) q.Enqueue(n.right); } ans.Add(lvl); }
+public static IList<IList<int>> LevelOrder(TreeNode root) {
+    var ans = new List<IList<int>>();
+    if (root == null) return ans;
+    var q = new Queue<TreeNode>();
+    q.Enqueue(root);
+    while (q.Count > 0) {
+        int sz = q.Count;
+        var level = new List<int>();
+        for (int i = 0; i < sz; i++) {
+            var node = q.Dequeue();
+            level.Add(node.val);
+            if (node.left != null) q.Enqueue(node.left);
+            if (node.right != null) q.Enqueue(node.right);
+        }
+        ans.Add(level);
+    }
     return ans;
 }
 ```
 
-### 18) Validate Binary Search Tree
-**Theory:** BST validation requires strict value bounds, not only local parent checks.
-**Answer:** DFS each node with `(min, max)` range and verify `min < val < max`.
-**Explanation:** Bound propagation catches deep subtree violations correctly.
+### 18) **Validate Binary Search Tree** — DFS with bounds
+**Theory:** BST property is **global** (all left < node < all right), not just parent-child local check.
+**Answer:** DFS `(node, min, max)`: value must be in `(min, max)` exclusive; recurse left with `(min, node.val)`, right with `(node.val, max)`.
+**Explanation:** Use `long` bounds to avoid `int` edge overflow on `MinValue`/`MaxValue`. O(n) time.
 ```csharp
-public bool IsValidBST(TreeNode root) => Dfs(root, long.MinValue, long.MaxValue);
-private bool Dfs(TreeNode n, long lo, long hi) {
-    if (n == null) return true; if (n.val <= lo || n.val >= hi) return false;
+public static bool IsValidBST(TreeNode root) =>
+    Dfs(root, long.MinValue, long.MaxValue);
+
+private static bool Dfs(TreeNode n, long lo, long hi) {
+    if (n == null) return true;
+    if (n.val <= lo || n.val >= hi) return false;
     return Dfs(n.left, lo, n.val) && Dfs(n.right, n.val, hi);
 }
 ```
 
-### 19) Kth Largest Element with Heap
-**Theory:** Keep a min-heap of size `k` so heap top is kth largest seen.
-**Answer:** Push all values and pop when size exceeds `k`.
-**Explanation:** This avoids full sorting and gives O(n log k).
+### 19) **Kth Largest Element** — min-heap of size k
+**Theory:** Maintain **min-heap** of k elements—smallest of the k is the kth largest overall.
+**Answer:** Push each num; if heap size > k, pop min. Return heap peek.
+**Explanation:** O(n log k) vs O(n log n) full sort. Follow-up: Quickselect O(n) average. `PriorityQueue` in .NET 6+.
 ```csharp
-public int FindKthLargest(int[] nums, int k) {
-    var pq = new PriorityQueue<int,int>();
-    foreach (var n in nums) { pq.Enqueue(n, n); if (pq.Count > k) pq.Dequeue(); }
-    return pq.Peek();
+public static int FindKthLargest(int[] nums, int k) {
+    var heap = new PriorityQueue<int, int>();
+    foreach (int n in nums) {
+        heap.Enqueue(n, n);
+        if (heap.Count > k) heap.Dequeue();
+    }
+    return heap.Peek();
 }
 ```
 
-### 20) Top K Frequent Elements
-**Theory:** Frequency map plus min-heap keeps only top-k counts efficiently.
-**Answer:** Count occurrences, push `(num,count)` into heap keyed by count.
-**Explanation:** Heap size bounded by `k` makes this scalable for big arrays.
+### 20) **Top K Frequent Elements** — hash map + heap
+**Theory:** Count frequencies, then keep **top k** by frequency using heap or bucket sort.
+**Answer:** `Dictionary` count → min-heap of size k keyed by frequency → extract.
+**Explanation:** O(n log k). Bucket sort O(n) if frequencies bounded. Tie-breaking usually any order.
 ```csharp
-public int[] TopKFrequent(int[] nums, int k) {
-    var freq = new Dictionary<int,int>(); foreach (var n in nums) freq[n] = freq.GetValueOrDefault(n) + 1;
-    var pq = new PriorityQueue<int,int>(); foreach (var kv in freq) { pq.Enqueue(kv.Key, kv.Value); if (pq.Count > k) pq.Dequeue(); }
-    var res = new int[k]; for (int i = k - 1; i >= 0; i--) res[i] = pq.Dequeue(); return res;
+public static int[] TopKFrequent(int[] nums, int k) {
+    var freq = new Dictionary<int, int>();
+    foreach (int n in nums) freq[n] = freq.GetValueOrDefault(n) + 1;
+    var heap = new PriorityQueue<int, int>();
+    foreach (var (num, count) in freq) {
+        heap.Enqueue(num, count);
+        if (heap.Count > k) heap.Dequeue();
+    }
+    var res = new int[k];
+    for (int i = k - 1; i >= 0; i--) res[i] = heap.Dequeue();
+    return res;
 }
 ```
 
-### 21) LRU Cache Design Concept
-**Theory:** True LRU requires O(1) get/put by combining hash map and doubly linked list.
-**Answer:** Dictionary maps key to list node; accesses move node to list head as most recent.
-**Explanation:** Tail node is least recently used and evicted when capacity is exceeded.
+### 21) **Number of Islands** — grid DFS / BFS
+**Theory:** Connected components on 2D grid—**graph traversal** (DFS or BFS) for each unvisited `'1'`.
+**Answer:** Loop cells; on land, increment count and flood-fill (mark visited `'#'` or `visited` set), exploring 4 directions.
+**Explanation:** O(m·n) time. BFS with queue works identically. Follow-up: distinct islands shape, diagonal connection.
 ```csharp
-// Core idea: Dictionary<int, LinkedListNode<(int key,int val)>> + LinkedList<(int key,int val)>
-// Get: if found, move node to front and return value.
-// Put: update existing node or add new front node; evict list.Last when count > capacity.
+public static int NumIslands(char[][] grid) {
+    if (grid.Length == 0) return 0;
+    int rows = grid.Length, cols = grid[0].Length, count = 0;
+    void Dfs(int r, int c) {
+        if (r < 0 || c < 0 || r >= rows || c >= cols || grid[r][c] != '1') return;
+        grid[r][c] = '0';
+        Dfs(r + 1, c); Dfs(r - 1, c); Dfs(r, c + 1); Dfs(r, c - 1);
+    }
+    for (int r = 0; r < rows; r++)
+        for (int c = 0; c < cols; c++)
+            if (grid[r][c] == '1') { count++; Dfs(r, c); }
+    return count;
+}
 ```
 
-### 22) Merge Intervals After Sorting
-**Theory:** Overlap merging depends on sorted starts so neighboring intervals can be combined greedily.
-**Answer:** Sort by start, then either extend last merged end or append new interval.
-**Explanation:** Sorting dominates complexity at O(n log n), merge pass is O(n).
+### 22) **Merge Intervals** — sort + greedy
+**Theory:** After sorting by start, overlapping intervals are adjacent—**greedy merge** in one pass.
+**Answer:** Sort by `start`. For each interval: if no overlap with last merged (`cur.start > last.end`), append; else extend `last.end = Max(last.end, cur.end)`.
+**Explanation:** O(n log n) sort + O(n) merge. Clarify inclusive/exclusive bounds. Related: insert interval, meeting rooms.
 ```csharp
-public int[][] Merge(int[][] intervals) {
-    Array.Sort(intervals, (a,b) => a[0].CompareTo(b[0])); var res = new List<int[]>();
-    foreach (var cur in intervals) { if (res.Count == 0 || res[^1][1] < cur[0]) res.Add(new[] { cur[0], cur[1] }); else res[^1][1] = Math.Max(res[^1][1], cur[1]); }
+public static int[][] Merge(int[][] intervals) {
+    Array.Sort(intervals, (a, b) => a[0].CompareTo(b[0]));
+    var res = new List<int[]>();
+    foreach (var cur in intervals) {
+        if (res.Count == 0 || res[^1][1] < cur[0])
+            res.Add(new[] { cur[0], cur[1] });
+        else
+            res[^1][1] = Math.Max(res[^1][1], cur[1]);
+    }
     return res.ToArray();
 }
 ```

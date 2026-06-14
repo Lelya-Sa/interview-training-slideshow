@@ -7,14 +7,14 @@ export const NOVA_TOPICS = [
     title: 'LeetCode (C#)',
     headline: 'LeetCode · C# patterns',
     intro:
-      'Hash maps, two pointers, trees, graphs, and DP — with C# solutions. Clarify constraints, state pattern, code happy path, then edge cases and Big O.',
+      'Hash map, stack, linked list, binary search, two pointers, sliding window, greedy, 1D DP, heap, tree DFS/BFS, backtracking, grid DFS, and intervals — 22 patterns with C# solutions, complexity, edge cases, and follow-ups.',
     bestPractices: [
       'Ask about input size, duplicates, and negative numbers before coding.',
       'Prefer Dictionary, HashSet, List — know amortized O(1) vs O(n).',
       'Say pattern name aloud (e.g. “two pointers”) then implement.',
       'Walk one edge case and state time/space complexity at the end.'
     ],
-    verify: 'Explain 5 solutions without reading answers; code Two Sum and Valid Parentheses from memory.'
+    verify: 'Explain 5 patterns without notes; code Two Sum, Valid Parentheses, and one tree or grid DFS from memory.'
   },
   {
     slug: 'logic',
