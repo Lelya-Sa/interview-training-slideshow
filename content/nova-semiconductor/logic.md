@@ -1,9 +1,13 @@
-### 23) Classic FizzBuzz with Rules
-**Theory:** Rule-ordering and modulo checks are a basic control-flow sanity test.
-**Answer:** Check divisibility by both 3 and 5 first, then individual cases.
-**Explanation:** Prioritizing combined condition avoids incorrect output for multiples of 15.
+# Nova Semiconductor — Logic & Reasoning (C#)
+
+Covers: **control flow**, **bit tricks**, **number theory**, **two pointers**, **binary search**, **prefix sums**, **stack**, **simulation/DP**, **rate limiting**, **greedy**, **string logic**, and **edge-case reasoning** — all with interview-depth explanations.
+
+### 23) **FizzBuzz** — why does rule order matter?
+**Theory:** FizzBuzz tests whether you handle **compound conditions** before simpler ones—a common control-flow mistake in interviews and in production rule engines.
+**Answer:** For each `n`, check **divisible by 15 first** (both 3 and 5), then by 3, then by 5, else print `n`. Wrong order (`3` before `15`) prints `"Fizz"` for 15 instead of `"FizzBuzz"`.
+**Explanation:** State the **invariant**: at most one branch applies. Complexity O(n) for printing 1..n. Edge cases: `n <= 0` (clarify spec), large n (use `StringBuilder` if concatenating output).
 ```csharp
-public string FizzBuzzValue(int n) {
+public static string FizzBuzzValue(int n) {
     if (n % 15 == 0) return "FizzBuzz";
     if (n % 3 == 0) return "Fizz";
     if (n % 5 == 0) return "Buzz";
@@ -11,244 +15,311 @@ public string FizzBuzzValue(int n) {
 }
 ```
 
-### 24) FizzBuzz Without Modulo
-**Theory:** Counters can replace modulo when arithmetic cost or constraints matter.
-**Answer:** Increment two counters and reset when each threshold is reached.
-**Explanation:** This demonstrates state-machine thinking beyond direct operators.
+### 24) **FizzBuzz without modulo** — what pattern is this?
+**Theory:** Some embedded or performance-sensitive contexts avoid `%`; interviewers want **state-machine** thinking.
+**Answer:** Maintain counters for “ticks until Fizz” and “ticks until Buzz”; increment each step, reset counter when it fires, combine flags for FizzBuzz.
+**Explanation:** Same output as modulo version if counters reset correctly. Shows you can model rules as **finite state** rather than only arithmetic tricks.
 ```csharp
-public IEnumerable<string> FizzBuzzNoMod(int n) {
+public static IEnumerable<string> FizzBuzzNoMod(int n) {
     int c3 = 0, c5 = 0;
-    for (int i = 1; i <= n; i++) { c3++; c5++; bool f = c3 == 3, b = c5 == 5; if (f) c3 = 0; if (b) c5 = 0; yield return f && b ? "FizzBuzz" : f ? "Fizz" : b ? "Buzz" : i.ToString(); }
+    for (int i = 1; i <= n; i++) {
+        c3++; c5++;
+        bool f = c3 == 3, b = c5 == 5;
+        if (f) c3 = 0;
+        if (b) c5 = 0;
+        yield return f && b ? "FizzBuzz" : f ? "Fizz" : b ? "Buzz" : i.ToString();
+    }
 }
 ```
 
-### 25) Missing Number via XOR
-**Theory:** XOR cancels equal values, leaving only the unmatched number.
-**Answer:** XOR all indices and all elements in the array.
-**Explanation:** This avoids extra memory and handles unsorted input cleanly.
+### 25) **Missing number** in `0..n` — XOR approach
+**Theory:** XOR is associative and `x ^ x = 0`, so paired values cancel—useful for “find the one missing element” without extra memory.
+**Answer:** XOR index `i` with `nums[i]` for all `i`, and XOR with `n` (length). Result is the missing value. Works because full set would XOR to 0.
+**Explanation:** O(n) time, O(1) space. Alternative: sum formula `n*(n+1)/2 - sum(nums)`—watch **integer overflow** for large n (use `long`). XOR avoids sum overflow issues.
 ```csharp
-public int MissingNumber(int[] nums) {
+public static int MissingNumber(int[] nums) {
     int x = nums.Length;
-    for (int i = 0; i < nums.Length; i++) x ^= i ^ nums[i];
+    for (int i = 0; i < nums.Length; i++)
+        x ^= i ^ nums[i];
     return x;
 }
 ```
 
-### 26) Single Number in Duplicates
-**Theory:** Pair-duplicated values disappear under XOR, exposing the unique value.
-**Answer:** XOR every element and return accumulator.
-**Explanation:** Time is O(n), space O(1), with no sorting needed.
+### 26) **Single number** when every other appears twice
+**Theory:** Same XOR cancellation idea—duplicate pairs zero out; the unique value remains.
+**Answer:** XOR all elements into accumulator `x`; return `x`.
+**Explanation:** O(n) time, O(1) space vs O(n) hash set. Follow-up: “every element appears **three** times except one” needs bit counting per bit position—not XOR alone.
 ```csharp
-public int SingleNumber(int[] nums) {
-    int x = 0; foreach (var n in nums) x ^= n; return x;
+public static int SingleNumber(int[] nums) {
+    int x = 0;
+    foreach (var n in nums) x ^= n;
+    return x;
 }
 ```
 
-### 27) Hamming Weight (Set Bits Count)
-**Theory:** Bit manipulation can count 1-bits efficiently using `n & (n-1)`.
-**Answer:** Repeatedly clear the lowest set bit and increment count.
-**Explanation:** Loop runs only as many times as there are set bits.
+### 27) **Count set bits** (Hamming weight) — Brian Kernighan trick
+**Theory:** `n & (n-1)` clears the lowest set bit—loop once per set bit instead of all 32 bits.
+**Answer:** While `n != 0`, do `n &= n - 1` and increment count.
+**Explanation:** Useful in embedded, flags, and parity checks. For 32-bit ints worst-case still O(32); average faster when sparse. C# also has `BitOperations.PopCount` on modern .NET.
 ```csharp
-public int HammingWeight(uint n) {
-    int c = 0; while (n != 0) { n &= (n - 1); c++; } return c;
+public static int HammingWeight(uint n) {
+    int count = 0;
+    while (n != 0) { n &= n - 1; count++; }
+    return count;
 }
 ```
 
-### 28) Hamming Distance Between Integers
-**Theory:** XOR marks differing bit positions as 1.
-**Answer:** Compute `x ^ y` and count set bits.
-**Explanation:** This directly models "number of differing bits."
+### 28) **Hamming distance** between two integers
+**Theory:** Hamming distance = number of bit positions where bits differ = popcount of `x ^ y`.
+**Answer:** Compute `z = (uint)(x ^ y)` and count set bits in `z` (Kernighan or PopCount).
+**Explanation:** Appears in error detection and similarity metrics. Say complexity O(number of differing bits) with Kernighan.
 ```csharp
-public int HammingDistance(int x, int y) {
-    uint z = (uint)(x ^ y); int c = 0; while (z != 0) { z &= z - 1; c++; } return c;
+public static int HammingDistance(int x, int y) {
+    uint z = (uint)(x ^ y);
+    int c = 0;
+    while (z != 0) { z &= z - 1; c++; }
+    return c;
 }
 ```
 
-### 29) Prime Check Optimization
-**Theory:** Non-primes have a factor at most `sqrt(n)`.
-**Answer:** Handle small cases, reject even numbers, test odd divisors up to square root.
-**Explanation:** This reduces unnecessary checks and is interview-acceptable.
+### 29) **Is n prime?** — optimized trial division
+**Theory:** If `n` is composite, it has a factor ≤ √n—only test divisors up to square root.
+**Answer:** Reject `n < 2`. Handle `2` separately. Reject even `n > 2`. Test odd divisors `d` from 3 while `d * d <= n`.
+**Explanation:** O(√n). Edge cases: `0`, `1`, negative (not prime by definition). For many queries up to N, use **sieve** (next question).
 ```csharp
-public bool IsPrime(int n) {
-    if (n < 2) return false; if (n == 2) return true; if (n % 2 == 0) return false;
-    for (int d = 3; d * d <= n; d += 2) if (n % d == 0) return false;
+public static bool IsPrime(int n) {
+    if (n < 2) return false;
+    if (n == 2) return true;
+    if (n % 2 == 0) return false;
+    for (int d = 3; d * d <= n; d += 2)
+        if (n % d == 0) return false;
     return true;
 }
 ```
 
-### 30) Sieve for Prime Generation
-**Theory:** Sieve of Eratosthenes marks multiples to generate all primes up to N.
-**Answer:** Initialize boolean array and strike out multiples from each prime candidate.
-**Explanation:** Total complexity is roughly O(n log log n), very efficient for ranges.
+### 30) **Sieve of Eratosthenes** — generate all primes ≤ N
+**Theory:** Mark multiples of each prime starting from p²; unmarked numbers are prime.
+**Answer:** Boolean array `isPrime[0..n]`, iterate p from 2 to n; if still prime, add to result and strike multiples `p*p, p*p+p, ...`.
+**Explanation:** O(n log log n) time—much faster than √n per query for dense ranges. Memory O(n). Use `long` for `p * p` when n is large to avoid overflow in inner loop.
 ```csharp
-public List<int> Sieve(int n) {
-    var prime = Enumerable.Repeat(true, n + 1).ToArray(); var res = new List<int>();
-    for (int p = 2; p <= n; p++) if (prime[p]) { res.Add(p); if ((long)p * p <= n) for (int m = p * p; m <= n; m += p) prime[m] = false; }
-    return res;
+public static List<int> SievePrimes(int n) {
+    var isPrime = Enumerable.Repeat(true, n + 1).ToArray();
+    var result = new List<int>();
+    for (int p = 2; p <= n; p++) {
+        if (!isPrime[p]) continue;
+        result.Add(p);
+        if ((long)p * p <= n)
+            for (int m = p * p; m <= n; m += p) isPrime[m] = false;
+    }
+    return result;
 }
 ```
 
-### 31) Euclidean GCD
-**Theory:** `gcd(a,b) = gcd(b, a mod b)` until remainder becomes zero.
-**Answer:** Iteratively swap and mod until `b` is zero.
-**Explanation:** Fast and foundational for fraction simplification and number theory.
+### 31) **GCD** and **LCM** — Euclidean algorithm
+**Theory:** `gcd(a,b)` divides both; `lcm(a,b) = |a*b| / gcd(a,b)` for scheduling/repeating cycles together.
+**Answer:** GCD: while `b != 0`, `(a,b) = (b, a % b)`. LCM: `Math.Abs((long)a / Gcd(a,b) * b)` (divide first to reduce overflow).
+**Explanation:** Foundation for fraction reduction, cycle alignment (“both events coincide every lcm days”). Handle negatives with `Math.Abs`.
 ```csharp
-public int Gcd(int a, int b) {
+public static int Gcd(int a, int b) {
     a = Math.Abs(a); b = Math.Abs(b);
     while (b != 0) { int t = a % b; a = b; b = t; }
     return a;
 }
+public static long Lcm(int a, int b) =>
+    Math.Abs((long)a / Gcd(a, b) * b);
 ```
 
-### 32) Palindrome Number Check
-**Theory:** Numeric palindrome can be validated without string conversion.
-**Answer:** Reverse the second half of digits and compare with first half.
-**Explanation:** This avoids overflow and keeps space constant.
+### 32) **Palindrome number** without string conversion
+**Theory:** Reverse the **second half** of digits and compare to the first half—avoids string allocation and handles half-way stop.
+**Answer:** Reject negatives and numbers ending in 0 (unless value is 0). While `x > reversed`, `reversed = reversed*10 + x%10`, `x /= 10`. Palindrome if `x == reversed` or `x == reversed/10` (odd length).
+**Explanation:** O(log₁₀ n) digits. Overflow: use `long` for `reversed` if interviewer allows huge inputs.
 ```csharp
-public bool IsPalindrome(int x) {
-    if (x < 0 || (x % 10 == 0 && x != 0)) return false; int rev = 0;
+public static bool IsPalindrome(int x) {
+    if (x < 0 || (x % 10 == 0 && x != 0)) return false;
+    int rev = 0;
     while (x > rev) { rev = rev * 10 + x % 10; x /= 10; }
     return x == rev || x == rev / 10;
 }
 ```
 
-### 33) Fibonacci Iterative DP
-**Theory:** Fibonacci recursion has overlapping subproblems, so iterative DP is preferred.
-**Answer:** Maintain previous two values and iterate up to n.
-**Explanation:** This yields O(n) time and O(1) memory.
+### 33) **Fibonacci** — why iterative beats naive recursion?
+**Theory:** Naive `fib(n)` recalculates subproblems exponentially; iterative DP is O(n) time, O(1) space.
+**Answer:** Base: `n<=1` return n. Keep `prev` and `curr`, loop from 2 to n updating sum.
+**Explanation:** Mention matrix exponentiation O(log n) only if asked. Watch **int overflow**—use `long` for n > 45. Clarify 0-index vs 1-index definition with interviewer.
 ```csharp
-public int Fib(int n) {
-    if (n <= 1) return n; int a = 0, b = 1;
+public static int Fib(int n) {
+    if (n <= 1) return n;
+    int a = 0, b = 1;
     for (int i = 2; i <= n; i++) { int c = a + b; a = b; b = c; }
     return b;
 }
 ```
 
-### 34) Find Duplicate in Range Array
-**Theory:** If values are bounded, a seen-set catches first repeated element quickly.
-**Answer:** Traverse array and return first number that cannot be added to set.
-**Explanation:** This is a practical trade-off: O(n) time, O(n) space.
+### 34) **First duplicate** in array — hash set vs sorting
+**Theory:** “Find first repeated value” is a **membership** problem—hash set gives O(n) expected time.
+**Answer:** Traverse; if `Add(n)` returns false, `n` was seen before—return it. Return sentinel (e.g. -1) if none.
+**Explanation:** Sorting + scan is O(n log n) but O(1) extra space if in-place allowed. For **first duplicate in range 1..n** with O(1) space, use **cycle detection** (Floyd)—advanced follow-up.
 ```csharp
-public int FirstDuplicate(int[] nums) {
+public static int FirstDuplicate(int[] nums) {
     var seen = new HashSet<int>();
-    foreach (var n in nums) if (!seen.Add(n)) return n;
+    foreach (var n in nums)
+        if (!seen.Add(n)) return n;
     return -1;
 }
 ```
 
-### 35) Majority Element (Boyer-Moore)
-**Theory:** Pair cancellation leaves majority candidate if one exists (> n/2).
-**Answer:** Track candidate and counter, reset candidate when count hits zero.
-**Explanation:** O(n) time and O(1) space beats hash counting for strict-majority case.
+### 35) **Majority element** (> n/2) — Boyer-Moore vote
+**Theory:** Pair different elements and “cancel”; majority survives if it exists.
+**Answer:** Track `candidate` and `count`. For each `n`: if `count==0`, candidate=n; count += (n==candidate) ? 1 : -1. **Second pass** verifies count > n/2 (required for correctness if majority not guaranteed).
+**Explanation:** O(n) time, O(1) space vs hash map O(n) space. Interview: always mention verification pass unless problem guarantees majority.
 ```csharp
-public int MajorityElement(int[] nums) {
+public static int MajorityElement(int[] nums) {
     int cand = 0, cnt = 0;
-    foreach (var n in nums) { if (cnt == 0) cand = n; cnt += (n == cand) ? 1 : -1; }
-    return cand;
-}
-```
-
-### 36) Rotate Array by K Steps
-**Theory:** Reversal algorithm rotates in-place using three segment reversals.
-**Answer:** Reverse entire array, then reverse first k and remaining segment.
-**Explanation:** Avoids extra array while preserving O(n) complexity.
-```csharp
-public void Rotate(int[] nums, int k) {
-    int n = nums.Length; k %= n; Array.Reverse(nums); Array.Reverse(nums, 0, k); Array.Reverse(nums, k, n - k);
-}
-```
-
-### 37) Unique Paths in Grid
-**Theory:** Each cell paths = top paths + left paths.
-**Answer:** Fill DP table from top-left with base row/column as 1.
-**Explanation:** This is a classic combinatorial DP interview problem.
-```csharp
-public int UniquePaths(int m, int n) {
-    var dp = new int[m,n];
-    for (int i = 0; i < m; i++) dp[i,0] = 1; for (int j = 0; j < n; j++) dp[0,j] = 1;
-    for (int i = 1; i < m; i++) for (int j = 1; j < n; j++) dp[i,j] = dp[i-1,j] + dp[i,j-1];
-    return dp[m-1,n-1];
-}
-```
-
-### 38) Sliding Window Rate Limiter Logic
-**Theory:** Sliding windows smooth bursts better than fixed windows for API protection.
-**Answer:** Keep recent request timestamps per key and drop those outside window.
-**Explanation:** Accept request only when remaining count is below limit.
-```csharp
-public bool Allow(List<long> timestamps, long nowMs, int limit, long windowMs) {
-    timestamps.RemoveAll(t => nowMs - t >= windowMs);
-    if (timestamps.Count >= limit) return false;
-    timestamps.Add(nowMs); return true;
-}
-```
-
-### 39) Token Bucket Rate Limiter Logic
-**Theory:** Token bucket allows short bursts while enforcing long-term throughput.
-**Answer:** Refill tokens over time and consume one token per request.
-**Explanation:** If tokens are unavailable, reject or queue the request.
-```csharp
-public bool Consume(ref double tokens, double capacity, double refillPerSec, ref long lastMs, long nowMs) {
-    tokens = Math.Min(capacity, tokens + (nowMs - lastMs) / 1000.0 * refillPerSec); lastMs = nowMs;
-    if (tokens < 1) return false; tokens -= 1; return true;
-}
-```
-
-### 40) Producer-Consumer with BlockingCollection
-**Theory:** Safe producer-consumer pipelines need synchronized queue and completion signaling.
-**Answer:** Use `BlockingCollection<T>` so consumer blocks when queue is empty.
-**Explanation:** Built-in coordination simplifies threading code and avoids busy waiting.
-```csharp
-var q = new BlockingCollection<int>(boundedCapacity: 100);
-Task.Run(() => { for (int i = 0; i < 1000; i++) q.Add(i); q.CompleteAdding(); });
-Task.Run(() => { foreach (var item in q.GetConsumingEnumerable()) Process(item); });
-```
-
-### 41) Deadlock Necessary Conditions
-**Theory:** Deadlock requires mutual exclusion, hold-and-wait, no preemption, and circular wait.
-**Answer:** Break at least one condition to prevent deadlock.
-**Explanation:** Typical prevention is consistent lock ordering across threads.
-```csharp
-// Avoid deadlock by locking resources in a global order:
-lock(firstResource) {
-    lock(secondResource) {
-        // critical section
+    foreach (var n in nums) {
+        if (cnt == 0) cand = n;
+        cnt += n == cand ? 1 : -1;
     }
+    return cand; // verify in second pass if needed
 }
 ```
 
-### 42) Fast Exponentiation (Binary Power)
-**Theory:** Exponentiation by squaring reduces multiplications from O(n) to O(log n).
-**Answer:** Square base each step and multiply result when current exponent bit is 1.
-**Explanation:** Works for large powers efficiently and is easy to explain in interviews.
+### 36) **Rotate array** right by k — reversal trick
+**Theory:** Rotating is three reversals: reverse all, reverse first k, reverse rest—O(n) in-place.
+**Answer:** `k %= n` (handle k > n). `Reverse(0,n-1)`, `Reverse(0,k-1)`, `Reverse(k,n-1)`.
+**Explanation:** Avoid O(n*k) one-step rotates. Edge: `n==0`, `k==0`, `k==n` (no-op after mod). Two-pointer swap logic is same family as palindrome checks.
 ```csharp
-public long Pow(long a, int n) {
-    long res = 1, b = a; int e = n;
-    while (e > 0) { if ((e & 1) == 1) res *= b; b *= b; e >>= 1; }
-    return res;
+public static void Rotate(int[] nums, int k) {
+    int n = nums.Length;
+    if (n == 0) return;
+    k %= n;
+    Array.Reverse(nums);
+    Array.Reverse(nums, 0, k);
+    Array.Reverse(nums, k, n - k);
 }
 ```
 
-### 43) Two Pointers for Pair Sum in Sorted Array
-**Theory:** Opposite-direction pointers exploit sorted order to find target sum.
-**Answer:** Move left pointer up if sum too small, right pointer down if too large.
-**Explanation:** This runs in O(n) versus O(n^2) brute force.
+### 37) **Unique paths** in m×n grid (only right/down)
+**Theory:** Classic **2D DP**: paths to cell = paths from above + paths from left. Base row/column = 1.
+**Answer:** Fill `dp[i,j]` for `i in 1..m-1`, `j in 1..n-1`. Answer `dp[m-1,n-1]`. Can optimize to 1D array O(n) space.
+**Explanation:** Combinatorics alternative: C(m+n-2, m-1) if no obstacles. Follow-up with obstacles → DP with blocked cells = 0. O(m*n) time.
 ```csharp
-public int[] TwoSumSorted(int[] a, int target) {
+public static int UniquePaths(int m, int n) {
+    var dp = new int[m, n];
+    for (int i = 0; i < m; i++) dp[i, 0] = 1;
+    for (int j = 0; j < n; j++) dp[0, j] = 1;
+    for (int i = 1; i < m; i++)
+        for (int j = 1; j < n; j++)
+            dp[i, j] = dp[i - 1, j] + dp[i, j - 1];
+    return dp[m - 1, n - 1];
+}
+```
+
+### 38) **Prefix sum** — range sum queries in O(1)
+**Theory:** Precompute cumulative sums so `sum(i..j) = prefix[j+1] - prefix[i]`—foundation for subarray problems.
+**Answer:** Build `prefix[0]=0`, `prefix[i+1]=prefix[i]+nums[i]`. Range sum `[l,r]` = `prefix[r+1]-prefix[l]`.
+**Explanation:** O(n) preprocess, O(1) per query. Enables “subarray sum equals k” with hash map of prefix frequencies—common follow-up. Watch index off-by-one in interviews.
+```csharp
+public sealed class PrefixSum {
+    private readonly long[] _p;
+    public PrefixSum(int[] nums) {
+        _p = new long[nums.Length + 1];
+        for (int i = 0; i < nums.Length; i++) _p[i + 1] = _p[i] + nums[i];
+    }
+    public long RangeSum(int l, int r) => _p[r + 1] - _p[l];
+}
+```
+
+### 39) **Binary search** — find target in sorted array
+**Theory:** Halve search space each step using monotonic order—O(log n) vs O(n) linear scan.
+**Answer:** `lo=0`, `hi=n-1`. While `lo<=hi`, `mid=(lo+hi)/2` (or `lo+(hi-lo)/2` to avoid overflow). If `a[mid]==target` return mid; if `a[mid]<target` search right else left. Return -1 if not found.
+**Explanation:** Also used on **answer space** (min capacity, speed) when monotonic predicate exists. Common bug: infinite loop when `lo=hi-1`—use `lo<=hi` or careful `lo=mid+1`.
+```csharp
+public static int BinarySearch(int[] a, int target) {
+    int lo = 0, hi = a.Length - 1;
+    while (lo <= hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (a[mid] == target) return mid;
+        if (a[mid] < target) lo = mid + 1;
+        else hi = mid - 1;
+    }
+    return -1;
+}
+```
+
+### 40) **Two pointers** — pair with sum in **sorted** array
+**Theory:** Opposite pointers exploit sorted order—each step eliminates many candidates.
+**Answer:** `l=0`, `r=n-1`. If `a[l]+a[r]==target` done; if sum too small `l++`, else `r--`. O(n) after sort; O(n log n) if you must sort first.
+**Explanation:** Unsorted two-sum uses **hash map** O(n). Clarify whether return indices or values, and duplicate handling.
+```csharp
+public static int[] TwoSumSorted(int[] a, int target) {
     int l = 0, r = a.Length - 1;
-    while (l < r) { int s = a[l] + a[r]; if (s == target) return new[] { l, r }; if (s < target) l++; else r--; }
+    while (l < r) {
+        int s = a[l] + a[r];
+        if (s == target) return new[] { l, r };
+        if (s < target) l++;
+        else r--;
+    }
     return Array.Empty<int>();
 }
 ```
 
-### 44) Balanced Parentheses Count Logic
-**Theory:** Balance counter can validate one bracket type without stack.
-**Answer:** Increment for `(` and decrement for `)`; count must never go negative.
-**Explanation:** Final count must be zero for a balanced string.
+### 41) **Merge two sorted arrays** — two-pointer merge
+**Theory:** Same merge step as merge sort—compare fronts, take smaller, advance pointer.
+**Answer:** Indices `i,j` on `a` and `b`; append smaller to result until one exhausted; append remainder.
+**Explanation:** O(n+m) time, O(n+m) space for new array. In-place merge into `a` with extra space at end of `a` is common follow-up (LeetCode). Foundation for external merge in data pipelines.
 ```csharp
-public bool IsBalancedRound(string s) {
-    int bal = 0;
-    foreach (var c in s) { if (c == '(') bal++; else if (c == ')') bal--; if (bal < 0) return false; }
-    return bal == 0;
+public static int[] MergeSorted(int[] a, int[] b) {
+    var res = new List<int>(a.Length + b.Length);
+    int i = 0, j = 0;
+    while (i < a.Length && j < b.Length)
+        res.Add(a[i] <= b[j] ? a[i++] : b[j++]);
+    while (i < a.Length) res.Add(a[i++]);
+    while (j < b.Length) res.Add(b[j++]);
+    return res.ToArray();
+}
+```
+
+### 42) **Valid parentheses** — stack for multiple bracket types
+**Theory:** Nesting requires **LIFO**—stack matches last opened bracket. Single-type `()` can use counter; `()[]{}` needs stack.
+**Answer:** Push opening brackets; on closing, pop and verify matching pair. If stack empty before pop or wrong type → false. End with empty stack.
+**Explanation:** O(n) time, O(n) space. Map closers to openers. Edge: empty string → true; string starting with `)` → false.
+```csharp
+public static bool IsValidBrackets(string s) {
+    var stack = new Stack<char>();
+    var pairs = new Dictionary<char, char> { [')'] = '(', [']'] = '[', ['}'] = '{' };
+    foreach (var c in s) {
+        if (c is '(' or '[' or '{') stack.Push(c);
+        else if (pairs.TryGetValue(c, out var open)) {
+            if (stack.Count == 0 || stack.Pop() != open) return false;
+        }
+    }
+    return stack.Count == 0;
+}
+```
+
+### 43) **Sliding window** rate limiter — logic only
+**Theory:** Limit requests per time window by evicting timestamps older than `windowMs`—smoother than fixed bucket for bursty traffic.
+**Answer:** Per client key, maintain timestamp list; on request, remove stale entries, reject if count ≥ limit, else append `now` and allow.
+**Explanation:** O(k) per request where k is requests in window—use **queue** or count index for amortized cleanup. Contrast **token bucket** (next question) for burst tolerance.
+```csharp
+public static bool AllowSlidingWindow(List<long> timestamps, long nowMs, int limit, long windowMs) {
+    timestamps.RemoveAll(t => nowMs - t >= windowMs);
+    if (timestamps.Count >= limit) return false;
+    timestamps.Add(nowMs);
+    return true;
+}
+```
+
+### 44) **Token bucket** rate limiter — allow bursts with average cap
+**Theory:** Tokens refill at steady rate up to **capacity**—allows short bursts while limiting long-run throughput (common in APIs).
+**Answer:** On each request: add `(now-last)*refillRate` tokens capped at capacity; if tokens ≥ 1, consume one and allow; else reject. Update `last`.
+**Explanation:** Parameters: capacity (burst), refill rate (sustained RPS). Used in networking and fab tool APIs protecting downstream systems. Thread-safety needs lock around shared bucket state.
+```csharp
+public static bool TryConsumeToken(ref double tokens, double capacity, double refillPerSec, ref long lastMs, long nowMs) {
+    tokens = Math.Min(capacity, tokens + (nowMs - lastMs) / 1000.0 * refillPerSec);
+    lastMs = nowMs;
+    if (tokens < 1) return false;
+    tokens -= 1;
+    return true;
 }
 ```

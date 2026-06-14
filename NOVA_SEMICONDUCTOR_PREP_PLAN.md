@@ -24,9 +24,9 @@
 - After coding: walk **one edge case** and state **time/space** complexity.
 
 ### Logic
-- Think aloud: restate problem → brute force → optimize → verify with a tiny example.
-- Watch **off-by-one**, **integer overflow** (`checked` / `long`), and **empty input**.
-- For puzzles: list **invariants** and **contradictions** before guessing.
+- Think aloud: restate → brute force → optimize → verify with tiny example; state **time/space** complexity.
+- Types covered: **FizzBuzz/state machine**, **XOR/bit tricks**, **primes/sieve/GCD**, **palindrome/Fibonacci**, **hash set**, **Boyer-Moore**, **rotation**, **grid DP**, **prefix sum**, **binary search**, **two pointers/merge**, **stack brackets**, **sliding window & token bucket** rate limits.
+- Watch **off-by-one**, **overflow** (`long`/`checked`), and **empty input**.
 
 ### Code (C#)
 - Know **`async`/`await`**, **`IDisposable`**, **`IEnumerable` vs `IQueryable`**, **LINQ deferred execution**.
