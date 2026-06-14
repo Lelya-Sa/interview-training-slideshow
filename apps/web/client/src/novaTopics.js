@@ -57,6 +57,20 @@ export const NOVA_TOPICS = [
       'Mention traceability, change control, and regression for hardware-adjacent software.'
     ],
     verify: 'Recite phases + 3 Scrum ceremonies; one story about quality or traceability.'
+  },
+  {
+    slug: 'threading',
+    title: 'Threading & Processes (C#)',
+    headline: 'Threading & processes · concurrency in .NET',
+    intro:
+      'Process vs thread, thread pool, lock/Monitor, SemaphoreSlim, Mutex, concurrent collections, Parallel.For, Task vs Thread, CancellationToken, deadlocks, race conditions, and producer-consumer — with C# examples.',
+    bestPractices: [
+      'Prefer async/await for I/O; Task.Run or Parallel.For for CPU-bound parallelism.',
+      'Never block on .Result/.Wait() on async code — classic deadlock on sync context.',
+      'Use private lock objects, Interlocked for counters, Concurrent* for shared structures.',
+      'Always pass CancellationToken into long-running work for clean shutdown.'
+    ],
+    verify: 'Explain process vs thread, fix a race with lock, and describe deadlock prevention without reading notes.'
   }
 ];
 

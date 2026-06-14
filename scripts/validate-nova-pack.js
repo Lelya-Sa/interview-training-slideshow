@@ -54,7 +54,7 @@ for (const [slug, range] of Object.entries(TOPIC_RANGES)) {
     if (topic !== range.label) {
       fail(`NS${id} topic mismatch: expected ${range.label}, got ${topic}`);
     }
-    if (slug === 'leetcode' || slug === 'code') {
+    if (slug === 'leetcode' || slug === 'code' || slug === 'threading') {
       if (!q.answer.includes('Code:')) {
         fail(`NS${id} (${slug}) should include a code block`);
       }

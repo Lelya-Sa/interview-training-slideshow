@@ -272,7 +272,7 @@ function App() {
             </button>
           </div>
           <p className="cognyte-roadmap-description">
-            LeetCode · Logic · Code (C#) · SDLC — <strong>22+ questions per topic</strong> (88 total). Use Interview mode: answer out loud, reveal, rate Strong/Partial/Weak.
+            LeetCode · Logic · Code (C#) · SDLC · Threading — <strong>22+ questions per topic</strong> (110 total). Use Interview mode: answer out loud, reveal, rate Strong/Partial/Weak.
           </p>
           <details className="cognyte-roadmap-details" open>
             <summary className="cognyte-roadmap-summary">Tonight&apos;s study order (recommended)</summary>
@@ -282,6 +282,7 @@ function App() {
                 <li><strong>30–40m</strong> Logic — puzzles, invariants, edge cases</li>
                 <li><strong>45–60m</strong> Code (C#) — async, LINQ, IDisposable, DI</li>
                 <li><strong>30–40m</strong> SDLC — Agile, testing, quality/traceability</li>
+                <li><strong>35–45m</strong> Threading & Processes — lock, Task, deadlock, CancellationToken</li>
                 <li><strong>20m</strong> Mixed timed drill + one-page cheat sheet</li>
               </ol>
               <p className="cognyte-roadmap-intro">
