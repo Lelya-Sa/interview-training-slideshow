@@ -35,14 +35,14 @@ export const NOVA_TOPICS = [
     title: 'Code (C#)',
     headline: 'Code · C# language & .NET',
     intro:
-      'async/await, IDisposable, LINQ, generics, DI, testing, and idiomatic C#. Expect language depth and “how would you structure this in production?”',
+      'async/await, IDisposable, LINQ & IQueryable, deferred execution, generics & OOP, DI lifetimes, exceptions, nullable types, records & structs, pattern matching, delegates/events, Task.WhenAll, ConfigureAwait, Span, xUnit, and ILogger/IOptions — 22 topics with production-minded C# and interview follow-ups.',
     bestPractices: [
-      'Know async vs sync, ConfigureAwait, and when not to block on .Result.',
-      'Explain IEnumerable deferred execution vs materialized lists.',
-      'Mention IDisposable, using declarations, and nullable reference types.',
-      'Tie answers to testability (xUnit) and logging (ILogger).'
+      'Never block async with .Result/.Wait() — explain deadlock on sync context.',
+      'IQueryable filters in SQL; IEnumerable in memory — avoid premature ToList().',
+      'Know IDisposable, await using, and DI scoped vs singleton lifetimes.',
+      'Tie answers to testability (xUnit) and structured logging (ILogger templates).'
     ],
-    verify: 'Write async fetch + parse, a LINQ pipeline, and IDisposable pattern from memory.'
+    verify: 'Write async fetch with CancellationToken, a DI constructor injection example, IDisposable using block, and one LINQ deferred-execution trap explanation from memory.'
   },
   {
     slug: 'sdlc',

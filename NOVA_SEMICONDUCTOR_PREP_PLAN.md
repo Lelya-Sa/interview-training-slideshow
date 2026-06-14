@@ -27,10 +27,12 @@
 - Watch **off-by-one**, **overflow** (`long`/`checked`), and **empty input**.
 
 ### Code (C#)
-- Know **`async`/`await`**, **`IDisposable`**, **`IEnumerable` vs `IQueryable`**, **LINQ deferred execution**.
-- **`string` vs `StringBuilder`**, **value vs reference types**, **nullable reference types**.
-- **DI**, **interfaces vs abstract classes**, **exceptions** (when to catch vs let bubble).
-- Mention **unit tests** (xUnit/NUnit), **logging** (`ILogger`), **configuration** (`IOptions`).
+- **async/await** (I/O, CancellationToken), **never** `.Result`/`.Wait()` on async code.
+- **IDisposable** / `await using`, **IEnumerable vs IQueryable**, **LINQ deferred execution** (double-enumeration trap).
+- **string vs StringBuilder**, **ref/out/in**, **generics & constraints**, **virtual/override**, **interface vs abstract class**.
+- **DI lifetimes** (singleton/scoped/transient), **exceptions** (catch specific, `throw;`), **nullable reference types**, **records**, **struct vs class**.
+- **Pattern matching**, **extension methods**, **delegates/events**, **Task.WhenAll**, **ConfigureAwait(false)** in libraries.
+- **Span/Memory**, **xUnit** (Fact/Theory), **ILogger** message templates, **IOptions** + `ValidateOnStart`.
 
 ### Threading & Processes (C#)
 - **Process** = isolated address space; **thread** = shared-memory execution unit inside a process.
