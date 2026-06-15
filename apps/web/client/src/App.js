@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QuestionsView from './components/QuestionsView';
 import { NOVA_TOPICS } from './novaTopics';
+import { DESIGN_PATTERN_TOPICS } from './designPatternTopics';
 
 const TOTAL_DAYS = 34;
 
@@ -11,7 +12,9 @@ function App() {
   const [showCognyteRoadmap, setShowCognyteRoadmap] = useState(false);
   const [showDayByDayPlan, setShowDayByDayPlan] = useState(false);
   const [showNovaPrep, setShowNovaPrep] = useState(false);
+  const [showDesignPatterns, setShowDesignPatterns] = useState(false);
   const [selectedNovaTopic, setSelectedNovaTopic] = useState(null);
+  const [selectedDesignPatternTopic, setSelectedDesignPatternTopic] = useState(null);
   const [useCognyteAsMain, setUseCognyteAsMain] = useState(true);
   const [roadmap, setRoadmap] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -111,7 +114,7 @@ function App() {
 
   return (
     <div className="app">
-      {selectedDay == null && selectedNovaTopic == null && !showSideQuest && !showCognyteRoadmap && !showDayByDayPlan && !showNovaPrep ? (
+      {selectedDay == null && selectedNovaTopic == null && selectedDesignPatternTopic == null && !showSideQuest && !showCognyteRoadmap && !showDayByDayPlan && !showNovaPrep && !showDesignPatterns ? (
         <>
           <header className="app-header">
             <h1 className="app-title">Interview Training</h1>
@@ -140,6 +143,13 @@ function App() {
                 onClick={() => setUseCognyteAsMain((prev) => !prev)}
               >
                 {useCognyteAsMain ? 'Using Cognyte 14-day plan' : 'Switch to Cognyte 14-day plan'}
+              </button>
+              <button
+                type="button"
+                className="day-btn design-patterns-btn"
+                onClick={() => setShowDesignPatterns(true)}
+              >
+                Design Patterns
               </button>
               <button
                 type="button"
@@ -247,6 +257,12 @@ function App() {
             </div>
           )}
         </>
+      ) : selectedDesignPatternTopic != null ? (
+        <QuestionsView
+          designPatternsMode
+          designPatternTopic={selectedDesignPatternTopic}
+          onClose={() => setSelectedDesignPatternTopic(null)}
+        />
       ) : selectedNovaTopic != null ? (
         <QuestionsView
           novaMode
@@ -259,6 +275,57 @@ function App() {
           cognyteMode={useCognyteAsMain && selectedDay >= 1 && selectedDay <= 14}
           onClose={() => setSelectedDay(null)}
         />
+      ) : showDesignPatterns ? (
+        <section className="cognyte-roadmap-panel design-patterns-panel" aria-live="polite">
+          <div className="cognyte-roadmap-header">
+            <h2 className="cognyte-roadmap-title">Design Patterns</h2>
+            <button
+              type="button"
+              className="day-btn"
+              onClick={() => setShowDesignPatterns(false)}
+            >
+              Back to roadmap
+            </button>
+          </div>
+          <p className="cognyte-roadmap-description">
+            Creational · Structural · Behavioral — <strong>24 patterns</strong> with theory, pros/cons, production Python examples, and interview mode.
+          </p>
+          <details className="cognyte-roadmap-details" open>
+            <summary className="cognyte-roadmap-summary">How to study patterns</summary>
+            <div className="cognyte-roadmap-body">
+              <ol className="interview-howto-list">
+                <li>For each pattern: name the <strong>problem</strong> before the pattern name.</li>
+                <li>Cover <strong>Theory → when to use → pitfall → Python example</strong> out loud.</li>
+                <li>Category guides in repo: <code>content/design-patterns/creational|structural|behavioral/README.md</code></li>
+                <li>Rate Strong/Partial/Weak after reveal; filter by pattern type in the sidebar.</li>
+              </ol>
+            </div>
+          </details>
+          <div className="roadmap-list nova-topic-grid">
+            {DESIGN_PATTERN_TOPICS.map((topic) => (
+              <article key={topic.slug} className="roadmap-day-card prep-day-card">
+                <div className="roadmap-day-header">
+                  <span className="roadmap-day-title">{topic.title}</span>
+                  <button
+                    type="button"
+                    className="day-btn open-questions-btn"
+                    onClick={() => setSelectedDesignPatternTopic(topic.slug)}
+                  >
+                    Open patterns
+                  </button>
+                </div>
+                <p className="prep-day-focus">{topic.intro}</p>
+                <p className="prep-day-focus"><strong>Best practices:</strong></p>
+                <ul className="roadmap-day-topics">
+                  {topic.bestPractices.map((tip) => (
+                    <li key={tip}>{tip}</li>
+                  ))}
+                </ul>
+                <p className="prep-day-verify"><strong>Verify:</strong> {topic.verify}</p>
+              </article>
+            ))}
+          </div>
+        </section>
       ) : showNovaPrep ? (
         <section className="cognyte-roadmap-panel nova-prep-panel" aria-live="polite">
           <div className="cognyte-roadmap-header">

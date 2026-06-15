@@ -1,21 +1,50 @@
 # Design Patterns - Interview Training
 
+## Design Patterns hub (web app)
+
+Open **Design Patterns** from the app header for **24 patterns** in interview mode, grouped by:
+
+| Type | Patterns | Content file |
+|------|----------|--------------|
+| **Creational** | 6 | `content/design-patterns-hub/creational.md` |
+| **Structural** | 7 | `content/design-patterns-hub/structural.md` |
+| **Behavioral** | 11 | `content/design-patterns-hub/behavioral.md` |
+
+API: `GET /api/design-patterns-hub/questions?topic=creational|structural|behavioral|all`
+
+Each pattern includes **Theory**, **Answer** (pros/cons), **Explanation** (production context), and **Python** examples.
+
+Category overviews (purpose, best practices, full pattern lists): [`creational/README.md`](./creational/README.md), [`structural/README.md`](./structural/README.md), [`behavioral/README.md`](./behavioral/README.md).
+
 ## Overview
 Design patterns are reusable solutions to common problems in software design. They provide proven approaches to solving recurring design problems and improve code maintainability, readability, and scalability.
 
 ## Categories
 
+Each category has a dedicated guide with **purpose**, **pros/cons**, **best practices**, and a catalog of **commonly used patterns**:
+
+| Category | Guide | Patterns in repo |
+|----------|-------|------------------|
+| **Creational** | [`creational/README.md`](./creational/README.md) | [Singleton](./creational/singleton/), [Factory](./creational/factory/) |
+| **Structural** | [`structural/README.md`](./structural/README.md) | [Adapter](./structural/adapter/) |
+| **Behavioral** | [`behavioral/README.md`](./behavioral/README.md) | [Observer](./behavioral/observer/), [Strategy](./behavioral/strategy/) |
+
 ### 1. Creational Patterns
 Focus on object creation mechanisms, trying to create objects in a manner suitable to the situation.
 
+**Full guide:** [`creational/README.md`](./creational/README.md)
+
 - **Singleton** - Ensure only one instance of a class exists
-- **Factory** - Create objects without specifying exact class
+- **Factory / Factory Method** - Create objects without specifying exact class
 - **Abstract Factory** - Create families of related objects
 - **Builder** - Construct complex objects step by step
 - **Prototype** - Create objects by cloning existing instances
+- **Object Pool**, **Dependency Injection**, **Simple Factory** — see category guide for more
 
 ### 2. Structural Patterns
 Focus on how classes and objects are composed to form larger structures.
+
+**Full guide:** [`structural/README.md`](./structural/README.md)
 
 - **Adapter** - Allow incompatible interfaces to work together
 - **Decorator** - Add behavior to objects dynamically
@@ -27,6 +56,8 @@ Focus on how classes and objects are composed to form larger structures.
 
 ### 3. Behavioral Patterns
 Focus on communication between objects and responsibility assignment.
+
+**Full guide:** [`behavioral/README.md`](./behavioral/README.md)
 
 - **Observer** - Notify multiple objects about state changes
 - **Strategy** - Define family of algorithms, make them interchangeable

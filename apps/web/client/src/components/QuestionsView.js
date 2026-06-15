@@ -17,14 +17,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { getCognyteDayRoadmap } from '../cognyteDayRoadmap';
 import { getNovaTopic } from '../novaTopics';
+import { getDesignPatternTopic } from '../designPatternTopics';
 import './QuestionsView.css';
 
 const CONF_STORAGE_PREFIX = 'cognyteConfidence:v1';
 const NOVA_CONF_STORAGE_PREFIX = 'novaConfidence:v1';
+const DP_CONF_STORAGE_PREFIX = 'designPatternConfidence:v1';
 
-function questionStorageKey(scope, q, idx, isNova = false) {
+function questionStorageKey(scope, q, idx, novaMode = false, designPatternsMode = false) {
   const id = q && q.questionId ? String(q.questionId) : `${scope}-i${idx}`;
-  const prefix = isNova ? NOVA_CONF_STORAGE_PREFIX : CONF_STORAGE_PREFIX;
+  const prefix = designPatternsMode
+    ? DP_CONF_STORAGE_PREFIX
+    : novaMode
+      ? NOVA_CONF_STORAGE_PREFIX
+      : CONF_STORAGE_PREFIX;
   return `${prefix}:${scope}:${id}`;
 }
 
@@ -44,9 +50,21 @@ function formatMmSs(totalSeconds) {
   return `${m}:${r.toString().padStart(2, '0')}`;
 }
 
-function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = false, novaTopic = '' }) {
-  const scopeKey = novaMode ? novaTopic : dayNumber;
-  const interviewPrepMode = cognyteMode || novaMode;
+function QuestionsView({
+  dayNumber,
+  onClose,
+  cognyteMode = false,
+  novaMode = false,
+  novaTopic = '',
+  designPatternsMode = false,
+  designPatternTopic = ''
+}) {
+  const scopeKey = designPatternsMode
+    ? designPatternTopic
+    : novaMode
+      ? novaTopic
+      : dayNumber;
+  const interviewPrepMode = cognyteMode || novaMode || designPatternsMode;
   // ============================================
   // STATE MANAGEMENT
   // ============================================
@@ -91,14 +109,16 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
     questions.forEach((q, idx) => {
       const key = getQKey(q, idx);
       try {
-        const raw = localStorage.getItem(questionStorageKey(scopeKey, q, idx, novaMode));
+        const raw = localStorage.getItem(
+          questionStorageKey(scopeKey, q, idx, novaMode, designPatternsMode)
+        );
         if (raw === 'strong' || raw === 'partial' || raw === 'weak') next[key] = raw;
       } catch (_) {
         /* ignore */
       }
     });
     setConfidenceByKey(next);
-  }, [interviewPrepMode, scopeKey, questions, getQKey, novaMode]);
+  }, [interviewPrepMode, scopeKey, questions, getQKey, novaMode, designPatternsMode]);
 
   useEffect(() => {
     setTimeLeft(timerBudget);
@@ -140,6 +160,25 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
             setExpandedTopics(topicsSet);
           } else {
             setError('Failed to load Nova Semiconductor questions.');
+          }
+          return;
+        }
+        if (designPatternsMode) {
+          const dpRes = await axios.get('/api/design-patterns-hub/questions', {
+            params: { topic: designPatternTopic }
+          });
+          if (dpRes.data && dpRes.data.success) {
+            const loaded = (dpRes.data.questions || []).map((q, idx) => ({
+              ...q,
+              originalIndex: idx
+            }));
+            setQuestions(loaded);
+            setError(null);
+            const topicsSet = new Set();
+            loaded.forEach((q) => { if (q.topicName) topicsSet.add(q.topicName); });
+            setExpandedTopics(topicsSet);
+          } else {
+            setError('Failed to load design patterns.');
           }
           return;
         }
@@ -348,7 +387,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
     }
     
     fetchQuestions();
-  }, [dayNumber, cognyteMode, novaMode, novaTopic]);
+  }, [dayNumber, cognyteMode, novaMode, novaTopic, designPatternsMode, designPatternTopic]);
 
   // ============================================
   // HANDLE ANSWER CHANGE
@@ -450,7 +489,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
     const key = getQKey(q, idx);
     const had = confidenceByKey[key];
     try {
-      localStorage.setItem(questionStorageKey(scopeKey, q, idx, novaMode), level);
+      localStorage.setItem(questionStorageKey(scopeKey, q, idx, novaMode, designPatternsMode), level);
     } catch (_) {
       /* ignore */
     }
@@ -473,7 +512,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
     if (!window.confirm('Clear all confidence ratings saved for this day on this device?')) return;
     questions.forEach((q, idx) => {
       try {
-        localStorage.removeItem(questionStorageKey(scopeKey, q, idx, novaMode));
+        localStorage.removeItem(questionStorageKey(scopeKey, q, idx, novaMode, designPatternsMode));
       } catch (_) {
         /* ignore */
       }
@@ -510,7 +549,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
       window.alert(`All questions in selected topic(s) completed.\n\nRated: ${doneCount}/${questions.length}${interviewPrepMode && interviewMode ? `\nRevisit Weak/Partial before your interview.` : ''}\n\nPoints: ${points}`);
     } else {
       // Quiz complete
-      window.alert(`${interviewPrepMode && interviewMode ? (novaMode ? 'Topic complete. Revisit Weak/Partial before your interview.' : 'Day complete. Export weak list from the sidebar counts and redo those first tomorrow.') : 'Quiz complete!'}\n\nPoints: ${points}\nStreak: ${streak}`);
+      window.alert(`${interviewPrepMode && interviewMode ? (novaMode ? 'Topic complete. Revisit Weak/Partial before your interview.' : designPatternsMode ? 'Patterns complete. Revisit Weak/Partial entries in the sidebar.' : 'Day complete. Export weak list from the sidebar counts and redo those first tomorrow.') : 'Quiz complete!'}\n\nPoints: ${points}\nStreak: ${streak}`);
       onClose();
     }
   };
@@ -571,6 +610,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
   const canAdvanceInterview = !interviewPrepFlow || !!confidenceByKey[currentKey];
   const cognyteRoadmap = cognyteMode ? getCognyteDayRoadmap(dayNumber) : null;
   const novaMeta = novaMode ? getNovaTopic(novaTopic) : null;
+  const dpMeta = designPatternsMode ? getDesignPatternTopic(designPatternTopic) : null;
 
   // ============================================
   // RENDER QUESTIONS VIEW
@@ -579,7 +619,11 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
     <div className="questions-view">
       <div className="questions-header">
         <div className="questions-title">
-          <h1>📋 {novaMode && novaMeta ? `Nova Semiconductor — ${novaMeta.title}` : `Daily Questions - Day ${dayNumber}`}</h1>
+          <h1>📋 {designPatternsMode && dpMeta
+            ? `Design Patterns — ${dpMeta.title}`
+            : novaMode && novaMeta
+              ? `Nova Semiconductor — ${novaMeta.title}`
+              : `Daily Questions - Day ${dayNumber}`}</h1>
           <p>
             {interviewPrepFlow
               ? 'Interview prep: answer out loud first (or jot bullets), then reveal the model answer and rate honesty.'
@@ -627,26 +671,28 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
         </div>
       </div>
 
-      {novaMode && novaMeta && (
+      {(novaMode && novaMeta) || (designPatternsMode && dpMeta) ? (
         <details className="cognyte-roadmap-details" defaultOpen>
-          <summary className="cognyte-roadmap-summary">{novaMeta.headline}</summary>
+          <summary className="cognyte-roadmap-summary">
+            {designPatternsMode && dpMeta ? dpMeta.headline : novaMeta.headline}
+          </summary>
           <div className="cognyte-roadmap-body">
-            <p className="cognyte-roadmap-intro">{novaMeta.intro}</p>
+            <p className="cognyte-roadmap-intro">{designPatternsMode && dpMeta ? dpMeta.intro : novaMeta.intro}</p>
             <div className="cognyte-roadmap-track">
               <div className="cognyte-roadmap-track-label">Best practices</div>
               <ul className="cognyte-roadmap-track-list">
-                {novaMeta.bestPractices.map((item) => (
+                {(designPatternsMode && dpMeta ? dpMeta.bestPractices : novaMeta.bestPractices).map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             </div>
             <div className="cognyte-roadmap-track">
-              <div className="cognyte-roadmap-track-label">Verify tonight</div>
-              <p className="cognyte-roadmap-intro">{novaMeta.verify}</p>
+              <div className="cognyte-roadmap-track-label">Verify</div>
+              <p className="cognyte-roadmap-intro">{designPatternsMode && dpMeta ? dpMeta.verify : novaMeta.verify}</p>
             </div>
           </div>
         </details>
-      )}
+      ) : null}
 
       {cognyteMode && cognyteRoadmap && (
         <details
@@ -724,7 +770,7 @@ function QuestionsView({ dayNumber, onClose, cognyteMode = false, novaMode = fal
       {/* Topics for Day X – multiselect (show questions from selected topics only) */}
       <div className="quick-navigation topics-multiselect-section">
         <div className="topics-multiselect-header">
-          <label className="topics-label">📚 {novaMode ? 'Topic' : `Topics for Day ${dayNumber}`}</label>
+          <label className="topics-label">📚 {designPatternsMode || novaMode ? 'Pattern type' : `Topics for Day ${dayNumber}`}</label>
           <span className="topics-hint">
             {selectedTopics.size === 0
               ? `Showing all ${questions.length} questions`
